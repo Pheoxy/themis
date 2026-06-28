@@ -1,3 +1,8 @@
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/themis-banner-dark.png">
+  <img alt="Themis: Pre-upstream PR validation" src="docs/assets/themis-banner-light.png">
+</picture>
+
 # Themis
 
 Themis is a paranoid pre-upstream assistant and gate for AI-assisted code. It is named for the Greek goddess of law, order, custom, and proper procedure.
@@ -123,6 +128,7 @@ Additional docs:
 - `docs/configuration.md`: `.themis.toml` policy fields and examples.
 - `docs/github-action.md`: GitHub Action usage and inputs.
 - `docs/development.md`: local development and self-check workflow.
+- `docs/assets/README.md`: visual concept artwork and future brand asset notes.
 - `examples/pr-body.md`: minimal PR body template that includes required accountability sections.
 
 ## Shell Completion

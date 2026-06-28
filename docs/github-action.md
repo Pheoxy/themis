@@ -2,6 +2,8 @@
 
 Themis can run as a composite GitHub Action. The action installs Nix by default, runs the flake-packaged CLI, and uploads the Markdown validation report.
 
+![Themis validation card](assets/themis-validation-card.png)
+
 ## Pull Request Gate
 
 ```yaml
