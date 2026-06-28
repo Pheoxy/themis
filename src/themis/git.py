@@ -98,7 +98,19 @@ def diff_text(repo: Path, base: str | None) -> str:
 
 
 def numstat(repo: Path, base: str | None) -> list[Numstat]:
+    seen: dict[str, Numstat] = {}
     output = git(repo, "diff", "--numstat", *diff_args(base), check=False)
+    for item in parse_numstat(output):
+        seen[item.path] = item
+    staged = git(repo, "diff", "--numstat", "--cached", check=False)
+    unstaged = git(repo, "diff", "--numstat", check=False)
+    for chunk in (staged, unstaged):
+        for item in parse_numstat(chunk):
+            seen[item.path] = item
+    return sorted(seen.values(), key=lambda item: item.path)
+
+
+def parse_numstat(output: str) -> list[Numstat]:
     stats: list[Numstat] = []
     for line in output.splitlines():
         parts = line.split("\t")

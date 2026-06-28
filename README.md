@@ -1,8 +1,8 @@
 # Themis
 
-Themis is a paranoid pre-upstream gate for AI-assisted code. It is named for the Greek goddess of law, order, custom, and proper procedure.
+Themis is a paranoid pre-upstream assistant and gate for AI-assisted code. It is named for the Greek goddess of law, order, custom, and proper procedure.
 
-It is meant to run before a pull request reaches maintainers and fail closed when the submission cannot prove it follows the target project's rules.
+It is meant to help contributors prepare upstream-ready work, automate repetitive process checks, and fail closed when a pull request cannot prove it follows the target project's rules.
 
 The tool treats maintainer time as scarce. Its default posture is deliberately strict: unclear provenance, missing tests, missing AI disclosure, generated/vendor noise, suspicious placeholders, ignored upstream rules, one-off feature churn, or unverifiable claims become hard blockers.
 
@@ -22,6 +22,7 @@ Themis does not take accountability for users. It blocks risky or under-evidence
 - Enforces DCO/Signed-off-by expectations when upstream docs mention them.
 - Blocks generated, vendored, minified, binary, oversized, secret-looking, placeholder, or AI-slop-looking diff content.
 - Produces a Markdown report and exits non-zero when blockers are present. The report is a gate result, not a certification.
+- Generates an upstream readiness guide that summarizes detected rules, changed files, likely obligations, and suggested next commands.
 
 ## Quick Start
 
@@ -35,6 +36,12 @@ Create starter config and a PR body template in a target repository:
 
 ```bash
 themis init --repo /path/to/target/repo
+```
+
+Ask Themis to run the gate and organize the upstream prep work for the current change:
+
+```bash
+themis guide --repo /path/to/target/repo --base origin/main --body-file pr-body.md --evidence "pytest -q passed" --run-checks
 ```
 
 ```bash

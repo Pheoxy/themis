@@ -23,6 +23,10 @@ def build_parser() -> argparse.ArgumentParser:
     add_validation_args(validate_parser)
     validate_parser.add_argument("--run-checks", action="store_true", help="Run required checks from .themis.toml in the target repo.")
 
+    guide_parser = subcommands.add_parser("guide", aliases=["g"], help="Run the gate and generate an upstream readiness guide.")
+    add_validation_args(guide_parser, base_default="origin/main")
+    guide_parser.add_argument("--run-checks", action="store_true", help="Run required checks from .themis.toml in the target repo.")
+
     pr_parser = subcommands.add_parser("pull-request", aliases=["pr"], help="Pull request workflows.")
     pr_subcommands = pr_parser.add_subparsers(dest="pr_command", required=True)
     draft_parser = pr_subcommands.add_parser("draft", aliases=["d"], help="Validate, run required checks, then create a draft PR.")
@@ -85,6 +89,45 @@ def main(argv: list[str] | None = None) -> int:
 
             print(render_completion(args.shell), end="")
             return 0
+        if args.command in {"guide", "g"}:
+            from .guide import render_guide
+
+            root = repo_root(args.repo.resolve())
+            config = PolicyConfig.load(root)
+            pr_description = read_optional(args.body_file)
+            test_evidence = args.evidence
+            if args.evidence_file:
+                test_evidence = join_evidence(test_evidence, read_optional(args.evidence_file))
+            checks = run_required_checks(root, config.required_checks) if args.run_checks else []
+            current_changes = changed_files(root, args.base)
+            current_stats = numstat(root, args.base)
+            data = ValidationInput(
+                repo=root,
+                base=args.base,
+                changed_files=current_changes,
+                numstat=current_stats,
+                diff_text=diff_text(root, args.base),
+                tracked_files=tracked_files(root),
+                commits=commits(root, args.base),
+                pr_description=pr_description,
+                test_evidence=test_evidence,
+                ai_assisted=args.ai_assisted,
+                check_results=checks,
+            )
+            findings = validate(data, config)
+            guide = render_guide(
+                root,
+                base=args.base,
+                changed=current_changes,
+                stats=current_stats,
+                config=config,
+                findings=findings,
+            )
+            if args.output:
+                args.output.write_text(guide, encoding="utf-8")
+            else:
+                print(guide)
+            return 2 if any(item.severity == BLOCKER for item in findings) else 0
         draft_pr = args.command in {"pull-request", "pr"} and args.pr_command in {"draft", "d"}
         run_checks = args.run_checks if args.command == "validate" else not args.skip_checks
         root = repo_root(args.repo.resolve())

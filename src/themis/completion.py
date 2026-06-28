@@ -5,6 +5,8 @@ COMMANDS = [
     "validate",
     "check",
     "v",
+    "guide",
+    "g",
     "pull-request",
     "pr",
     "draft",
