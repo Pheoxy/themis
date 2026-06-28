@@ -1,0 +1,181 @@
+# Themis
+
+Themis is a paranoid pre-upstream gate for AI-assisted code. It is named for the Greek goddess of law, order, custom, and proper procedure.
+
+It is meant to run before a pull request reaches maintainers and fail closed when the submission cannot prove it follows the target project's rules.
+
+The tool treats maintainer time as scarce. Its default posture is deliberately strict: unclear provenance, missing tests, missing AI disclosure, generated/vendor noise, suspicious placeholders, ignored upstream rules, one-off feature churn, or unverifiable claims become hard blockers.
+
+Themis is not anti-newcomer. It is meant to protect maintainers and sincere contributors, including new ones, by making upstream expectations explicit before review time is spent. See `docs/mission.md`.
+
+## What It Checks
+
+- Always applies the validator's own built-in paranoid safety rules first.
+- Dynamically applies target repository rules from `.themis.toml`, contribution docs, PR templates, and policy files.
+- Finds upstream rules in files such as `CONTRIBUTING`, `DEVELOPING`, `MAINTAINERS`, `SECURITY`, `LICENSE`, pull request templates, and `.github` policy files.
+- Blocks AI-assisted submissions unless the PR text includes explicit `AI assistance:` and `Human accountability:` sections.
+- Blocks AI-assisted submissions when project docs appear to forbid AI-generated contributions.
+- Infers repo-specific blockers for PR checklist acknowledgement, DCO/signoff, required tests, changelog/release-note handling, issue links, and conventional commit style when the target repo documents those requirements.
+- Requires test evidence for code changes and flags code changes with no matching tests.
+- Enforces DCO/Signed-off-by expectations when upstream docs mention them.
+- Blocks generated, vendored, minified, binary, oversized, secret-looking, placeholder, or AI-slop-looking diff content.
+- Produces a Markdown report and exits non-zero when blockers are present.
+
+## Quick Start
+
+On NixOS or any system with flakes enabled, enter the development shell first:
+
+```bash
+nix develop
+```
+
+```bash
+python -m themis validate --repo /path/to/target/repo --base origin/main --body-file pr-body.md --evidence "pytest -q passed in CI"
+```
+
+By default, the validator assumes the patch is AI-assisted. To validate a patch as human-authored, make that explicit:
+
+```bash
+python -m themis validate --repo /path/to/target/repo --base origin/main --human-authored --evidence "make test passed"
+```
+
+For CI usage, write a report artifact:
+
+```bash
+themis \
+  validate \
+  --repo . \
+  --base origin/main \
+  --body-file "$PR_BODY_FILE" \
+  --evidence-file validation/test-evidence.txt \
+  --output upstream-validation-report.md
+```
+
+You can also run the packaged CLI directly through the flake:
+
+```bash
+nix run . -- validate --repo /path/to/target/repo --base origin/main --body-file pr-body.md --evidence "pytest -q passed"
+```
+
+Project verification is intentionally Nix-first:
+
+```bash
+nix flake check
+```
+
+## Draft PR
+
+When local work is ready, use the PR draft command. It runs the hard gate, runs configured required checks, writes a validation report, and creates a GitHub draft PR only if there are no blockers.
+
+```bash
+nix run . -- pr draft --base origin/main --body-file pr-body.md --evidence "nix flake check passed"
+```
+
+Equivalent full command. `pr` is shorthand for `pull-request`; `d` is shorthand for `draft`.
+
+```bash
+nix run . -- pull-request draft --base origin/main --body-file pr-body.md --evidence "nix flake check passed"
+```
+
+The draft PR body includes the original PR description plus the validator report. The command requires GitHub CLI authentication for draft PR creation.
+
+Equivalent direct validator form:
+
+```bash
+nix run . -- pr draft --repo . --base origin/main --body-file pr-body.md
+```
+
+## CLI Reference
+
+The CLI reference is generated directly from the parser code so docs and implementation stay tied together.
+
+```bash
+nix run . -- docs cli --write
+nix run . -- docs cli --check
+```
+
+`nix flake check` runs the generated-docs check, so Themis blocks itself when CLI docs drift from code. See `docs/cli.md`.
+
+## GitHub Action
+
+Use this repository as an action in another project after checkout:
+
+```yaml
+name: Themis
+
+on: pull_request
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Write PR body
+        env:
+          PR_BODY: ${{ github.event.pull_request.body }}
+        run: printf '%s' "$PR_BODY" > pr-body.md
+      - uses: OWNER/themis@main
+        with:
+          base: origin/${{ github.base_ref }}
+          body-file: pr-body.md
+          run-checks: "true"
+```
+
+Draft PR creation from CI is intentionally opt-in and requires `pull-requests: write` plus a valid `GH_TOKEN`.
+
+Exit codes:
+
+- `0`: no blockers
+- `2`: one or more hard blockers
+- `3`: validator execution/configuration error
+
+## Configuration
+
+Create `.themis.toml` in the target repository to tune thresholds or command evidence.
+
+```toml
+[policy]
+max_changed_files = 25
+max_added_lines = 800
+max_deleted_lines = 500
+max_file_added_lines = 300
+require_upstream_rules = true
+require_tests_for_code = true
+require_test_changes_for_code = true
+block_generated_paths = true
+block_vendor_paths = true
+block_ai_markers = true
+block_placeholders = true
+
+allow_paths = [
+  "docs/generated/",
+]
+
+required_checks = [
+  "nix flake check",
+]
+```
+
+`required_checks` are only executed during `themis validate --run-checks` or by default during `themis pull-request draft`. If policy defines required checks and they are not run, the submission is blocked; this avoids letting vague claims replace exact upstream-required commands.
+
+## Required PR Disclosure For AI-Assisted Work
+
+The default bot posture assumes AI assistance. The PR description must include sections like:
+
+```markdown
+AI assistance: Used for implementation suggestions; all generated code was manually reviewed and edited.
+
+Human accountability: I understand and take responsibility for every line, including tests, licensing, security, and project policy compliance.
+```
+
+This is intentionally stricter than many projects. It reflects the current maintainer backlash against low-effort AI submissions and forces responsibility onto the submitter before maintainers spend review time.
+
+## Research Basis
+
+See `docs/ai-upstream-politics.md` for the maintainer/community concerns that shaped the hard-blocking defaults.
