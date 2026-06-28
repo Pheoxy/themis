@@ -13,5 +13,5 @@ build/
 .env
 .env.*
 !.env.example
-upstream-validation-report.md
-pr-body.md
+/upstream-validation-report.md
+/pr-body.md

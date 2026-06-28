@@ -96,6 +96,13 @@ nix run . -- docs cli --check
 
 `nix flake check` runs the generated-docs check, so Themis blocks itself when CLI docs drift from code. See `docs/cli.md`.
 
+Additional docs:
+
+- `docs/configuration.md`: `.themis.toml` policy fields and examples.
+- `docs/github-action.md`: GitHub Action usage and inputs.
+- `docs/development.md`: local development and self-check workflow.
+- `examples/pr-body.md`: minimal PR body template that includes required accountability sections.
+
 ## GitHub Action
 
 Use this repository as an action in another project after checkout:
