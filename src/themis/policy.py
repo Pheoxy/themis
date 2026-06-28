@@ -80,14 +80,29 @@ AI_MARKERS = re.compile(
 )
 
 PLACEHOLDERS = re.compile(
-    r"(?i)(todo|fixme|xxx|hack|temporary|placeholder|stub|not implemented|for now|"
-    r"good enough|probably works|needs cleanup|follow-up)"
+    r"(?i)\b(todo|fixme|xxx|hack|temporary|placeholder|stub|not implemented|for now|"
+    r"good enough|probably works|needs cleanup|follow-up)\b"
 )
 
 SECRET_PATTERNS = (
     re.compile(r"AKIA[0-9A-Z]{16}"),
     re.compile(r"(?i)-----BEGIN (RSA |DSA |EC |OPENSSH )?PRIVATE KEY-----"),
     re.compile(r"(?i)(api[_-]?key|secret|token|password)\s*[:=]\s*['\"][^'\"]{16,}['\"]"),
+)
+
+WEAK_SECTION_TEXT = re.compile(
+    r"(?is)^\s*(n/?a|none|no|unknown|todo|tbd|not sure|state whether|fill this|placeholder|used|yes)\s*\.?\s*$"
+)
+
+ACCOUNTABILITY_WORDS = re.compile(r"(?i)\b(responsib|accountab|own|reviewed|verified|tested|license|security|every line)\b")
+
+PASSING_EVIDENCE = re.compile(
+    r"(?is)\b(pass(?:ed)?|success(?:ful)?|ok|green|clean|exit\s*0|0\s*failures?|ci\s+passed)\b"
+)
+
+CHECK_COMMAND_EVIDENCE = re.compile(
+    r"(?is)(`[^`]+`|\b(nix\s+flake\s+check|pytest|python\s+-m\s+unittest|unittest|cargo\s+test|go\s+test|"
+    r"npm\s+test|yarn\s+test|pnpm\s+test|make\s+test|mvn\s+test|gradle\s+test|dotnet\s+test|ci)\b)"
 )
 
 
@@ -185,6 +200,7 @@ def validate_project_specific_rules(
     findings: list[Finding] = []
     pr_text = data.pr_description.lower()
     code_changes = [item.path for item in data.changed_files if is_source_path(item.path) and not is_test_path(item.path)]
+    process_text = "\n".join(content for name, content in rule_docs if is_process_rule_doc(name))
 
     for name, content in rule_docs:
         if "pull_request_template" not in name.lower():
@@ -200,7 +216,7 @@ def validate_project_specific_rules(
                 )
             )
 
-    if code_changes and docs_require_changelog(docs_text):
+    if code_changes and docs_require_changelog(process_text):
         has_changelog_change = any(re.search(r"(?i)(change.?log|changes|release.?notes|news)", item.path) for item in data.changed_files)
         has_changelog_note = re.search(r"(?im)^\s*(change.?log|release notes?)\s*:\s*(not needed|n/a|none|yes|updated)", data.pr_description)
         if not has_changelog_change and not has_changelog_note:
@@ -212,7 +228,7 @@ def validate_project_specific_rules(
                 )
             )
 
-    if docs_require_issue_link(docs_text) and not re.search(r"(?i)(fixes|closes|refs|references)\s+#\d+|https?://\S+/(issues|pull)/\d+", data.pr_description):
+    if docs_require_issue_link(process_text) and not re.search(r"(?i)(fixes|closes|refs|references)\s+#\d+|https?://\S+/(issues|pull)/\d+", data.pr_description):
         findings.append(
             Finding(
                 BLOCKER,
@@ -221,7 +237,7 @@ def validate_project_specific_rules(
             )
         )
 
-    if docs_require_conventional_commits(docs_text):
+    if docs_require_conventional_commits(process_text):
         if not data.base:
             findings.append(Finding(BLOCKER, "cannot-verify-commit-style", "Upstream docs require conventional commits, but no base ref was provided."))
         elif not data.commits:
@@ -241,6 +257,8 @@ def load_rule_docs(repo: Path) -> list[tuple[str, str]]:
     github = repo / ".github"
     if github.exists():
         for path in github.rglob("*.md"):
+            if "ISSUE_TEMPLATE" in path.parts:
+                continue
             candidates.add(str(path.relative_to(repo)))
     for name in sorted(candidates):
         path = repo / name
@@ -322,8 +340,16 @@ def validate_ai_disclosure(data: ValidationInput, docs_text: str) -> list[Findin
         description = data.pr_description.lower()
         if "ai assistance:" not in description:
             findings.append(Finding(BLOCKER, "missing-ai-disclosure", "AI-assisted submissions must include an `AI assistance:` section in the PR description."))
+        else:
+            ai_section = extract_labeled_section(data.pr_description, "AI assistance")
+            if weak_section(ai_section):
+                findings.append(Finding(BLOCKER, "weak-ai-disclosure", "`AI assistance:` must explain how AI was used and how the output was reviewed."))
         if "human accountability:" not in description:
             findings.append(Finding(BLOCKER, "missing-human-accountability", "AI-assisted submissions must include a `Human accountability:` responsibility statement."))
+        else:
+            accountability = extract_labeled_section(data.pr_description, "Human accountability")
+            if weak_section(accountability) or not ACCOUNTABILITY_WORDS.search(accountability):
+                findings.append(Finding(BLOCKER, "weak-human-accountability", "`Human accountability:` must explicitly take responsibility for the submitted work."))
     if require_ai_disclosure and not data.ai_assisted:
         findings.append(
             Finding(
@@ -365,7 +391,7 @@ def validate_diff_content(data: ValidationInput, config: PolicyConfig) -> list[F
             continue
         if config.block_ai_markers and AI_MARKERS.search(added) and not is_low_risk_text_file(current_file):
             findings.append(Finding(BLOCKER, "ai-marker-in-diff", "Added line contains AI-tool/slop marker text.", file=current_file, detail=trim(added)))
-        if config.block_placeholders and PLACEHOLDERS.search(added) and not is_low_risk_text_file(current_file):
+        if config.block_placeholders and PLACEHOLDERS.search(added) and should_block_placeholder(current_file, added):
             findings.append(Finding(BLOCKER, "placeholder-in-code", "Added code contains placeholder or cleanup language.", file=current_file, detail=trim(added)))
         for pattern in SECRET_PATTERNS:
             if pattern.search(added):
@@ -387,6 +413,8 @@ def validate_tests(data: ValidationInput, docs_text: str, config: PolicyConfig) 
         return findings
     if config.require_tests_for_code and not data.test_evidence.strip() and not any(result.returncode == 0 for result in data.check_results):
         findings.append(Finding(BLOCKER, "missing-test-evidence", "Code changed, but no test evidence or successful required check was provided."))
+    elif config.require_tests_for_code and data.test_evidence.strip() and not strong_test_evidence(data.test_evidence):
+        findings.append(Finding(BLOCKER, "weak-test-evidence", "Test evidence must name a check/command or CI run and state that it passed."))
     if config.require_test_changes_for_code and not test_changes:
         findings.append(Finding(BLOCKER, "missing-test-changes", "Code changed, but no test files changed. Provide tests or configure an explicit exception."))
     if docs_mention_tests and not data.test_evidence.strip() and not any(result.returncode == 0 for result in data.check_results):
@@ -445,6 +473,36 @@ def is_low_risk_text_file(path: str | None) -> bool:
     return suffix in {".md", ".rst", ".txt"}
 
 
+def is_process_rule_doc(name: str) -> bool:
+    normalized = name.lower()
+    excluded = ("code_of_conduct", "security", "license", "copying", "issue_template")
+    return not any(part in normalized for part in excluded)
+
+
+def should_block_placeholder(path: str | None, line: str) -> bool:
+    if is_low_risk_text_file(path) or is_test_path(path or ""):
+        return False
+    if "re.compile(" in line or line.lstrip().startswith("r\""):
+        return False
+    return True
+
+
+def extract_labeled_section(text: str, label: str) -> str:
+    pattern = re.compile(rf"(?ims)^\s*{re.escape(label)}\s*:\s*(.*?)(?=^\s*[A-Z][A-Za-z /-]{{2,40}}\s*:|\Z)")
+    match = pattern.search(text)
+    if not match:
+        return ""
+    return match.group(1).strip()
+
+
+def weak_section(value: str) -> bool:
+    return not value.strip() or bool(WEAK_SECTION_TEXT.match(value.strip()))
+
+
+def strong_test_evidence(value: str) -> bool:
+    return bool(PASSING_EVIDENCE.search(value) and CHECK_COMMAND_EVIDENCE.search(value))
+
+
 def docs_require_changelog(text: str) -> bool:
     return bool(
         re.search(
@@ -457,7 +515,11 @@ def docs_require_changelog(text: str) -> bool:
 def docs_require_issue_link(text: str) -> bool:
     return bool(
         re.search(
-            r"(?is)\b(must|required|require|should|need to).{0,100}\b(issue|ticket|bug report|reference|fixes|closes)",
+            r"(?is)\b(pull request|pr|change|patch|contribution|commit).{0,120}\b(must|required|require|should|need to).{0,120}\b(issue|ticket|bug report|reference|fixes|closes)",
+            text,
+        )
+        or re.search(
+            r"(?is)\b(must|required|require|should|need to).{0,120}\b(issue|ticket|bug report|reference|fixes|closes).{0,120}\b(pull request|pr|change|patch|contribution|commit)",
             text,
         )
     )

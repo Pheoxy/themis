@@ -47,6 +47,33 @@ class PolicyTests(unittest.TestCase):
             findings = validate(data, PolicyConfig(require_test_changes_for_code=False))
             self.assertIn("placeholder-in-code", {item.code for item in findings if item.severity == BLOCKER})
 
+    def test_ai_assisted_blocks_placeholder_disclosure(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            tmp = Path(raw)
+            (tmp / "CONTRIBUTING.md").write_text("Run tests before submitting.\n", encoding="utf-8")
+            pr = "AI assistance: used\n\nHuman accountability: I own every line and tested it."
+            data = make_input(tmp, diff="", files=[ChangedFile("README.md", "M")], pr=pr)
+            findings = validate(data, PolicyConfig())
+            self.assertIn("weak-ai-disclosure", {item.code for item in findings if item.severity == BLOCKER})
+
+    def test_ai_assisted_blocks_weak_accountability(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            tmp = Path(raw)
+            (tmp / "CONTRIBUTING.md").write_text("Run tests before submitting.\n", encoding="utf-8")
+            pr = "AI assistance: Used for implementation suggestions and reviewed manually.\n\nHuman accountability: yes"
+            data = make_input(tmp, diff="", files=[ChangedFile("README.md", "M")], pr=pr)
+            findings = validate(data, PolicyConfig())
+            self.assertIn("weak-human-accountability", {item.code for item in findings if item.severity == BLOCKER})
+
+    def test_blocks_weak_test_evidence_for_code_changes(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            tmp = Path(raw)
+            (tmp / "CONTRIBUTING.md").write_text("Run tests before submitting.\n", encoding="utf-8")
+            pr = "AI assistance: Used for implementation suggestions and reviewed manually.\n\nHuman accountability: I own every line and take responsibility for tests."
+            data = make_input(tmp, diff="+++ b/src/app.py\n+return 1\n", files=[ChangedFile("src/app.py", "M")], pr=pr, evidence="looks good")
+            findings = validate(data, PolicyConfig(require_test_changes_for_code=False))
+            self.assertIn("weak-test-evidence", {item.code for item in findings if item.severity == BLOCKER})
+
     def test_missing_upstream_rules_fails_closed(self) -> None:
         with tempfile.TemporaryDirectory() as raw:
             tmp = Path(raw)
@@ -73,6 +100,28 @@ class PolicyTests(unittest.TestCase):
             data = make_input(tmp, diff="", files=[ChangedFile("README.md", "M")], pr=pr)
             findings = validate(data, PolicyConfig())
             self.assertIn("pr-template-not-acknowledged", {item.code for item in findings if item.severity == BLOCKER})
+
+    def test_issue_templates_do_not_create_pr_issue_link_rule(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            tmp = Path(raw)
+            (tmp / "CONTRIBUTING.md").write_text("Run tests before submitting.\n", encoding="utf-8")
+            issue_templates = tmp / ".github" / "ISSUE_TEMPLATE"
+            issue_templates.mkdir(parents=True)
+            (issue_templates / "bug_report.md").write_text("Link the related pull request for this issue.\n", encoding="utf-8")
+            pr = "AI assistance: Used for implementation suggestions and reviewed manually.\n\nHuman accountability: I own every line and take responsibility for tests."
+            data = make_input(tmp, diff="", files=[ChangedFile("README.md", "M")], pr=pr)
+            findings = validate(data, PolicyConfig())
+            self.assertNotIn("missing-issue-link", {item.code for item in findings if item.severity == BLOCKER})
+
+    def test_code_of_conduct_does_not_create_pr_issue_link_rule(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            tmp = Path(raw)
+            (tmp / "CONTRIBUTING.md").write_text("Run tests before submitting.\n", encoding="utf-8")
+            (tmp / "CODE_OF_CONDUCT.md").write_text("Maintainers may close issues when repeated patch submissions harm the project.\n", encoding="utf-8")
+            pr = "AI assistance: Used for implementation suggestions and reviewed manually.\n\nHuman accountability: I own every line and take responsibility for tests."
+            data = make_input(tmp, diff="", files=[ChangedFile("README.md", "M")], pr=pr)
+            findings = validate(data, PolicyConfig())
+            self.assertNotIn("missing-issue-link", {item.code for item in findings if item.severity == BLOCKER})
 
     def test_human_authored_with_test_evidence_can_pass_basic_gate(self) -> None:
         with tempfile.TemporaryDirectory() as raw:

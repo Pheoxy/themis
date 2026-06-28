@@ -192,12 +192,12 @@ required_checks = [
 The default bot posture assumes AI assistance. The PR description must include sections like:
 
 ```markdown
-AI assistance: Used for implementation suggestions; all generated code was manually reviewed and edited.
+AI assistance: Used for implementation suggestions; all generated code was manually reviewed, edited, and checked against upstream rules.
 
 Human accountability: I understand and take responsibility for every line, including tests, licensing, security, and project policy compliance.
 ```
 
-This is intentionally stricter than many projects. It reflects the current maintainer backlash against low-effort AI submissions and forces responsibility onto the submitter before maintainers spend review time.
+The sections cannot be placeholders such as `used`, `yes`, or `N/A`. Test evidence also has to name a command or CI run and say it passed. This is intentionally stricter than many projects. It reflects the current maintainer backlash against low-effort AI submissions and forces responsibility onto the submitter before maintainers spend review time.
 
 ## Research Basis
 
