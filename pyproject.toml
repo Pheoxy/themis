@@ -10,12 +10,22 @@ readme = "README.md"
 requires-python = ">=3.11"
 authors = [{ name = "Themis maintainers" }]
 license = { text = "MIT" }
+keywords = ["ai", "code-review", "github-actions", "maintainers", "pull-requests", "validation"]
 classifiers = [
   "Programming Language :: Python :: 3",
   "Programming Language :: Python :: 3 :: Only",
   "Programming Language :: Python :: 3.11",
+  "Environment :: Console",
+  "Intended Audience :: Developers",
+  "License :: OSI Approved :: MIT License",
   "Topic :: Software Development :: Quality Assurance",
 ]
+
+[project.urls]
+Homepage = "https://github.com/OWNER/themis"
+Documentation = "https://github.com/OWNER/themis/tree/main/docs"
+Issues = "https://github.com/OWNER/themis/issues"
+Source = "https://github.com/OWNER/themis"
 
 [project.scripts]
 themis = "themis.cli:main"

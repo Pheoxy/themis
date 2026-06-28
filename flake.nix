@@ -44,9 +44,26 @@
         }
       );
 
-      checks = forAllSystems (system: {
-        default = self.packages.${system}.default;
-      });
+      checks = forAllSystems (
+        system:
+        let
+          pkgs = import nixpkgs { inherit system; };
+          python = pkgs.python311;
+        in
+        {
+          default = self.packages.${system}.default;
+          unit-tests = pkgs.runCommand "themis-unit-tests" { nativeBuildInputs = [ python ]; } ''
+            cd ${self}
+            PYTHONPATH=${self}/src python -m unittest discover -s tests
+            touch $out
+          '';
+          cli-docs = pkgs.runCommand "themis-cli-docs" { nativeBuildInputs = [ python ]; } ''
+            cd ${self}
+            PYTHONPATH=${self}/src python -m themis docs cli --check
+            touch $out
+          '';
+        }
+      );
 
       apps = forAllSystems (system: {
         default = {
