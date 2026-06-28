@@ -1,0 +1,108 @@
+name: Themis
+description: Paranoid upstream validation gate for AI-assisted code submissions.
+
+inputs:
+  repo:
+    description: Repository path to validate.
+    default: .
+  base:
+    description: Base ref for the PR diff, for example origin/main.
+    required: true
+  body-file:
+    description: File containing the pull request body.
+    default: ""
+  evidence:
+    description: Inline test evidence.
+    default: ""
+  evidence-file:
+    description: File containing test evidence.
+    default: ""
+  human-authored:
+    description: Set to true only when no AI assistance was used.
+    default: "false"
+  run-checks:
+    description: Run required_checks from .themis.toml.
+    default: "true"
+  output:
+    description: Markdown report path.
+    default: upstream-validation-report.md
+  draft-pr:
+    description: Create a draft PR with gh after validation passes.
+    default: "false"
+  title:
+    description: Draft PR title override.
+    default: ""
+  base-branch:
+    description: Draft PR base branch override.
+    default: ""
+  head-branch:
+    description: Draft PR head branch override.
+    default: ""
+  install-nix:
+    description: Install Nix before running.
+    default: "true"
+
+runs:
+  using: composite
+  steps:
+    - name: Install Nix
+      if: ${{ inputs.install-nix == 'true' }}
+      uses: DeterminateSystems/nix-installer-action@v16
+
+    - name: Validate upstream readiness
+      shell: bash
+      env:
+        INPUT_REPO: ${{ inputs.repo }}
+        INPUT_BASE: ${{ inputs.base }}
+        INPUT_BODY_FILE: ${{ inputs.body-file }}
+        INPUT_EVIDENCE: ${{ inputs.evidence }}
+        INPUT_EVIDENCE_FILE: ${{ inputs.evidence-file }}
+        INPUT_HUMAN_AUTHORED: ${{ inputs.human-authored }}
+        INPUT_RUN_CHECKS: ${{ inputs.run-checks }}
+        INPUT_OUTPUT: ${{ inputs.output }}
+        INPUT_DRAFT_PR: ${{ inputs.draft-pr }}
+        INPUT_TITLE: ${{ inputs.title }}
+        INPUT_BASE_BRANCH: ${{ inputs.base-branch }}
+        INPUT_HEAD_BRANCH: ${{ inputs.head-branch }}
+      run: |
+        set -euo pipefail
+        command=(validate)
+        if [[ "$INPUT_DRAFT_PR" == "true" ]]; then
+          command=(pull-request draft)
+        fi
+        args=(--repo "$INPUT_REPO" --base "$INPUT_BASE" --output "$INPUT_OUTPUT")
+        if [[ -n "$INPUT_BODY_FILE" ]]; then
+          args+=(--body-file "$INPUT_BODY_FILE")
+        fi
+        if [[ -n "$INPUT_EVIDENCE" ]]; then
+          args+=(--evidence "$INPUT_EVIDENCE")
+        fi
+        if [[ -n "$INPUT_EVIDENCE_FILE" ]]; then
+          args+=(--evidence-file "$INPUT_EVIDENCE_FILE")
+        fi
+        if [[ "$INPUT_HUMAN_AUTHORED" == "true" ]]; then
+          args+=(--human-authored)
+        fi
+        if [[ "${command[0]}" == "validate" && "$INPUT_RUN_CHECKS" == "true" ]]; then
+          args+=(--run-checks)
+        fi
+        if [[ "${command[0]}" == "pull-request" && "$INPUT_RUN_CHECKS" != "true" ]]; then
+          args+=(--skip-checks)
+        fi
+        if [[ -n "$INPUT_TITLE" ]]; then
+          args+=(--title "$INPUT_TITLE")
+        fi
+        if [[ -n "$INPUT_BASE_BRANCH" ]]; then
+          args+=(--base-branch "$INPUT_BASE_BRANCH")
+        fi
+        if [[ -n "$INPUT_HEAD_BRANCH" ]]; then
+          args+=(--head-branch "$INPUT_HEAD_BRANCH")
+        fi
+        nix run "$GITHUB_ACTION_PATH" -- "${command[@]}" "${args[@]}"
+
+    - name: Upload validation report
+      if: always() && inputs.output != ''
+      uses: actions/upload-artifact@v4
+      with:
+        name: upstream-validation-report
+        path: ${{ inputs.output }}
