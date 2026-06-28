@@ -23,6 +23,7 @@ Themis does not take accountability for users. It blocks risky or under-evidence
 - Blocks generated, vendored, minified, binary, oversized, secret-looking, placeholder, or AI-slop-looking diff content.
 - Produces a Markdown report and exits non-zero when blockers are present. The report is a gate result, not a certification.
 - Generates an upstream readiness guide that summarizes detected rules, changed files, likely obligations, and suggested next commands.
+- Generates a reviewer packet that groups blockers into contributor-facing feedback and suggested maintainer actions.
 
 ## Quick Start
 
@@ -42,6 +43,12 @@ Ask Themis to run the gate and organize the upstream prep work for the current c
 
 ```bash
 themis guide --repo /path/to/target/repo --base origin/main --body-file pr-body.md --evidence "pytest -q passed" --run-checks
+```
+
+Generate reviewer-facing feedback that maintainers can send back to a contributor:
+
+```bash
+themis review --repo /path/to/target/repo --base origin/main --body-file pr-body.md --evidence "pytest -q passed" --run-checks
 ```
 
 ```bash

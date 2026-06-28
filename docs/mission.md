@@ -4,7 +4,7 @@ Themis is named for the Greek goddess of divine law, order, custom, and proper p
 
 The project exists to let upstream work continue while protecting the people who keep projects healthy. It is strict because maintainers, reviewers, and long-term contributors pay the cost when low-confidence code reaches review.
 
-Themis should act like an assistant in the goddess's domains: law, order, custom, and proper procedure. It should help contributors discover rules, organize evidence, prepare pull request text, run checks, and draft PRs when the gate passes. Those assistant workflows still serve the pass/fail gate. The assistant role supports the contributor; it does not replace their responsibility.
+Themis should act like an assistant in the goddess's domains: law, order, custom, and proper procedure. It should help contributors discover rules, organize evidence, prepare pull request text, run checks, and draft PRs when the gate passes. It should also help reviewers and maintainers by turning repeat process failures into clear contributor-facing feedback, so maintainers can spend less time restating rules and more time reviewing project-specific substance. Those assistant workflows still serve the pass/fail gate. The assistant role supports the contributor and maintainer; it does not replace their responsibility.
 
 Themis is not meant to punish new contributors. It is meant to make the expected standard explicit before a maintainer has to spend time discovering missing tests, unclear ownership, hidden AI assistance, ignored contribution rules, or one-off feature work that leaves the project with long-term maintenance debt.
 

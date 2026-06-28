@@ -7,6 +7,7 @@ COMMANDS = [
     "v",
     "guide",
     "g",
+    "review",
     "pull-request",
     "pr",
     "draft",

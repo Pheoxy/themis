@@ -27,6 +27,10 @@ def build_parser() -> argparse.ArgumentParser:
     add_validation_args(guide_parser, base_default="origin/main")
     guide_parser.add_argument("--run-checks", action="store_true", help="Run required checks from .themis.toml in the target repo.")
 
+    review_parser = subcommands.add_parser("review", help="Run the gate and generate a maintainer review packet.")
+    add_validation_args(review_parser, base_default="origin/main")
+    review_parser.add_argument("--run-checks", action="store_true", help="Run required checks from .themis.toml in the target repo.")
+
     pr_parser = subcommands.add_parser("pull-request", aliases=["pr"], help="Pull request workflows.")
     pr_subcommands = pr_parser.add_subparsers(dest="pr_command", required=True)
     draft_parser = pr_subcommands.add_parser("draft", aliases=["d"], help="Validate, run required checks, then create a draft PR.")
@@ -89,8 +93,9 @@ def main(argv: list[str] | None = None) -> int:
 
             print(render_completion(args.shell), end="")
             return 0
-        if args.command in {"guide", "g"}:
+        if args.command in {"guide", "g", "review"}:
             from .guide import render_guide
+            from .review import render_review_packet
 
             root = repo_root(args.repo.resolve())
             config = PolicyConfig.load(root)
@@ -115,18 +120,14 @@ def main(argv: list[str] | None = None) -> int:
                 check_results=checks,
             )
             findings = validate(data, config)
-            guide = render_guide(
-                root,
-                base=args.base,
-                changed=current_changes,
-                stats=current_stats,
-                config=config,
-                findings=findings,
-            )
-            if args.output:
-                args.output.write_text(guide, encoding="utf-8")
+            if args.command == "review":
+                output = render_review_packet(root, base=args.base, changed=current_changes, stats=current_stats, config=config, findings=findings)
             else:
-                print(guide)
+                output = render_guide(root, base=args.base, changed=current_changes, stats=current_stats, config=config, findings=findings)
+            if args.output:
+                args.output.write_text(output, encoding="utf-8")
+            else:
+                print(output)
             return 2 if any(item.severity == BLOCKER for item in findings) else 0
         draft_pr = args.command in {"pull-request", "pr"} and args.pr_command in {"draft", "d"}
         run_checks = args.run_checks if args.command == "validate" else not args.skip_checks

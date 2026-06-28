@@ -8,16 +8,17 @@ This file is generated from the argparse command tree. Update CLI code first, th
 
 ```text
 usage: themis [-h] [--version]
-              {validate,check,v,guide,g,pull-request,pr,docs,init,completion}
+              {validate,check,v,guide,g,review,pull-request,pr,docs,init,completion}
               ...
 
 Paranoid upstream PR validator for AI-assisted code.
 
 positional arguments:
-  {validate,check,v,guide,g,pull-request,pr,docs,init,completion}
+  {validate,check,v,guide,g,review,pull-request,pr,docs,init,completion}
     validate (check, v)
                         Run the hard upstream-readiness gate.
     guide (g)           Run the gate and generate an upstream readiness guide.
+    review              Run the gate and generate a maintainer review packet.
     pull-request (pr)   Pull request workflows.
     docs                Documentation workflows.
     init                Create starter Themis files in a target repository.
@@ -61,6 +62,33 @@ options:
 usage: themis guide [-h] [-r REPO] [-b BASE] [--ai | --human] [-B BODY_FILE]
                     [-e EVIDENCE] [-E EVIDENCE_FILE] [-o OUTPUT]
                     [--run-checks]
+
+options:
+  -h, --help            show this help message and exit
+  -r REPO, --repo REPO  Target git repository to validate.
+  -b BASE, --base BASE  Base ref for PR diff, for example origin/main.
+                        Defaults to HEAD plus working tree changes.
+  --ai, --ai-assisted   Treat the patch as AI-assisted. This is the default.
+  --human, --human-authored
+                        Explicitly declare the patch was not AI-assisted.
+  -B BODY_FILE, --body-file BODY_FILE
+                        File containing the pull request body.
+  -e EVIDENCE, --evidence EVIDENCE
+                        Short text proving which tests/checks passed.
+  -E EVIDENCE_FILE, --evidence-file EVIDENCE_FILE
+                        File containing test/check evidence.
+  -o OUTPUT, --output OUTPUT
+                        Write Markdown report to this path.
+  --run-checks          Run required checks from .themis.toml in the target
+                        repo.
+```
+
+## `themis review`
+
+```text
+usage: themis review [-h] [-r REPO] [-b BASE] [--ai | --human] [-B BODY_FILE]
+                     [-e EVIDENCE] [-E EVIDENCE_FILE] [-o OUTPUT]
+                     [--run-checks]
 
 options:
   -h, --help            show this help message and exit
