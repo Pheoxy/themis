@@ -11,3 +11,5 @@ The format follows Keep a Changelog conventions, and this project uses semantic 
 - Initial Themis scaffold with Nix packaging, CLI validation, generated CLI docs, GitHub Action support, and draft pull request creation.
 - Configuration, GitHub Action, and development documentation.
 - Direct CLI parser tests for normal and shorthand command forms.
+- `themis init` setup command for target repositories.
+- Shell completion generation for Bash, Zsh, and Fish.

@@ -29,6 +29,12 @@ On NixOS or any system with flakes enabled, enter the development shell first:
 nix develop
 ```
 
+Create starter config and a PR body template in a target repository:
+
+```bash
+themis init --repo /path/to/target/repo
+```
+
 ```bash
 python -m themis validate --repo /path/to/target/repo --base origin/main --body-file pr-body.md --evidence "pytest -q passed in CI"
 ```
@@ -102,6 +108,16 @@ Additional docs:
 - `docs/github-action.md`: GitHub Action usage and inputs.
 - `docs/development.md`: local development and self-check workflow.
 - `examples/pr-body.md`: minimal PR body template that includes required accountability sections.
+
+## Shell Completion
+
+Generate completion scripts from the installed CLI:
+
+```bash
+themis completion bash
+themis completion zsh
+themis completion fish
+```
 
 ## GitHub Action
 

@@ -39,6 +39,14 @@ def build_parser() -> argparse.ArgumentParser:
     cli_docs_mode.add_argument("--write", action="store_true", help="Write generated CLI docs to disk.")
     cli_docs_mode.add_argument("--check", action="store_true", help="Fail if generated CLI docs differ from disk.")
     cli_docs_parser.add_argument("-p", "--path", type=Path, default=Path("docs/cli.md"), help="Generated docs path.")
+
+    init_parser = subcommands.add_parser("init", help="Create starter Themis files in a target repository.")
+    init_parser.add_argument("-r", "--repo", type=Path, default=Path.cwd(), help="Target repository to initialize.")
+    init_parser.add_argument("--force", action="store_true", help="Overwrite existing generated files.")
+    init_parser.add_argument("--no-body", action="store_true", help="Do not create a starter pull request body file.")
+
+    completion_parser = subcommands.add_parser("completion", help="Print shell completion script.")
+    completion_parser.add_argument("shell", choices=["bash", "zsh", "fish"], help="Shell to generate completions for.")
     return parser
 
 
@@ -63,6 +71,20 @@ def main(argv: list[str] | None = None) -> int:
             from .docs import handle_cli_docs
 
             return handle_cli_docs(args)
+        if args.command == "init":
+            from .init import init_repo
+
+            result = init_repo(args.repo.resolve(), force=args.force, include_pr_body=not args.no_body)
+            for path in result.written:
+                print(f"created {path}")
+            for path in result.skipped:
+                print(f"skipped existing {path}")
+            return 0
+        if args.command == "completion":
+            from .completion import render_completion
+
+            print(render_completion(args.shell), end="")
+            return 0
         draft_pr = args.command in {"pull-request", "pr"} and args.pr_command in {"draft", "d"}
         run_checks = args.run_checks if args.command == "validate" else not args.skip_checks
         root = repo_root(args.repo.resolve())

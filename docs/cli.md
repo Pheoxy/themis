@@ -7,16 +7,19 @@ This file is generated from the argparse command tree. Update CLI code first, th
 ## `themis`
 
 ```text
-usage: themis [-h] [--version] {validate,check,v,pull-request,pr,docs} ...
+usage: themis [-h] [--version]
+              {validate,check,v,pull-request,pr,docs,init,completion} ...
 
 Paranoid upstream PR validator for AI-assisted code.
 
 positional arguments:
-  {validate,check,v,pull-request,pr,docs}
+  {validate,check,v,pull-request,pr,docs,init,completion}
     validate (check, v)
                         Run the hard upstream-readiness gate.
     pull-request (pr)   Pull request workflows.
     docs                Documentation workflows.
+    init                Create starter Themis files in a target repository.
+    completion          Print shell completion script.
 
 options:
   -h, --help            show this help message and exit
@@ -123,4 +126,28 @@ options:
   --write               Write generated CLI docs to disk.
   --check               Fail if generated CLI docs differ from disk.
   -p PATH, --path PATH  Generated docs path.
+```
+
+## `themis init`
+
+```text
+usage: themis init [-h] [-r REPO] [--force] [--no-body]
+
+options:
+  -h, --help            show this help message and exit
+  -r REPO, --repo REPO  Target repository to initialize.
+  --force               Overwrite existing generated files.
+  --no-body             Do not create a starter pull request body file.
+```
+
+## `themis completion`
+
+```text
+usage: themis completion [-h] {bash,zsh,fish}
+
+positional arguments:
+  {bash,zsh,fish}  Shell to generate completions for.
+
+options:
+  -h, --help       show this help message and exit
 ```
