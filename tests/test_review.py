@@ -33,6 +33,7 @@ class ReviewPacketTests(unittest.TestCase):
         self.assertIn("AI assistance disclosure", feedback_for("missing-ai-disclosure"))
         self.assertIn("Signed-off-by", feedback_for("missing-signed-off-by"))
         self.assertIn("warning", feedback_for("upstream-ai-policy-present", "WARNING"))
+        self.assertIn("No action required", feedback_for("clean-static-gate", "INFO"))
 
 
 if __name__ == "__main__":

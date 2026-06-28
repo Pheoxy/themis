@@ -3,7 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 
 from .git import ChangedFile, Numstat
-from .policy import BLOCKER, WARNING, Finding, PolicyConfig, is_source_path, is_test_path, load_rule_docs
+from .policy import BLOCKER, INFO, WARNING, Finding, PolicyConfig, is_source_path, is_test_path, load_rule_docs
 
 
 def render_review_packet(
@@ -122,4 +122,6 @@ def feedback_for(code: str, severity: str = BLOCKER) -> str:
         return "Remove generated/vendor noise or provide an explicit project-approved exception."
     if severity == WARNING:
         return "Review this warning against the target repository rules before approval."
+    if severity == INFO:
+        return "No action required unless normal human review finds a concern."
     return "Resolve this blocker according to the target repository rules, then re-run Themis."
