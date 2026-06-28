@@ -1,0 +1,16 @@
+[policy]
+max_changed_files = 25
+max_added_lines = 800
+max_deleted_lines = 500
+max_file_added_lines = 300
+require_upstream_rules = true
+require_tests_for_code = true
+require_test_changes_for_code = true
+block_generated_paths = true
+block_vendor_paths = true
+block_ai_markers = true
+block_placeholders = true
+
+required_checks = [
+  "nix flake check",
+]

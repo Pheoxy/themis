@@ -1,0 +1,99 @@
+from pathlib import Path
+import sys
+import tempfile
+import unittest
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
+
+from themis.git import ChangedFile, Numstat
+from themis.policy import BLOCKER, PolicyConfig, ValidationInput, validate
+
+
+def make_input(tmp: Path, *, diff: str, files: list[ChangedFile], pr: str = "", evidence: str = "") -> ValidationInput:
+    return ValidationInput(
+        repo=tmp,
+        base="origin/main",
+        changed_files=files,
+        numstat=[Numstat(path=item.path, added=1, deleted=0) for item in files],
+        diff_text=diff,
+        tracked_files=[item.path for item in files],
+        commits=[],
+        pr_description=pr,
+        test_evidence=evidence,
+        ai_assisted=True,
+        check_results=[],
+    )
+
+
+class PolicyTests(unittest.TestCase):
+    def test_ai_assisted_requires_disclosure_and_accountability(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            tmp = Path(raw)
+            (tmp / "CONTRIBUTING.md").write_text("Run tests before submitting.\n", encoding="utf-8")
+            data = make_input(tmp, diff="", files=[ChangedFile("src/app.py", "M")], evidence="pytest passed")
+            findings = validate(data, PolicyConfig(require_test_changes_for_code=False))
+            codes = {item.code for item in findings if item.severity == BLOCKER}
+            self.assertIn("missing-ai-disclosure", codes)
+            self.assertIn("missing-human-accountability", codes)
+
+    def test_blocks_placeholder_code(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            tmp = Path(raw)
+            (tmp / "CONTRIBUTING.md").write_text("Please test changes.\n", encoding="utf-8")
+            placeholder = "TO" + "DO"
+            diff = f"+++ b/src/app.py\n+def run():\n+    # {placeholder} fix this later\n+    return True\n"
+            pr = "AI assistance: used.\n\nHuman accountability: I own every line."
+            data = make_input(tmp, diff=diff, files=[ChangedFile("src/app.py", "M")], pr=pr, evidence="pytest passed")
+            findings = validate(data, PolicyConfig(require_test_changes_for_code=False))
+            self.assertIn("placeholder-in-code", {item.code for item in findings if item.severity == BLOCKER})
+
+    def test_missing_upstream_rules_fails_closed(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            tmp = Path(raw)
+            pr = "AI assistance: used.\n\nHuman accountability: I own every line."
+            data = make_input(tmp, diff="", files=[ChangedFile("README.md", "M")], pr=pr)
+            findings = validate(data, PolicyConfig())
+            self.assertIn("missing-upstream-rules", {item.code for item in findings if item.severity == BLOCKER})
+
+    def test_project_changelog_rule_is_inferred_from_docs(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            tmp = Path(raw)
+            (tmp / "CONTRIBUTING.md").write_text("Code changes must update release notes.\n", encoding="utf-8")
+            pr = "AI assistance: used.\n\nHuman accountability: I own every line."
+            data = make_input(tmp, diff="+++ b/src/app.py\n+return 1\n", files=[ChangedFile("src/app.py", "M")], pr=pr, evidence="pytest passed")
+            findings = validate(data, PolicyConfig(require_test_changes_for_code=False))
+            self.assertIn("missing-changelog-decision", {item.code for item in findings if item.severity == BLOCKER})
+
+    def test_project_pr_template_checklist_is_inferred(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            tmp = Path(raw)
+            (tmp / ".github").mkdir()
+            (tmp / ".github" / "pull_request_template.md").write_text("- [ ] I ran tests\n", encoding="utf-8")
+            pr = "AI assistance: used.\n\nHuman accountability: I own every line."
+            data = make_input(tmp, diff="", files=[ChangedFile("README.md", "M")], pr=pr)
+            findings = validate(data, PolicyConfig())
+            self.assertIn("pr-template-not-acknowledged", {item.code for item in findings if item.severity == BLOCKER})
+
+    def test_human_authored_with_test_evidence_can_pass_basic_gate(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            tmp = Path(raw)
+            (tmp / "CONTRIBUTING.md").write_text("Run tests before submitting.\n", encoding="utf-8")
+            data = ValidationInput(
+                repo=tmp,
+                base="origin/main",
+                changed_files=[ChangedFile("src/app.py", "M"), ChangedFile("tests/test_app.py", "M")],
+                numstat=[Numstat("src/app.py", 1, 0), Numstat("tests/test_app.py", 1, 0)],
+                diff_text="+++ b/src/app.py\n+return 1\n+++ b/tests/test_app.py\n+assert True\n",
+                tracked_files=[],
+                commits=[],
+                pr_description="",
+                test_evidence="python -m unittest passed",
+                ai_assisted=False,
+                check_results=[],
+            )
+            findings = validate(data, PolicyConfig())
+            self.assertNotIn(BLOCKER, {item.severity for item in findings})
+
+
+if __name__ == "__main__":
+    unittest.main()
