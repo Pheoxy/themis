@@ -8,6 +8,8 @@ The tool treats maintainer time as scarce. Its default posture is deliberately s
 
 Themis is not anti-newcomer. It is meant to protect maintainers and sincere contributors, including new ones, by making upstream expectations explicit before review time is spent. See `docs/mission.md`.
 
+Themis does not take accountability for users. It blocks risky or under-evidenced submissions as best it can, but passing Themis does not certify correctness, security, licensing, maintainability, or upstream acceptance. The submitter remains responsible for the work, and maintainers remain responsible for project review decisions.
+
 ## What It Checks
 
 - Always applies the validator's own built-in paranoid safety rules first.
@@ -19,7 +21,7 @@ Themis is not anti-newcomer. It is meant to protect maintainers and sincere cont
 - Requires test evidence for code changes and flags code changes with no matching tests.
 - Enforces DCO/Signed-off-by expectations when upstream docs mention them.
 - Blocks generated, vendored, minified, binary, oversized, secret-looking, placeholder, or AI-slop-looking diff content.
-- Produces a Markdown report and exits non-zero when blockers are present.
+- Produces a Markdown report and exits non-zero when blockers are present. The report is a gate result, not a certification.
 
 ## Quick Start
 
@@ -197,7 +199,7 @@ AI assistance: Used for implementation suggestions; all generated code was manua
 Human accountability: I understand and take responsibility for every line, including tests, licensing, security, and project policy compliance.
 ```
 
-The sections cannot be placeholders such as `used`, `yes`, or `N/A`. Test evidence also has to name a command or CI run and say it passed. This is intentionally stricter than many projects. It reflects the current maintainer backlash against low-effort AI submissions and forces responsibility onto the submitter before maintainers spend review time.
+The sections cannot be placeholders such as `used`, `yes`, or `N/A`. Test evidence also has to name a command or CI run and say it passed. This is intentionally stricter than many projects. It reflects the current maintainer backlash against low-effort AI submissions and keeps responsibility on the submitter before maintainers spend review time.
 
 ## Research Basis
 

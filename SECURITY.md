@@ -1,6 +1,6 @@
 # Security Policy
 
-Themis is a validation gate, so security issues include ordinary vulnerabilities and validation bypasses that could let risky code pass as safe.
+Themis is a validation gate, so security issues include ordinary vulnerabilities and validation bypasses that could let risky code pass as safe. Themis does not certify that passing code is secure; it only reports configured blockers and evidence gaps.
 
 ## Supported Versions
 

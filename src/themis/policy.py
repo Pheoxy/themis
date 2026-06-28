@@ -186,7 +186,7 @@ def validate(data: ValidationInput, config: PolicyConfig) -> list[Finding]:
             Finding(
                 INFO,
                 "clean-static-gate",
-                "No hard blockers were found by configured static checks. This is not a guarantee of upstream acceptance.",
+                "No hard blockers were found by configured static checks. This is not a guarantee of correctness or upstream acceptance.",
             )
         )
     return findings
@@ -349,7 +349,7 @@ def validate_ai_disclosure(data: ValidationInput, docs_text: str) -> list[Findin
         else:
             accountability = extract_labeled_section(data.pr_description, "Human accountability")
             if weak_section(accountability) or not ACCOUNTABILITY_WORDS.search(accountability):
-                findings.append(Finding(BLOCKER, "weak-human-accountability", "`Human accountability:` must explicitly take responsibility for the submitted work."))
+                findings.append(Finding(BLOCKER, "weak-human-accountability", "`Human accountability:` must explicitly state that the submitter takes responsibility for the submitted work."))
     if require_ai_disclosure and not data.ai_assisted:
         findings.append(
             Finding(

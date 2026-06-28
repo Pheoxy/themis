@@ -18,6 +18,6 @@ Tests/checks run:
 
 AI assistance: State whether AI assistance was used and how all generated output was reviewed.
 
-Human accountability: State that you take responsibility for every line, including tests, licensing, security, and project policy compliance.
+Human accountability: State that you, not Themis or any AI tool, take responsibility for every line, including tests, licensing, security, and project policy compliance.
 
 Changelog: Updated / not needed because ...

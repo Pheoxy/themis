@@ -17,3 +17,4 @@ The format follows Keep a Changelog conventions, and this project uses semantic 
 ### Changed
 
 - AI disclosure, human accountability, and test evidence now reject placeholder or vague text.
+- Documentation and reports now state explicitly that Themis does not take accountability for users or certify passing code.

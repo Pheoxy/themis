@@ -33,3 +33,5 @@ nix develop --command python -m themis docs cli --check
 ## Self Validation
 
 Themis should be run against its own changes before a pull request is drafted. The pull request body must include `AI assistance:` and `Human accountability:` sections when AI assistance was used.
+
+Self-validation does not make Themis responsible for the change. It only checks whether the change satisfies Themis's configured gate. The submitter still owns correctness, security, licensing, and maintainability.

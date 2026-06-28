@@ -25,7 +25,7 @@ Policy examples and public reactions used to shape this tool:
 Design implications for this validator:
 
 - Fail closed when upstream rules are missing or cannot be evaluated.
-- Require evidence, not vibes: tests, disclosure, signoff, and human accountability have to be visible.
+- Require evidence, not vibes: tests, disclosure, signoff, and human accountability have to be visible. The validator checks for that evidence; it does not assume accountability on behalf of the submitter.
 - Treat generated/vendor/binary churn as suspicious unless explicitly allowed.
 - Prefer hard blockers over advisory warnings for anything that would predictably waste maintainer time.
 - Make the validator suspicious of its own output: a clean report means only that configured checks passed, not that the patch is inherently good.

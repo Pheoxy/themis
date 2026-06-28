@@ -44,7 +44,7 @@ def render_markdown(data: ValidationInput, findings: list[Finding]) -> str:
             "",
             "## Validator Caveat",
             "",
-            "This report is a gate, not a guarantee. Passing means Themis did not find configured hard blockers; maintainers may still reject the patch.",
+            "This report is a gate, not a guarantee. Passing means Themis did not find configured hard blockers; it does not certify correctness, safety, licensing, maintainability, or upstream acceptance. Accountability remains with the submitter and the project's review process.",
             "",
         ]
     )
