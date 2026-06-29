@@ -386,7 +386,7 @@ def validate_diff_content(data: ValidationInput, config: PolicyConfig) -> list[F
         added = line[1:]
         if not added.strip():
             continue
-        if config.block_ai_markers and AI_MARKERS.search(added) and not is_low_risk_text_file(current_file):
+        if config.block_ai_markers and AI_MARKERS.search(added) and should_block_ai_marker(current_file, added):
             findings.append(Finding(BLOCKER, "ai-marker-in-diff", "Added line contains AI-tool/slop marker text.", file=current_file, detail=trim(added)))
         if config.block_placeholders and PLACEHOLDERS.search(added) and should_block_placeholder(current_file, added):
             findings.append(Finding(BLOCKER, "placeholder-in-code", "Added code contains placeholder or cleanup language.", file=current_file, detail=trim(added)))
@@ -479,12 +479,24 @@ def is_process_rule_doc(name: str) -> bool:
 def should_block_placeholder(path: str | None, line: str) -> bool:
     if is_low_risk_text_file(path) or is_test_path(path or ""):
         return False
-    stripped = line.lstrip()
     if "re.compile(" in line or "FindingExplanation(" in line:
         return False
-    if stripped.startswith(("\"", "'", "r\"", "r'", "f\"", "f'")):
+    if is_string_literal_line(line):
         return False
     return True
+
+
+def should_block_ai_marker(path: str | None, line: str) -> bool:
+    if is_low_risk_text_file(path) or is_test_path(path or ""):
+        return False
+    if "re.compile(" in line or is_string_literal_line(line):
+        return False
+    return True
+
+
+def is_string_literal_line(line: str) -> bool:
+    stripped = line.lstrip()
+    return stripped.startswith(("\"", "'", "r\"", "r'", "f\"", "f'"))
 
 
 def extract_labeled_section(text: str, label: str) -> str:
