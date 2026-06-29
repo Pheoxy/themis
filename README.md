@@ -74,6 +74,12 @@ For bots and dashboards, request machine-readable JSON:
 themis validate --repo . --base origin/main --body-file pr-body.md --evidence "nix flake check passed" --format json
 ```
 
+For code scanning/review tooling, request SARIF:
+
+```bash
+themis validate --repo . --base origin/main --body-file pr-body.md --evidence "nix flake check passed" --format sarif --output themis.sarif
+```
+
 ```bash
 python -m themis validate --repo /path/to/target/repo --base origin/main --body-file pr-body.md --evidence "pytest -q passed in CI"
 ```

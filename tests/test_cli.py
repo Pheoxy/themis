@@ -163,6 +163,21 @@ class CliTests(unittest.TestCase):
             self.assertEqual(payload["status"], "blocked")
             self.assertEqual(payload["findings"][0]["code"], "blocked")
 
+    def test_validate_can_write_sarif_output(self) -> None:
+        run = fake_validation_run()
+        findings = [Finding(BLOCKER, "blocked", "Blocked for test.", file="src/app.py")]
+        with tempfile.TemporaryDirectory() as raw:
+            output = Path(raw) / "themis.sarif"
+            with (
+                patch("themis.cli.build_validation_run", return_value=run),
+                patch("themis.cli.validate", return_value=findings),
+            ):
+                self.assertEqual(main(["validate", "--output", str(output), "--format", "sarif"]), 2)
+
+            payload = json.loads(output.read_text(encoding="utf-8"))
+            self.assertEqual(payload["version"], "2.1.0")
+            self.assertEqual(payload["runs"][0]["results"][0]["ruleId"], "blocked")
+
 
 def fake_validation_run() -> SimpleNamespace:
     data = SimpleNamespace(

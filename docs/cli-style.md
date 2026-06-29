@@ -194,6 +194,7 @@ Current behavior:
 - Human/Markdown output is the primary output.
 - `--output` writes gate output to a file.
 - `--format json` writes machine-readable JSON.
+- `--format sarif` writes SARIF 2.1.0 for code scanning or review tooling.
 - No color mode exists yet.
 
 Future modes should follow this contract:

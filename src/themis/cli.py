@@ -31,6 +31,7 @@ from .policy import (
 from .json_report import render_json
 from .pr import DraftPrError, DraftPrOptions, build_pr_body, create_draft_pr, infer_pr_base
 from .report import render_markdown
+from .sarif_report import render_sarif
 
 
 @dataclass(frozen=True)
@@ -114,7 +115,7 @@ def add_validation_args(parser: argparse.ArgumentParser, *, base_default: str | 
     parser.add_argument("-e", "--evidence", default="", help="Short text proving which tests/checks passed.")
     parser.add_argument("-E", "--evidence-file", type=Path, help="File containing test/check evidence.")
     parser.add_argument("-o", "--output", type=Path, help="Write gate output to this path.")
-    parser.add_argument("--format", choices=["markdown", "json"], default="markdown", help="Output format for gate results.")
+    parser.add_argument("--format", choices=["markdown", "json", "sarif"], default="markdown", help="Output format for gate results.")
     parser.add_argument("--annotations", choices=["none", "github"], default="none", help="Emit CI annotations for findings.")
 
 
@@ -287,6 +288,8 @@ def render_gate_output(
         return markdown_output
     if output_format == "json":
         return render_json(gate.validation.data, gate.findings, workflow=workflow, exit_code=exit_code, draft_pr_url=draft_pr_url)
+    if output_format == "sarif":
+        return render_sarif(gate.validation.data, gate.findings)
     raise ValueError(f"unsupported output format: {output_format}")
 
 

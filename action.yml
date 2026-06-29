@@ -27,7 +27,7 @@ inputs:
     description: Gate output path.
     default: upstream-validation-report.md
   format:
-    description: Gate output format. Use markdown or json.
+    description: Gate output format. Use markdown, json, or sarif.
     default: markdown
   annotations:
     description: CI annotation mode. Use github for GitHub workflow annotations or none to disable.

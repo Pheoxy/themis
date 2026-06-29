@@ -16,6 +16,7 @@ The format follows Keep a Changelog conventions, and this project uses semantic 
 - CLI style guidance and target-repository CLI integration tests.
 - Machine-readable JSON gate output through `--format json`.
 - `themis explain` finding-code remediation catalog for contributor/maintainer back-and-forth.
+- SARIF gate output through `--format sarif`.
 - Configuration, GitHub Action, and development documentation.
 - Direct CLI parser tests for command forms.
 - `themis init` setup command for target repositories.

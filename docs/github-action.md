@@ -43,7 +43,7 @@ jobs:
 - `human-authored`: set to `true` only when no AI assistance was used.
 - `run-checks`: run `.themis.toml` required checks. Default: `true`.
 - `output`: report path. Default: `upstream-validation-report.md`.
-- `format`: gate output format. Use `markdown` or `json`. Default: `markdown`.
+- `format`: gate output format. Use `markdown`, `json`, or `sarif`. Default: `markdown`.
 - `annotations`: CI annotation mode. Use `github` or `none`. Default: `github`.
 - `draft-pr`: create a draft PR after validation passes. Default: `false`.
 - `title`: draft PR title override.

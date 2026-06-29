@@ -35,7 +35,7 @@ options:
 ```text
 usage: themis validate [-h] [-r REPO] [-b BASE] [--ai | --human]
                        [-B BODY_FILE] [-e EVIDENCE] [-E EVIDENCE_FILE]
-                       [-o OUTPUT] [--format {markdown,json}]
+                       [-o OUTPUT] [--format {markdown,json,sarif}]
                        [--annotations {none,github}] [--run-checks]
 
 options:
@@ -54,7 +54,7 @@ options:
                         File containing test/check evidence.
   -o OUTPUT, --output OUTPUT
                         Write gate output to this path.
-  --format {markdown,json}
+  --format {markdown,json,sarif}
                         Output format for gate results.
   --annotations {none,github}
                         Emit CI annotations for findings.
@@ -67,8 +67,8 @@ options:
 ```text
 usage: themis guide [-h] [-r REPO] [-b BASE] [--ai | --human] [-B BODY_FILE]
                     [-e EVIDENCE] [-E EVIDENCE_FILE] [-o OUTPUT]
-                    [--format {markdown,json}] [--annotations {none,github}]
-                    [--run-checks]
+                    [--format {markdown,json,sarif}]
+                    [--annotations {none,github}] [--run-checks]
 
 options:
   -h, --help            show this help message and exit
@@ -86,7 +86,7 @@ options:
                         File containing test/check evidence.
   -o OUTPUT, --output OUTPUT
                         Write gate output to this path.
-  --format {markdown,json}
+  --format {markdown,json,sarif}
                         Output format for gate results.
   --annotations {none,github}
                         Emit CI annotations for findings.
@@ -100,7 +100,7 @@ options:
 usage: themis maintainer-packet [-h] [-r REPO] [-b BASE] [--ai | --human]
                                 [-B BODY_FILE] [-e EVIDENCE]
                                 [-E EVIDENCE_FILE] [-o OUTPUT]
-                                [--format {markdown,json}]
+                                [--format {markdown,json,sarif}]
                                 [--annotations {none,github}] [--run-checks]
 
 options:
@@ -119,7 +119,7 @@ options:
                         File containing test/check evidence.
   -o OUTPUT, --output OUTPUT
                         Write gate output to this path.
-  --format {markdown,json}
+  --format {markdown,json,sarif}
                         Output format for gate results.
   --annotations {none,github}
                         Emit CI annotations for findings.
@@ -146,7 +146,7 @@ options:
 ```text
 usage: themis pull-request draft [-h] [-r REPO] [-b BASE] [--ai | --human] -B
                                  BODY_FILE [-e EVIDENCE] [-E EVIDENCE_FILE]
-                                 [-o OUTPUT] [--format {markdown,json}]
+                                 [-o OUTPUT] [--format {markdown,json,sarif}]
                                  [--annotations {none,github}] [--skip-checks]
                                  [--title TITLE] [--base-branch BASE_BRANCH]
                                  [--head-branch HEAD_BRANCH]
@@ -167,7 +167,7 @@ options:
                         File containing test/check evidence.
   -o OUTPUT, --output OUTPUT
                         Write gate output to this path.
-  --format {markdown,json}
+  --format {markdown,json,sarif}
                         Output format for gate results.
   --annotations {none,github}
                         Emit CI annotations for findings.
