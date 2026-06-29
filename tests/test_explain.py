@@ -28,6 +28,23 @@ class ExplainTests(unittest.TestCase):
         self.assertIn("Themis Finding", single)
         self.assertIn("What to do", single)
 
+    def test_process_gate_codes_have_specific_explanations(self) -> None:
+        codes = [
+            "upstream-forbids-ai",
+            "missing-changelog-decision",
+            "missing-issue-link",
+            "pr-template-not-acknowledged",
+            "cannot-verify-commit-style",
+            "invalid-commit-style",
+            "no-changes",
+            "binary-change",
+        ]
+        for code in codes:
+            with self.subTest(code=code):
+                item = explain_code(code)
+                self.assertNotIn("No specific explanation", item.summary)
+                self.assertIn(code, render_explanation())
+
 
 if __name__ == "__main__":
     unittest.main()
