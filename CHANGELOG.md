@@ -44,6 +44,7 @@ The format follows Keep a Changelog conventions, and this project uses semantic 
 - Release checks now reject placeholder package metadata URLs.
 - `nix flake check` now validates the repository `.themis.toml` with `themis config check`.
 - `themis config check` now works on plain directories, not only git repositories.
+- Rule inference fixture coverage for common Python, Rust, and Node upstream contribution styles.
 - Configuration, GitHub Action, and development documentation.
 - Direct CLI parser tests for command forms.
 - `themis init` setup command for target repositories.

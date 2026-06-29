@@ -50,6 +50,54 @@ class RulesTests(unittest.TestCase):
             inspection = inspect_rules(repo, PolicyConfig())
             self.assertFalse(inspection.inferred.ai_appears_forbidden)
 
+    def test_common_upstream_rule_styles_are_inferred(self) -> None:
+        cases = [
+            (
+                "python",
+                {
+                    "CONTRIBUTING.md": "Before opening a pull request, run pytest and update changelog fragments in news/. Reference the issue this closes.\n",
+                    ".github/pull_request_template.md": "- [ ] I ran the test suite\n- [ ] I added release notes\n",
+                },
+                {
+                    "changelog_or_release_notes": True,
+                    "issue_or_reference_link": True,
+                    "pull_request_checklist": True,
+                    "tests_mentioned": True,
+                },
+            ),
+            (
+                "rust",
+                {
+                    "CONTRIBUTING.md": "Commits must follow Conventional Commits. Run cargo test. Developer Certificate of Origin sign-off is required.\n",
+                },
+                {
+                    "conventional_commits": True,
+                    "dco_or_signoff": True,
+                    "tests_mentioned": True,
+                },
+            ),
+            (
+                "node",
+                {
+                    ".github/CONTRIBUTING.md": "Use npm test, mention generated code, and disclose AI generated contributions in the PR description.\n",
+                },
+                {
+                    "ai_disclosure_policy": True,
+                    "tests_mentioned": True,
+                },
+            ),
+        ]
+
+        for name, files, expected in cases:
+            with self.subTest(name=name):
+                with tempfile.TemporaryDirectory() as raw:
+                    repo = create_example_target_repo(Path(raw))
+                    for relative, content in files.items():
+                        write(repo / relative, content)
+                    inferred = inspect_rules(repo, PolicyConfig()).inferred
+                    for field, value in expected.items():
+                        self.assertEqual(getattr(inferred, field), value, field)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -541,11 +541,18 @@ def docs_require_issue_link(text: str) -> bool:
             r"(?is)\b(must|required|require|should|need to).{0,120}\b(issue|ticket|bug report|reference|fixes|closes).{0,120}\b(pull request|pr|change|patch|contribution|commit)",
             text,
         )
+        or re.search(
+            r"(?is)\b(reference|link|fixes|closes).{0,80}\b(issue|ticket|bug report)",
+            text,
+        )
     )
 
 
 def docs_require_conventional_commits(text: str) -> bool:
-    return bool(re.search(r"(?is)\b(conventional commits?|commit message).{0,100}\b(feat|fix|docs|chore|type|scope)", text))
+    return bool(
+        re.search(r"(?is)\b(conventional commits?|commit message).{0,100}\b(feat|fix|docs|chore|type|scope)", text)
+        or re.search(r"(?is)\b(must|required|require|should|need to|follow|use).{0,80}\bconventional commits?\b", text)
+    )
 
 
 def docs_forbid_ai(text: str) -> bool:
