@@ -482,7 +482,10 @@ def is_process_rule_doc(name: str) -> bool:
 def should_block_placeholder(path: str | None, line: str) -> bool:
     if is_low_risk_text_file(path) or is_test_path(path or ""):
         return False
-    if "re.compile(" in line or line.lstrip().startswith("r\""):
+    stripped = line.lstrip()
+    if "re.compile(" in line or "FindingExplanation(" in line:
+        return False
+    if stripped.startswith(("\"", "'", "r\"", "r'", "f\"", "f'")):
         return False
     return True
 

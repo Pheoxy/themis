@@ -47,6 +47,16 @@ class PolicyTests(unittest.TestCase):
             findings = validate(data, PolicyConfig(require_test_changes_for_code=False))
             self.assertIn("placeholder-in-code", {item.code for item in findings if item.severity == BLOCKER})
 
+    def test_allows_placeholder_word_in_explanation_catalog(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            tmp = Path(raw)
+            (tmp / "CONTRIBUTING.md").write_text("Run tests before submitting.\n", encoding="utf-8")
+            diff = '+++ b/src/themis/explain.py\n+    "placeholder-in-code": FindingExplanation(\n+        "Code contains placeholder or cleanup language.",\n'
+            pr = "AI assistance: Used for implementation suggestions and reviewed manually.\n\nHuman accountability: I own every line and take responsibility for tests."
+            data = make_input(tmp, diff=diff, files=[ChangedFile("src/themis/explain.py", "M")], pr=pr, evidence="nix flake check passed")
+            findings = validate(data, PolicyConfig(require_test_changes_for_code=False))
+            self.assertNotIn("placeholder-in-code", {item.code for item in findings if item.severity == BLOCKER})
+
     def test_ai_assisted_blocks_placeholder_disclosure(self) -> None:
         with tempfile.TemporaryDirectory() as raw:
             tmp = Path(raw)
