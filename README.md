@@ -106,6 +106,12 @@ For bots and dashboards, request machine-readable JSON:
 themis validate --repo . --base origin/main --body-file pr-body.md --evidence "nix flake check passed" --format json
 ```
 
+For a concise PR comment body, request comment format:
+
+```bash
+themis validate --repo . --base origin/main --body-file pr-body.md --evidence "nix flake check passed" --format comment
+```
+
 For code scanning/review tooling, request SARIF:
 
 ```bash

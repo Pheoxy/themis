@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from collections import Counter
 
+from .explain import remediation_for
 from .policy import BLOCKER, Finding, ValidationInput
 
 
@@ -90,3 +91,51 @@ def check_output_snippet(output: str) -> str:
     if len(snippet) > MAX_CHECK_OUTPUT_CHARS:
         snippet = f"{snippet[:MAX_CHECK_OUTPUT_CHARS].rstrip()}\n..."
     return snippet.replace("```", "` ` `")
+
+
+def render_comment(data: ValidationInput, findings: list[Finding]) -> str:
+    counts = Counter(item.severity for item in findings)
+    status = "BLOCKED" if counts[BLOCKER] else "PASS"
+    lines = [
+        "## Themis Gate Result",
+        "",
+        f"Status: **{status}**",
+        "",
+        f"- Blockers: `{counts['BLOCKER']}`",
+        f"- Warnings: `{counts['WARNING']}`",
+        f"- Changed files: `{len(data.changed_files)}`",
+        "",
+    ]
+    blockers = [finding for finding in findings if finding.severity == BLOCKER]
+    warnings = [finding for finding in findings if finding.severity == "WARNING"]
+    if blockers:
+        lines.extend(["### Blockers", ""])
+        for finding in blockers[:10]:
+            location = f" in `{finding.file}`" if finding.file else ""
+            lines.append(f"- `{finding.code}`{location}: {finding.message}")
+            lines.append(f"  Fix: {remediation_for(finding.code, finding.severity)}")
+        if len(blockers) > 10:
+            lines.append(f"- ...and {len(blockers) - 10} more blocker(s). See the full Themis report.")
+        lines.extend(
+            [
+                "",
+                "Please resolve every blocker and re-run Themis before asking maintainers for deep review.",
+            ]
+        )
+    elif warnings:
+        lines.extend(["### Warnings", ""])
+        for finding in warnings[:10]:
+            lines.append(f"- `{finding.code}`: {finding.message}")
+        if len(warnings) > 10:
+            lines.append(f"- ...and {len(warnings) - 10} more warning(s). See the full Themis report.")
+        lines.extend(["", "No hard blockers were found, but maintainers should review warnings before approval."])
+    else:
+        lines.append("No hard blockers were found. Continue normal human review.")
+    lines.extend(
+        [
+            "",
+            "Themis is a gate result, not a certification. The submitter remains accountable for correctness, security, licensing, maintainability, and upstream fit.",
+            "",
+        ]
+    )
+    return "\n".join(lines)

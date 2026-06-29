@@ -30,7 +30,7 @@ from .policy import (
 )
 from .json_report import render_json
 from .pr import DraftPrError, DraftPrOptions, build_pr_body, create_draft_pr, infer_pr_base
-from .report import render_markdown
+from .report import render_comment, render_markdown
 from .sarif_report import render_sarif
 
 
@@ -144,7 +144,7 @@ def add_validation_args(parser: argparse.ArgumentParser, *, base_default: str | 
     parser.add_argument("-e", "--evidence", default="", help="Short text proving which tests/checks passed.")
     parser.add_argument("-E", "--evidence-file", type=Path, help="File containing test/check evidence.")
     parser.add_argument("-o", "--output", type=Path, help="Write gate output to this path.")
-    parser.add_argument("--format", choices=["markdown", "json", "sarif"], default="markdown", help="Output format for gate results.")
+    parser.add_argument("--format", choices=["markdown", "comment", "json", "sarif"], default="markdown", help="Output format for gate results.")
     parser.add_argument("--annotations", choices=["none", "github"], default="none", help="Emit CI annotations for findings.")
 
 
@@ -378,6 +378,8 @@ def render_gate_output(
 ) -> str:
     if output_format == "markdown":
         return markdown_output
+    if output_format == "comment":
+        return render_comment(gate.validation.data, gate.findings)
     if output_format == "json":
         return render_json(gate.validation.data, gate.findings, workflow=workflow, exit_code=exit_code, draft_pr_url=draft_pr_url)
     if output_format == "sarif":

@@ -6,7 +6,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 from themis.git import ChangedFile, Numstat
 from themis.policy import BLOCKER, CheckResult, Finding, ValidationInput
-from themis.report import check_output_snippet, render_markdown
+from themis.report import check_output_snippet, render_comment, render_markdown
 
 
 class ReportTests(unittest.TestCase):
@@ -55,6 +55,27 @@ class ReportTests(unittest.TestCase):
         self.assertIn("` ` `", snippet)
         self.assertTrue(snippet.endswith("..."))
         self.assertLessEqual(len(snippet), 1210)
+
+    def test_comment_output_is_concise_and_actionable(self) -> None:
+        comment = render_comment(
+            make_input(changed_files=[ChangedFile("src/app.py", "M")]),
+            [Finding(BLOCKER, "missing-test-evidence", "No passing test evidence was provided.", file="src/app.py")],
+        )
+
+        self.assertIn("Themis Gate Result", comment)
+        self.assertIn("Status: **BLOCKED**", comment)
+        self.assertIn("Fix:", comment)
+        self.assertIn("submitter remains accountable", comment)
+
+    def test_comment_output_handles_passing_with_warnings(self) -> None:
+        comment = render_comment(
+            make_input(),
+            [Finding("WARNING", "upstream-ai-policy-present", "AI policy present.")],
+        )
+
+        self.assertIn("Status: **PASS**", comment)
+        self.assertIn("Warnings", comment)
+        self.assertIn("maintainers should review warnings", comment)
 
 
 def make_input(

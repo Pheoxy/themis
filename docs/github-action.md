@@ -44,7 +44,7 @@ jobs:
 - `run-checks`: run `.themis.toml` required checks. Default: `true`.
 - `workflow`: Themis workflow to run. Use `validate`, `guide`, `maintainer-packet`, or `self-check`. Default: `validate`.
 - `output`: report path. Default: `upstream-validation-report.md`.
-- `format`: gate output format. Use `markdown`, `json`, or `sarif`. Default: `markdown`.
+- `format`: gate output format. Use `markdown`, `comment`, `json`, or `sarif`. Default: `markdown`.
 - `annotations`: CI annotation mode. Use `github` or `none`. Default: `github`.
 - `step-summary`: write gate output to the GitHub Step Summary when possible. Default: `true`.
 - `draft-pr`: create a draft PR after validation passes. Default: `false`.
@@ -62,7 +62,7 @@ jobs:
 Draft PR creation from CI requires write permissions and GitHub CLI authentication. Keep it opt-in.
 When `draft-pr` is `true`, the action runs `themis pull-request draft` regardless of `workflow`.
 
-Markdown reports are appended directly to the summary. JSON and SARIF are wrapped in fenced code blocks so the check summary remains readable.
+Markdown and comment reports are appended directly to the summary. JSON and SARIF are wrapped in fenced code blocks so the check summary remains readable.
 
 ## Maintainer Packet Workflow
 
