@@ -205,6 +205,7 @@ nix run . -- docs cli --check
 Additional docs:
 
 - `docs/configuration.md`: `.themis.toml` policy fields and examples.
+- `docs/schema/themis.schema.json`: JSON Schema for `.themis.toml`.
 - `docs/cli-style.md`: CLI command/output style rules and naming guidance.
 - `docs/github-action.md`: GitHub Action usage and inputs.
 - `docs/ai-providers.md`: safe AI backend/provider configuration and roadmap.

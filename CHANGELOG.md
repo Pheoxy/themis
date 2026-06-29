@@ -31,6 +31,7 @@ The format follows Keep a Changelog conventions, and this project uses semantic 
 - Concise PR-comment output through `--format comment`.
 - Optional GitHub Action PR comments through `comment-pr`.
 - Copyable GitHub Action examples for validation, PR comments, and self-check workflows.
+- JSON Schema for `.themis.toml` configuration.
 - Configuration, GitHub Action, and development documentation.
 - Direct CLI parser tests for command forms.
 - `themis init` setup command for target repositories.

@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://themis-pr-validator.local/schema/themis.schema.json",
+  "title": "Themis configuration",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "max_changed_files": { "type": "integer", "minimum": 1 },
+        "max_added_lines": { "type": "integer", "minimum": 0 },
+        "max_deleted_lines": { "type": "integer", "minimum": 0 },
+        "max_file_added_lines": { "type": "integer", "minimum": 0 },
+        "require_upstream_rules": { "type": "boolean" },
+        "require_tests_for_code": { "type": "boolean" },
+        "require_test_changes_for_code": { "type": "boolean" },
+        "block_generated_paths": { "type": "boolean" },
+        "block_vendor_paths": { "type": "boolean" },
+        "block_ai_markers": { "type": "boolean" },
+        "block_placeholders": { "type": "boolean" },
+        "allow_paths": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "required_checks": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "ai": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "provider": {
+          "type": "string",
+          "enum": ["none", "fake", "openai", "anthropic", "ollama", "custom"]
+        },
+        "model": { "type": "string" },
+        "api_key_env": { "type": "string" },
+        "endpoint_env": { "type": "string" },
+        "command_env": { "type": "string" },
+        "allowed_workflows": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["explain", "guide", "maintainer-packet", "rules"]
+          }
+        }
+      }
+    }
+  }
+}

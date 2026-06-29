@@ -2,6 +2,8 @@
 
 Themis reads `.themis.toml` from the target repository root. The built-in paranoid rules always apply first; configuration can tune thresholds and required commands, but should not be used to hide missing evidence.
 
+A JSON Schema is available at `docs/schema/themis.schema.json` for editors and tooling.
+
 ## Example
 
 ```toml
@@ -67,3 +69,13 @@ AI providers are disabled by default. Provider configuration is for explicit ass
 - `allowed_workflows`: assistant workflows allowed to use provider output. Gate workflows such as `validate` are not allowed.
 
 See `docs/ai-providers.md` for the provider safety contract and roadmap.
+
+## JSON Schema
+
+Editors and CI tools can use the schema file to validate supported keys and value shapes:
+
+```text
+docs/schema/themis.schema.json
+```
+
+The schema is checked by unit tests to stay aligned with Themis's policy and AI provider config dataclasses.
