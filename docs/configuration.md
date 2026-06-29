@@ -4,6 +4,8 @@ Themis reads `.themis.toml` from the target repository root. The built-in parano
 
 A JSON Schema is available at `docs/schema/themis.schema.json` for editors and tooling.
 
+Run `themis config check --repo .` to validate policy and AI provider configuration without running a PR gate.
+
 ## Example
 
 ```toml

@@ -8,13 +8,13 @@ This file is generated from the argparse command tree. Update CLI code first, th
 
 ```text
 usage: themis [-h] [--version]
-              {validate,v,guide,g,maintainer-packet,mp,pull-request,pr,docs,release,explain,doctor,rules,providers,self-check,init,completion}
+              {validate,v,guide,g,maintainer-packet,mp,pull-request,pr,docs,release,config,explain,doctor,rules,providers,self-check,init,completion}
               ...
 
 Paranoid upstream PR validator for AI-assisted code.
 
 positional arguments:
-  {validate,v,guide,g,maintainer-packet,mp,pull-request,pr,docs,release,explain,doctor,rules,providers,self-check,init,completion}
+  {validate,v,guide,g,maintainer-packet,mp,pull-request,pr,docs,release,config,explain,doctor,rules,providers,self-check,init,completion}
     validate (v)        Run the hard upstream-readiness gate.
     guide (g)           Run the gate and generate an upstream readiness guide.
     maintainer-packet (mp)
@@ -22,6 +22,7 @@ positional arguments:
     pull-request (pr)   Pull request workflows.
     docs                Documentation workflows.
     release             Release maintenance workflows.
+    config              Configuration workflows.
     explain             Explain a Themis finding code and how to fix it.
     doctor              Diagnose target repository and local Themis readiness.
     rules               Show effective policy and inferred upstream rules.
@@ -240,6 +241,34 @@ options:
                         Release check output format.
   -o OUTPUT, --output OUTPUT
                         Write release check output to this path.
+```
+
+## `themis config`
+
+```text
+usage: themis config [-h] {check} ...
+
+positional arguments:
+  {check}
+    check     Validate `.themis.toml` configuration.
+
+options:
+  -h, --help  show this help message and exit
+```
+
+## `themis config check`
+
+```text
+usage: themis config check [-h] [-r REPO] [--format {markdown,json}]
+                           [-o OUTPUT]
+
+options:
+  -h, --help            show this help message and exit
+  -r REPO, --repo REPO  Target git repository to inspect.
+  --format {markdown,json}
+                        Config check output format.
+  -o OUTPUT, --output OUTPUT
+                        Write config check output to this path.
 ```
 
 ## `themis explain`

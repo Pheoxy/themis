@@ -94,6 +94,14 @@ class CliTests(unittest.TestCase):
         self.assertEqual(args.repo, Path("."))
         self.assertEqual(args.format, "json")
 
+    def test_config_check_command_parses(self) -> None:
+        parser = build_parser()
+        args = parser.parse_args(["config", "check", "--repo", ".", "--format", "json"])
+        self.assertEqual(args.command, "config")
+        self.assertEqual(args.config_command, "check")
+        self.assertEqual(args.repo, Path("."))
+        self.assertEqual(args.format, "json")
+
     def test_self_check_command_parses(self) -> None:
         parser = build_parser()
         args = parser.parse_args(["self-check", "--repo", ".", "--format", "json", "--human"])
@@ -115,6 +123,7 @@ class CliTests(unittest.TestCase):
         self.assertIn("providers", docs)
         self.assertIn("self-check", docs)
         self.assertIn("release", docs)
+        self.assertIn("config", docs)
         self.assertIn("pull-request (pr)", docs)
         self.assertIn("draft (d)", docs)
         self.assertNotIn("validate (check", docs)

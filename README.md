@@ -267,6 +267,12 @@ Exit codes:
 
 Create `.themis.toml` in the target repository to tune thresholds or command evidence.
 
+Validate configuration without running the PR gate:
+
+```sh
+themis config check --repo .
+```
+
 ```toml
 [policy]
 max_changed_files = 25

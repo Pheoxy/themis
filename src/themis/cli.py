@@ -98,6 +98,13 @@ def build_parser() -> argparse.ArgumentParser:
     release_check_parser.add_argument("--format", choices=["markdown", "json"], default="markdown", help="Release check output format.")
     release_check_parser.add_argument("-o", "--output", type=Path, help="Write release check output to this path.")
 
+    config_parser = subcommands.add_parser("config", help="Configuration workflows.")
+    config_subcommands = config_parser.add_subparsers(dest="config_command", required=True)
+    config_check_parser = config_subcommands.add_parser("check", help="Validate `.themis.toml` configuration.")
+    config_check_parser.add_argument("-r", "--repo", type=Path, default=Path.cwd(), help="Target git repository to inspect.")
+    config_check_parser.add_argument("--format", choices=["markdown", "json"], default="markdown", help="Config check output format.")
+    config_check_parser.add_argument("-o", "--output", type=Path, help="Write config check output to this path.")
+
     explain_parser = subcommands.add_parser("explain", help="Explain a Themis finding code and how to fix it.")
     explain_parser.add_argument("code", nargs="?", help="Finding code to explain. Omit to list known codes.")
 
@@ -163,6 +170,14 @@ def main(argv: list[str] | None = None) -> int:
             output = render_version_check_json(result) if args.format == "json" else render_version_check_markdown(result)
             write_output(output, args.output)
             return version_check_exit_code(result)
+        if args.command == "config":
+            from .config_check import config_exit_code, inspect_config, render_config_json, render_config_markdown
+
+            root = repo_root(args.repo.resolve())
+            inspection = inspect_config(root)
+            output = render_config_json(inspection) if args.format == "json" else render_config_markdown(inspection)
+            write_output(output, args.output)
+            return config_exit_code(inspection)
         if args.command == "explain":
             from .explain import render_explanation
 
