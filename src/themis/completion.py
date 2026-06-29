@@ -22,6 +22,7 @@ COMMANDS = [
     "docs",
     "cli",
     "release",
+    "config",
     "check",
     "init",
     "completion",

@@ -6,6 +6,7 @@ import unittest
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 from themis.completion import render_completion
+from themis.cli import build_parser
 from themis.init import init_repo
 
 
@@ -45,7 +46,17 @@ class InitAndCompletionTests(unittest.TestCase):
                 self.assertIn("themis", output)
                 self.assertIn("validate", output)
                 self.assertIn("pull-request", output)
+                self.assertIn("config", output)
                 self.assertIn("--body-file" if shell != "fish" else "body-file", output)
+
+    def test_completion_includes_top_level_parser_commands(self) -> None:
+        parser = build_parser()
+        command_action = next(action for action in parser._actions if action.dest == "command")
+        command_names = set(command_action.choices)
+        output = render_completion("bash")
+        for command in command_names:
+            with self.subTest(command=command):
+                self.assertIn(command, output)
 
 
 if __name__ == "__main__":
