@@ -15,7 +15,7 @@ nix flake check
 ```
 
 `nix flake check` runs unit tests and checks that generated CLI documentation matches the parser code.
-It also checks release version consistency across `pyproject.toml`, `src/themis/__init__.py`, and `flake.nix`.
+It also checks configuration validity and release readiness.
 
 ## CLI Documentation
 
@@ -39,10 +39,10 @@ Self-validation does not make Themis responsible for the change. It only checks 
 
 ## Release Check
 
-Before tagging a release, verify version declarations agree:
+Before tagging a release, verify release readiness:
 
 ```bash
 nix run . -- release check
 ```
 
-This command is also enforced by `nix flake check`.
+This command is also enforced by `nix flake check`. See `docs/release.md` for the full release process.
