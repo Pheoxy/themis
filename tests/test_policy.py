@@ -26,6 +26,25 @@ def make_input(tmp: Path, *, diff: str, files: list[ChangedFile], pr: str = "", 
 
 
 class PolicyTests(unittest.TestCase):
+    def test_policy_config_allows_ai_only_config(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            tmp = Path(raw)
+            (tmp / ".themis.toml").write_text('[ai]\nenabled = false\nprovider = "none"\n', encoding="utf-8")
+            self.assertEqual(PolicyConfig.load(tmp), PolicyConfig())
+
+    def test_policy_config_rejects_unknown_top_level_table(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            tmp = Path(raw)
+            (tmp / ".themis.toml").write_text('[policy]\nmax_changed_files = 5\n\n[unknown]\nvalue = true\n', encoding="utf-8")
+            with self.assertRaisesRegex(ValueError, "unknown top-level keys"):
+                PolicyConfig.load(tmp)
+
+    def test_policy_config_keeps_top_level_policy_key_shorthand(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            tmp = Path(raw)
+            (tmp / ".themis.toml").write_text("max_changed_files = 5\n", encoding="utf-8")
+            self.assertEqual(PolicyConfig.load(tmp).max_changed_files, 5)
+
     def test_ai_assisted_requires_disclosure_and_accountability(self) -> None:
         with tempfile.TemporaryDirectory() as raw:
             tmp = Path(raw)

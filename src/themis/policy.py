@@ -144,8 +144,12 @@ class PolicyConfig:
         if not path.exists():
             return cls()
         data = tomllib.loads(path.read_text(encoding="utf-8"))
-        policy = data.get("policy", data)
         allowed = {field.name for field in cls.__dataclass_fields__.values()}  # type: ignore[attr-defined]
+        known_tables = {"policy", "ai"}
+        unknown_top_level = sorted(set(data) - allowed - known_tables)
+        if unknown_top_level:
+            raise ValueError(f"unknown top-level keys in {path}: {', '.join(unknown_top_level)}")
+        policy = data.get("policy", {key: value for key, value in data.items() if key in allowed})
         unknown = sorted(set(policy) - allowed)
         if unknown:
             raise ValueError(f"unknown policy keys in {path}: {', '.join(unknown)}")
