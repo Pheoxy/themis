@@ -24,6 +24,7 @@ The format follows Keep a Changelog conventions, and this project uses semantic 
 - Provider preview redaction and audit metadata for prompts and custom command output.
 - GitHub Action step-summary output for Themis reports.
 - `themis self-check` combined diagnostics/rules/providers/gate workflow.
+- `themis init` now writes safe disabled-by-default AI provider configuration.
 - Configuration, GitHub Action, and development documentation.
 - Direct CLI parser tests for command forms.
 - `themis init` setup command for target repositories.

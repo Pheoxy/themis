@@ -25,6 +25,15 @@ allow_paths = [
 required_checks = [
   "nix flake check",
 ]
+
+[ai]
+enabled = false
+provider = "none"
+model = ""
+api_key_env = ""
+endpoint_env = ""
+command_env = ""
+allowed_workflows = ["explain", "guide", "maintainer-packet", "rules"]
 ```
 
 ## Policy Fields
@@ -44,3 +53,17 @@ required_checks = [
 - `required_checks`: commands Themis runs only when `--run-checks` is used, or by default during `themis pull-request draft`.
 
 Keep exceptions narrow. If a project needs a broad allowlist, that usually means Themis needs a better rule instead of a weaker policy.
+
+## AI Provider Fields
+
+AI providers are disabled by default. Provider configuration is for explicit assistant workflows only; it must not decide gate pass/fail status.
+
+- `enabled`: opt in to provider-backed assistant preview behavior.
+- `provider`: provider name for diagnostics and adapters. Supported diagnostic names are `none`, `fake`, `openai`, `anthropic`, `ollama`, and `custom`.
+- `model`: provider model name.
+- `api_key_env`: environment variable name containing an API key. The value is never printed.
+- `endpoint_env`: optional environment variable name containing a provider endpoint.
+- `command_env`: environment variable name containing the custom provider command.
+- `allowed_workflows`: assistant workflows allowed to use provider output. Gate workflows such as `validate` are not allowed.
+
+See `docs/ai-providers.md` for the provider safety contract and roadmap.

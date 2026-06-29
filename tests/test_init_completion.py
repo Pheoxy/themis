@@ -28,6 +28,16 @@ class InitAndCompletionTests(unittest.TestCase):
             self.assertEqual([path.name for path in result.written], [".themis.toml"])
             self.assertFalse((repo / "pr-body.md").exists())
 
+    def test_init_config_includes_safe_ai_provider_defaults(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            repo = Path(raw)
+            init_repo(repo, include_pr_body=False)
+            config = (repo / ".themis.toml").read_text(encoding="utf-8")
+            self.assertIn("[ai]", config)
+            self.assertIn("enabled = false", config)
+            self.assertIn('provider = "none"', config)
+            self.assertIn('allowed_workflows = ["explain", "guide", "maintainer-packet", "rules"]', config)
+
     def test_completion_contains_expected_commands(self) -> None:
         for shell in ("bash", "zsh", "fish"):
             with self.subTest(shell=shell):
