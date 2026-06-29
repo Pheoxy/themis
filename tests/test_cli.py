@@ -63,6 +63,13 @@ class CliTests(unittest.TestCase):
         self.assertEqual(args.repo, Path("."))
         self.assertEqual(args.format, "json")
 
+    def test_rules_command_parses(self) -> None:
+        parser = build_parser()
+        args = parser.parse_args(["rules", "--repo", ".", "--format", "json"])
+        self.assertEqual(args.command, "rules")
+        self.assertEqual(args.repo, Path("."))
+        self.assertEqual(args.format, "json")
+
     def test_generated_cli_docs_include_canonical_commands(self) -> None:
         docs = render_cli_docs()
         self.assertIn(GENERATED_HEADER, docs)
@@ -72,6 +79,7 @@ class CliTests(unittest.TestCase):
         self.assertIn("maintainer-packet (mp)", docs)
         self.assertIn("explain", docs)
         self.assertIn("doctor", docs)
+        self.assertIn("rules", docs)
         self.assertIn("pull-request (pr)", docs)
         self.assertIn("draft (d)", docs)
         self.assertNotIn("validate (check", docs)

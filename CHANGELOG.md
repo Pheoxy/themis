@@ -18,6 +18,7 @@ The format follows Keep a Changelog conventions, and this project uses semantic 
 - `themis explain` finding-code remediation catalog for contributor/maintainer back-and-forth.
 - SARIF gate output through `--format sarif`.
 - `themis doctor` repository and local-tool readiness diagnostics.
+- `themis rules` effective policy and inferred upstream rule inspection.
 - Configuration, GitHub Action, and development documentation.
 - Direct CLI parser tests for command forms.
 - `themis init` setup command for target repositories.

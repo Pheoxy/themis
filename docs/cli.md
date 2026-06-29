@@ -8,13 +8,13 @@ This file is generated from the argparse command tree. Update CLI code first, th
 
 ```text
 usage: themis [-h] [--version]
-              {validate,v,guide,g,maintainer-packet,mp,pull-request,pr,docs,explain,doctor,init,completion}
+              {validate,v,guide,g,maintainer-packet,mp,pull-request,pr,docs,explain,doctor,rules,init,completion}
               ...
 
 Paranoid upstream PR validator for AI-assisted code.
 
 positional arguments:
-  {validate,v,guide,g,maintainer-packet,mp,pull-request,pr,docs,explain,doctor,init,completion}
+  {validate,v,guide,g,maintainer-packet,mp,pull-request,pr,docs,explain,doctor,rules,init,completion}
     validate (v)        Run the hard upstream-readiness gate.
     guide (g)           Run the gate and generate an upstream readiness guide.
     maintainer-packet (mp)
@@ -23,6 +23,7 @@ positional arguments:
     docs                Documentation workflows.
     explain             Explain a Themis finding code and how to fix it.
     doctor              Diagnose target repository and local Themis readiness.
+    rules               Show effective policy and inferred upstream rules.
     init                Create starter Themis files in a target repository.
     completion          Print shell completion script.
 
@@ -232,6 +233,20 @@ options:
                         Doctor output format.
   -o OUTPUT, --output OUTPUT
                         Write doctor output to this path.
+```
+
+## `themis rules`
+
+```text
+usage: themis rules [-h] [-r REPO] [--format {markdown,json}] [-o OUTPUT]
+
+options:
+  -h, --help            show this help message and exit
+  -r REPO, --repo REPO  Target git repository to inspect.
+  --format {markdown,json}
+                        Rules output format.
+  -o OUTPUT, --output OUTPUT
+                        Write rules output to this path.
 ```
 
 ## `themis init`

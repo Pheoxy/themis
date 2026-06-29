@@ -10,6 +10,7 @@ COMMANDS = [
     "mp",
     "explain",
     "doctor",
+    "rules",
     "pull-request",
     "pr",
     "draft",

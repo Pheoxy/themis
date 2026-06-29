@@ -329,10 +329,7 @@ def validate_upstream_rules(
 
 def validate_ai_disclosure(data: ValidationInput, docs_text: str) -> list[Finding]:
     findings: list[Finding] = []
-    forbid_ai = re.search(
-        r"(?is)(no|not|never|forbid|forbidden|prohibit|prohibited|reject|not accepted).{0,80}\b(ai|llm|chatgpt|generated code|generative)",
-        docs_text,
-    )
+    forbid_ai = docs_forbid_ai(docs_text)
     require_ai_disclosure = re.search(r"(?is)\b(ai|llm|generative|generated).{0,120}\b(disclos|indicat|mention|declare)", docs_text)
     if data.ai_assisted and forbid_ai:
         findings.append(Finding(BLOCKER, "upstream-forbids-ai", "Upstream docs appear to forbid AI-generated/AI-assisted contributions."))
@@ -530,6 +527,17 @@ def docs_require_issue_link(text: str) -> bool:
 
 def docs_require_conventional_commits(text: str) -> bool:
     return bool(re.search(r"(?is)\b(conventional commits?|commit message).{0,100}\b(feat|fix|docs|chore|type|scope)", text))
+
+
+def docs_forbid_ai(text: str) -> bool:
+    return any(
+        re.search(pattern, text)
+        for pattern in (
+            r"(?is)\b(ai|llm|chatgpt|generative ai|ai-generated|ai generated|llm-generated).{0,80}\b(contributions?|code|patch(?:es)?|pull requests?).{0,80}\b(not accepted|forbidden|prohibited|rejected|disallowed)",
+            r"(?is)\b(do not|must not|cannot|may not|never).{0,40}\b(submit|contribute|include|use).{0,80}\b(ai|llm|chatgpt|generative ai|ai-generated|ai generated|llm-generated)",
+            r"(?is)\b(no|forbidden|prohibited|reject(?:s|ed)?|not accepted).{0,40}\b(ai-generated|ai generated|llm-generated|generative ai).{0,40}\b(code|contributions?|patch(?:es)?|pull requests?)",
+        )
+    )
 
 
 def is_conventional_commit(subject: str) -> bool:

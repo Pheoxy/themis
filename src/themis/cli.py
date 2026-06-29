@@ -99,6 +99,11 @@ def build_parser() -> argparse.ArgumentParser:
     doctor_parser.add_argument("--format", choices=["markdown", "json"], default="markdown", help="Doctor output format.")
     doctor_parser.add_argument("-o", "--output", type=Path, help="Write doctor output to this path.")
 
+    rules_parser = subcommands.add_parser("rules", help="Show effective policy and inferred upstream rules.")
+    rules_parser.add_argument("-r", "--repo", type=Path, default=Path.cwd(), help="Target git repository to inspect.")
+    rules_parser.add_argument("--format", choices=["markdown", "json"], default="markdown", help="Rules output format.")
+    rules_parser.add_argument("-o", "--output", type=Path, help="Write rules output to this path.")
+
     init_parser = subcommands.add_parser("init", help="Create starter Themis files in a target repository.")
     init_parser.add_argument("-r", "--repo", type=Path, default=Path.cwd(), help="Target repository to initialize.")
     init_parser.add_argument("--force", action="store_true", help="Overwrite existing generated files.")
@@ -144,6 +149,14 @@ def main(argv: list[str] | None = None) -> int:
             output = render_doctor_json(result) if args.format == "json" else render_doctor_markdown(result)
             write_output(output, args.output)
             return doctor_exit_code(result)
+        if args.command == "rules":
+            from .rules import inspect_rules, render_rules_json, render_rules_markdown, rules_exit_code
+
+            root = repo_root(args.repo.resolve())
+            inspection = inspect_rules(root, PolicyConfig.load(root))
+            output = render_rules_json(inspection) if args.format == "json" else render_rules_markdown(inspection)
+            write_output(output, args.output)
+            return rules_exit_code(inspection)
         if args.command == "init":
             from .init import init_repo
 

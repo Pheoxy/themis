@@ -75,6 +75,17 @@ class PolicyTests(unittest.TestCase):
             findings = validate(data, PolicyConfig())
             self.assertIn("weak-human-accountability", {item.code for item in findings if item.severity == BLOCKER})
 
+    def test_accountability_language_does_not_forbid_ai(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            tmp = Path(raw)
+            (tmp / "CONTRIBUTING.md").write_text("AI use must be disclosed.\n", encoding="utf-8")
+            (tmp / ".github").mkdir()
+            (tmp / ".github" / "pull_request_template.md").write_text("Human accountability: State that you, not Themis or any AI tool, take responsibility.\n", encoding="utf-8")
+            pr = "AI assistance: Used for implementation suggestions and reviewed manually.\n\nHuman accountability: I own every line and take responsibility for tests."
+            data = make_input(tmp, diff="", files=[ChangedFile("README.md", "M")], pr=pr)
+            findings = validate(data, PolicyConfig())
+            self.assertNotIn("upstream-forbids-ai", {item.code for item in findings if item.severity == BLOCKER})
+
     def test_blocks_weak_test_evidence_for_code_changes(self) -> None:
         with tempfile.TemporaryDirectory() as raw:
             tmp = Path(raw)

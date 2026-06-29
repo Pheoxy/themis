@@ -50,6 +50,12 @@ Diagnose whether the repository and local tools are ready for Themis workflows:
 themis doctor --repo /path/to/target/repo
 ```
 
+Inspect the effective policy and inferred upstream rules:
+
+```bash
+themis rules --repo /path/to/target/repo
+```
+
 Ask Themis to run the gate and organize the upstream prep work for the current change:
 
 ```bash

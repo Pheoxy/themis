@@ -64,6 +64,7 @@ The commands are intentionally separated by audience and output, not by differen
 | `themis maintainer-packet` | `themis mp` | maintainer | Run the same gate and produce maintainer-facing feedback and triage notes. |
 | `themis explain` | none | contributor / maintainer | Explain a finding code and expected remediation. |
 | `themis doctor` | none | contributor / maintainer / CI | Diagnose repository and tool readiness before gate workflows. |
+| `themis rules` | none | contributor / maintainer / CI | Show effective policy and inferred upstream rules. |
 | `themis pull-request draft` | `themis pr d` | contributor | Run the gate, run configured checks by default, and create a GitHub draft PR only if clean. |
 | `themis init` | none | setup | Create starter Themis policy/template files in a target repo. |
 | `themis docs cli` | none | project maintenance | Generate/check parser-derived CLI docs. |
@@ -88,6 +89,7 @@ themis maintainer-packet
 themis mp
 themis explain missing-test-evidence
 themis doctor
+themis rules
 themis pull-request draft
 themis pr d
 ```
