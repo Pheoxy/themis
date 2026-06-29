@@ -33,6 +33,12 @@ jobs:
           run-checks: "true"
 ```
 
+More complete copyable examples live in `examples/github-actions/`:
+
+- `validate.yml`: default hard gate with read-only pull request permissions.
+- `comment.yml`: maintainer-facing comment workflow with `format: comment` and `comment-pr: "true"`.
+- `self-check.yml`: combined doctor/rules/providers/gate workflow.
+
 ## Inputs
 
 - `repo`: repository path to validate. Default: `.`.
@@ -67,6 +73,11 @@ When `draft-pr` is `true`, the action runs `themis pull-request draft` regardles
 Markdown and comment reports are appended directly to the summary. JSON and SARIF are wrapped in fenced code blocks so the check summary remains readable.
 
 PR commenting requires `pull-requests: write` and a valid `GH_TOKEN`. Comment failures emit a warning instead of replacing the gate result. Use `format: comment` for concise comment bodies.
+
+The examples in `examples/github-actions/` show the expected permission split:
+
+- validation and self-check use `pull-requests: read`.
+- PR comments use `pull-requests: write` and `GH_TOKEN`.
 
 ## Maintainer Packet Workflow
 

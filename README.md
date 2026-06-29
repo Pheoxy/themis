@@ -211,6 +211,7 @@ Additional docs:
 - `docs/development.md`: local development and self-check workflow.
 - `docs/assets/README.md`: visual concept artwork and future brand asset notes.
 - `examples/pr-body.md`: minimal PR body template that includes required accountability sections.
+- `examples/github-actions/`: copyable GitHub workflows for validation, PR comments, and self-check.
 
 ## Shell Completion
 
