@@ -42,6 +42,7 @@ jobs:
 - `evidence-file`: file containing test/check evidence.
 - `human-authored`: set to `true` only when no AI assistance was used.
 - `run-checks`: run `.themis.toml` required checks. Default: `true`.
+- `workflow`: Themis workflow to run. Use `validate`, `guide`, `maintainer-packet`, or `self-check`. Default: `validate`.
 - `output`: report path. Default: `upstream-validation-report.md`.
 - `format`: gate output format. Use `markdown`, `json`, or `sarif`. Default: `markdown`.
 - `annotations`: CI annotation mode. Use `github` or `none`. Default: `github`.
@@ -59,5 +60,19 @@ jobs:
 - `report`: path to the generated gate output artifact.
 
 Draft PR creation from CI requires write permissions and GitHub CLI authentication. Keep it opt-in.
+When `draft-pr` is `true`, the action runs `themis pull-request draft` regardless of `workflow`.
 
 Markdown reports are appended directly to the summary. JSON and SARIF are wrapped in fenced code blocks so the check summary remains readable.
+
+## Maintainer Packet Workflow
+
+Use the maintainer packet workflow when the action should produce contributor-facing feedback instead of the default validation report:
+
+```yaml
+- uses: OWNER/themis@main
+  with:
+    base: origin/${{ github.base_ref }}
+    body-file: pr-body.md
+    workflow: maintainer-packet
+    run-checks: "true"
+```

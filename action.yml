@@ -23,6 +23,9 @@ inputs:
   run-checks:
     description: Run required_checks from .themis.toml.
     default: "true"
+  workflow:
+    description: Themis workflow to run. Use validate, guide, maintainer-packet, or self-check.
+    default: validate
   output:
     description: Gate output path.
     default: upstream-validation-report.md
@@ -80,6 +83,7 @@ runs:
         INPUT_EVIDENCE_FILE: ${{ inputs.evidence-file }}
         INPUT_HUMAN_AUTHORED: ${{ inputs.human-authored }}
         INPUT_RUN_CHECKS: ${{ inputs.run-checks }}
+        INPUT_WORKFLOW: ${{ inputs.workflow }}
         INPUT_OUTPUT: ${{ inputs.output }}
         INPUT_FORMAT: ${{ inputs.format }}
         INPUT_ANNOTATIONS: ${{ inputs.annotations }}
@@ -89,7 +93,24 @@ runs:
         INPUT_HEAD_BRANCH: ${{ inputs.head-branch }}
       run: |
         set -euo pipefail
-        command=(validate)
+        case "$INPUT_WORKFLOW" in
+          validate)
+            command=(validate)
+            ;;
+          guide)
+            command=(guide)
+            ;;
+          maintainer-packet)
+            command=(maintainer-packet)
+            ;;
+          self-check)
+            command=(self-check)
+            ;;
+          *)
+            printf 'Unsupported Themis workflow: %s\n' "$INPUT_WORKFLOW" >&2
+            exit 3
+            ;;
+        esac
         if [[ "$INPUT_DRAFT_PR" == "true" ]]; then
           command=(pull-request draft)
         fi
@@ -106,7 +127,7 @@ runs:
         if [[ "$INPUT_HUMAN_AUTHORED" == "true" ]]; then
           args+=(--human-authored)
         fi
-        if [[ "${command[0]}" == "validate" && "$INPUT_RUN_CHECKS" == "true" ]]; then
+        if [[ "${command[0]}" != "pull-request" && "$INPUT_RUN_CHECKS" == "true" ]]; then
           args+=(--run-checks)
         fi
         if [[ "${command[0]}" == "pull-request" && "$INPUT_RUN_CHECKS" != "true" ]]; then
