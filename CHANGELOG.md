@@ -40,6 +40,7 @@ The format follows Keep a Changelog conventions, and this project uses semantic 
 - Shell completion coverage for the `config` command.
 - README command table coverage for diagnostics and config validation workflows.
 - Fail-closed rejection for configs that mix `[policy]` with top-level policy-key shorthand.
+- Release checks now verify core release files are present and non-empty.
 - Configuration, GitHub Action, and development documentation.
 - Direct CLI parser tests for command forms.
 - `themis init` setup command for target repositories.

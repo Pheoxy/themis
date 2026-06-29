@@ -8,10 +8,18 @@ import tomllib
 
 
 @dataclass(frozen=True)
+class ReleaseFileCheck:
+    path: str
+    status: str
+    message: str
+
+
+@dataclass(frozen=True)
 class VersionCheckResult:
     pyproject: str
     package: str
     flake: str
+    files: list[ReleaseFileCheck]
 
 
 def inspect_versions(repo: Path) -> VersionCheckResult:
@@ -22,11 +30,29 @@ def inspect_versions(repo: Path) -> VersionCheckResult:
     flake_match = re.search(r'version\s*=\s*"([^"]+)";', (repo / "flake.nix").read_text(encoding="utf-8"))
     if not flake_match:
         raise ValueError("could not find flake package version")
-    return VersionCheckResult(pyproject=pyproject, package=package_match.group(1), flake=flake_match.group(1))
+    return VersionCheckResult(
+        pyproject=pyproject,
+        package=package_match.group(1),
+        flake=flake_match.group(1),
+        files=inspect_release_files(repo),
+    )
+
+
+def inspect_release_files(repo: Path) -> list[ReleaseFileCheck]:
+    checks: list[ReleaseFileCheck] = []
+    for relative in ("README.md", "CHANGELOG.md", "LICENSE"):
+        path = repo / relative
+        if path.exists() and path.read_text(encoding="utf-8", errors="replace").strip():
+            checks.append(ReleaseFileCheck(relative, "PASS", "Release file is present."))
+        else:
+            checks.append(ReleaseFileCheck(relative, "FAIL", "Release file is missing or empty."))
+    return checks
 
 
 def version_check_exit_code(result: VersionCheckResult) -> int:
-    return 0 if len({result.pyproject, result.package, result.flake}) == 1 else 2
+    versions_match = len({result.pyproject, result.package, result.flake}) == 1
+    files_pass = all(check.status == "PASS" for check in result.files)
+    return 0 if versions_match and files_pass else 2
 
 
 def render_version_check_markdown(result: VersionCheckResult) -> str:
@@ -42,13 +68,19 @@ def render_version_check_markdown(result: VersionCheckResult) -> str:
         f"- `src/themis/__init__.py`: `{result.package}`",
         f"- `flake.nix`: `{result.flake}`",
         "",
+        "## Release Files",
+        "",
     ]
+    for check in result.files:
+        lines.append(f"- **{check.status}** `{check.path}`: {check.message}")
+    lines.append("")
     if version_check_exit_code(result):
         lines.extend(
             [
                 "## Next",
                 "",
                 "- Update all version declarations to the same value before release.",
+                "- Add any missing release files before publishing artifacts.",
                 "",
             ]
         )
@@ -61,6 +93,11 @@ def render_version_check_json(result: VersionCheckResult) -> str:
         "workflow": "release check",
         "status": "pass" if version_check_exit_code(result) == 0 else "blocked",
         "exit_code": version_check_exit_code(result),
-        "versions": asdict(result),
+        "files": [asdict(check) for check in result.files],
+        "versions": {
+            "pyproject": result.pyproject,
+            "package": result.package,
+            "flake": result.flake,
+        },
     }
     return json.dumps(payload, indent=2, sort_keys=True) + "\n"
