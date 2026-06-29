@@ -83,11 +83,35 @@ class ActionCommentTests(unittest.TestCase):
         self.assertEqual(result.argv, [])
 
 
+class ActionStepSummaryTests(unittest.TestCase):
+    def test_step_summary_appends_markdown_report_directly(self) -> None:
+        result = run_step_summary({"INPUT_FORMAT": "markdown"}, report="# Themis\n", report_exists=True)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(result.summary, "# Themis\n")
+
+    def test_step_summary_wraps_json_report_in_fence(self) -> None:
+        result = run_step_summary({"INPUT_FORMAT": "json"}, report='{"status":"pass"}\n', report_exists=True)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(result.summary, '## Themis json output\n\n```json\n{"status":"pass"}\n\n```\n')
+
+    def test_step_summary_skips_missing_report(self) -> None:
+        result = run_step_summary({"INPUT_FORMAT": "markdown"}, report="", report_exists=False)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(result.summary, "")
+
+
 class ActionRouteResult:
     def __init__(self, completed: subprocess.CompletedProcess[str], argv: list[str]) -> None:
         self.returncode = completed.returncode
         self.stderr = completed.stderr
         self.argv = argv
+
+
+class ActionSummaryResult:
+    def __init__(self, completed: subprocess.CompletedProcess[str], summary: str) -> None:
+        self.returncode = completed.returncode
+        self.stderr = completed.stderr
+        self.summary = summary
 
 
 def run_action_route(overrides: dict[str, str]) -> ActionRouteResult:
@@ -142,6 +166,32 @@ def run_action_route(overrides: dict[str, str]) -> ActionRouteResult:
         completed = subprocess.run(["bash", str(route_script)], cwd=root, env=env, text=True, capture_output=True)
         argv = capture.read_text(encoding="utf-8").splitlines() if capture.exists() else []
         return ActionRouteResult(completed, argv)
+
+
+def run_step_summary(overrides: dict[str, str], *, report: str, report_exists: bool) -> ActionSummaryResult:
+    root = Path(__file__).resolve().parents[1]
+    script = extract_action_script(root / "action.yml", "Write step summary")
+    with tempfile.TemporaryDirectory() as raw:
+        tmp = Path(raw)
+        route_script = tmp / "summary.sh"
+        route_script.write_text(script, encoding="utf-8")
+        route_script.chmod(0o755)
+        summary = tmp / "summary.md"
+        if report_exists:
+            (tmp / "report.out").write_text(report, encoding="utf-8")
+
+        env = os.environ.copy()
+        env.update(
+            {
+                "GITHUB_STEP_SUMMARY": str(summary),
+                "INPUT_OUTPUT": "report.out",
+                "INPUT_FORMAT": "markdown",
+            }
+        )
+        env.update(overrides)
+        completed = subprocess.run(["bash", str(route_script)], cwd=tmp, env=env, text=True, capture_output=True)
+        summary_text = summary.read_text(encoding="utf-8") if summary.exists() else ""
+        return ActionSummaryResult(completed, summary_text)
 
 
 def run_comment_step(overrides: dict[str, str], *, report_exists: bool) -> ActionRouteResult:
