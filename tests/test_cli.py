@@ -1,6 +1,7 @@
 from pathlib import Path
 import contextlib
 import io
+import json
 import sys
 import tempfile
 from types import SimpleNamespace
@@ -63,6 +64,7 @@ class CliTests(unittest.TestCase):
         self.assertNotIn("review", docs)
         self.assertIn("-B BODY_FILE, --body-file BODY_FILE", docs)
         self.assertIn("--run-checks", docs)
+        self.assertIn("--format", docs)
         self.assertIn("--annotations", docs)
 
     def test_generated_cli_docs_check_detects_drift(self) -> None:
@@ -138,15 +140,39 @@ class CliTests(unittest.TestCase):
             self.assertEqual(output.read_text(encoding="utf-8"), "# report\n")
             self.assertIn("::error title=blocked,file=src/app.py::Blocked for test.", stderr.getvalue())
 
+    def test_validate_can_write_json_output(self) -> None:
+        run = fake_validation_run()
+        findings = [Finding(BLOCKER, "blocked", "Blocked for test.", file="src/app.py")]
+        with tempfile.TemporaryDirectory() as raw:
+            output = Path(raw) / "report.json"
+            with (
+                patch("themis.cli.build_validation_run", return_value=run),
+                patch("themis.cli.validate", return_value=findings),
+            ):
+                self.assertEqual(main(["validate", "--output", str(output), "--format", "json"]), 2)
+
+            payload = json.loads(output.read_text(encoding="utf-8"))
+            self.assertEqual(payload["workflow"], "validate")
+            self.assertEqual(payload["status"], "blocked")
+            self.assertEqual(payload["findings"][0]["code"], "blocked")
+
 
 def fake_validation_run() -> SimpleNamespace:
+    data = SimpleNamespace(
+        repo=Path("/tmp/repo"),
+        base="origin/main",
+        ai_assisted=True,
+        changed_files=[],
+        numstat=[],
+        check_results=[],
+    )
     return SimpleNamespace(
         root=Path("/tmp/repo"),
         config=SimpleNamespace(),
         pr_description="AI assistance: none",
         changed=[],
         stats=[],
-        data=SimpleNamespace(),
+        data=data,
     )
 
 

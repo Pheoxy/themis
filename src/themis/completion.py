@@ -31,6 +31,7 @@ OPTIONS = [
     "--evidence",
     "--evidence-file",
     "--output",
+    "--format",
     "--annotations",
     "--run-checks",
     "--skip-checks",

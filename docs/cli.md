@@ -34,8 +34,8 @@ options:
 ```text
 usage: themis validate [-h] [-r REPO] [-b BASE] [--ai | --human]
                        [-B BODY_FILE] [-e EVIDENCE] [-E EVIDENCE_FILE]
-                       [-o OUTPUT] [--annotations {none,github}]
-                       [--run-checks]
+                       [-o OUTPUT] [--format {markdown,json}]
+                       [--annotations {none,github}] [--run-checks]
 
 options:
   -h, --help            show this help message and exit
@@ -52,7 +52,9 @@ options:
   -E EVIDENCE_FILE, --evidence-file EVIDENCE_FILE
                         File containing test/check evidence.
   -o OUTPUT, --output OUTPUT
-                        Write Markdown report to this path.
+                        Write gate output to this path.
+  --format {markdown,json}
+                        Output format for gate results.
   --annotations {none,github}
                         Emit CI annotations for findings.
   --run-checks          Run required checks from .themis.toml in the target
@@ -64,7 +66,8 @@ options:
 ```text
 usage: themis guide [-h] [-r REPO] [-b BASE] [--ai | --human] [-B BODY_FILE]
                     [-e EVIDENCE] [-E EVIDENCE_FILE] [-o OUTPUT]
-                    [--annotations {none,github}] [--run-checks]
+                    [--format {markdown,json}] [--annotations {none,github}]
+                    [--run-checks]
 
 options:
   -h, --help            show this help message and exit
@@ -81,7 +84,9 @@ options:
   -E EVIDENCE_FILE, --evidence-file EVIDENCE_FILE
                         File containing test/check evidence.
   -o OUTPUT, --output OUTPUT
-                        Write Markdown report to this path.
+                        Write gate output to this path.
+  --format {markdown,json}
+                        Output format for gate results.
   --annotations {none,github}
                         Emit CI annotations for findings.
   --run-checks          Run required checks from .themis.toml in the target
@@ -94,6 +99,7 @@ options:
 usage: themis maintainer-packet [-h] [-r REPO] [-b BASE] [--ai | --human]
                                 [-B BODY_FILE] [-e EVIDENCE]
                                 [-E EVIDENCE_FILE] [-o OUTPUT]
+                                [--format {markdown,json}]
                                 [--annotations {none,github}] [--run-checks]
 
 options:
@@ -111,7 +117,9 @@ options:
   -E EVIDENCE_FILE, --evidence-file EVIDENCE_FILE
                         File containing test/check evidence.
   -o OUTPUT, --output OUTPUT
-                        Write Markdown report to this path.
+                        Write gate output to this path.
+  --format {markdown,json}
+                        Output format for gate results.
   --annotations {none,github}
                         Emit CI annotations for findings.
   --run-checks          Run required checks from .themis.toml in the target
@@ -137,9 +145,9 @@ options:
 ```text
 usage: themis pull-request draft [-h] [-r REPO] [-b BASE] [--ai | --human] -B
                                  BODY_FILE [-e EVIDENCE] [-E EVIDENCE_FILE]
-                                 [-o OUTPUT] [--annotations {none,github}]
-                                 [--skip-checks] [--title TITLE]
-                                 [--base-branch BASE_BRANCH]
+                                 [-o OUTPUT] [--format {markdown,json}]
+                                 [--annotations {none,github}] [--skip-checks]
+                                 [--title TITLE] [--base-branch BASE_BRANCH]
                                  [--head-branch HEAD_BRANCH]
 
 options:
@@ -157,7 +165,9 @@ options:
   -E EVIDENCE_FILE, --evidence-file EVIDENCE_FILE
                         File containing test/check evidence.
   -o OUTPUT, --output OUTPUT
-                        Write Markdown report to this path.
+                        Write gate output to this path.
+  --format {markdown,json}
+                        Output format for gate results.
   --annotations {none,github}
                         Emit CI annotations for findings.
   --skip-checks         Do not run configured required checks. This usually

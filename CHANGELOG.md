@@ -14,6 +14,7 @@ The format follows Keep a Changelog conventions, and this project uses semantic 
 - Optional GitHub workflow annotations for blockers, warnings, and informational findings.
 - Richer validation reports with changed files, bounded check output snippets, and next actions.
 - CLI style guidance and target-repository CLI integration tests.
+- Machine-readable JSON gate output through `--format json`.
 - Configuration, GitHub Action, and development documentation.
 - Direct CLI parser tests for command forms.
 - `themis init` setup command for target repositories.

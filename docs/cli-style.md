@@ -190,14 +190,14 @@ Future CLI additions should preserve those meanings. If more exit codes are adde
 Current behavior:
 
 - Human/Markdown output is the primary output.
-- `--output` writes Markdown to a file.
-- No JSON mode exists yet.
+- `--output` writes gate output to a file.
+- `--format json` writes machine-readable JSON.
 - No color mode exists yet.
 
 Future modes should follow this contract:
 
 ```text
---json      machine-readable JSON only
+--format json  machine-readable JSON only
 --plain     no header, no decoration, stable line-oriented text
 --quiet     only serious errors
 --verbose   extra diagnostic context

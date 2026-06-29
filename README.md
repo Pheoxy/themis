@@ -62,6 +62,12 @@ In GitHub Actions, Themis can annotate blockers and warnings directly in the che
 themis validate --repo . --base origin/main --body-file pr-body.md --evidence "nix flake check passed" --annotations github
 ```
 
+For bots and dashboards, request machine-readable JSON:
+
+```bash
+themis validate --repo . --base origin/main --body-file pr-body.md --evidence "nix flake check passed" --format json
+```
+
 ```bash
 python -m themis validate --repo /path/to/target/repo --base origin/main --body-file pr-body.md --evidence "pytest -q passed in CI"
 ```

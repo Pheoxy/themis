@@ -28,6 +28,7 @@ from .policy import (
     run_required_checks,
     validate,
 )
+from .json_report import render_json
 from .pr import DraftPrError, DraftPrOptions, build_pr_body, create_draft_pr, infer_pr_base
 from .report import render_markdown
 
@@ -109,7 +110,8 @@ def add_validation_args(parser: argparse.ArgumentParser, *, base_default: str | 
     parser.add_argument("-B", "--body-file", type=Path, required=require_pr_description, help="File containing the pull request body.")
     parser.add_argument("-e", "--evidence", default="", help="Short text proving which tests/checks passed.")
     parser.add_argument("-E", "--evidence-file", type=Path, help="File containing test/check evidence.")
-    parser.add_argument("-o", "--output", type=Path, help="Write Markdown report to this path.")
+    parser.add_argument("-o", "--output", type=Path, help="Write gate output to this path.")
+    parser.add_argument("--format", choices=["markdown", "json"], default="markdown", help="Output format for gate results.")
     parser.add_argument("--annotations", choices=["none", "github"], default="none", help="Emit CI annotations for findings.")
 
 
@@ -142,7 +144,7 @@ def main(argv: list[str] | None = None) -> int:
             gate = evaluate_gate(args, run_checks=args.run_checks)
             run = gate.validation
             if args.command in {"maintainer-packet", "mp"}:
-                output = render_review_packet(
+                markdown_output = render_review_packet(
                     run.root,
                     base=args.base,
                     changed=run.changed,
@@ -150,8 +152,9 @@ def main(argv: list[str] | None = None) -> int:
                     config=run.config,
                     findings=gate.findings,
                 )
+                workflow = "maintainer-packet"
             else:
-                output = render_guide(
+                markdown_output = render_guide(
                     run.root,
                     base=args.base,
                     changed=run.changed,
@@ -159,33 +162,47 @@ def main(argv: list[str] | None = None) -> int:
                     config=run.config,
                     findings=gate.findings,
                 )
+                workflow = "guide"
+            exit_code = gate_exit_code(gate.findings)
+            output = render_gate_output(args.format, gate, workflow=workflow, exit_code=exit_code, markdown_output=markdown_output)
             write_output(output, args.output)
             write_annotations(gate.findings, args.annotations)
-            return gate_exit_code(gate.findings)
+            return exit_code
         draft_pr = args.command in {"pull-request", "pr"} and args.pr_command in {"draft", "d"}
         run_checks = args.run_checks if args.command in {"validate", "v"} else not args.skip_checks
         gate = evaluate_gate(args, run_checks=run_checks)
         run = gate.validation
-        report = render_markdown(run.data, gate.findings)
-        write_output(report, args.output)
-        write_annotations(gate.findings, args.annotations)
-        if has_blockers(gate.findings):
-            return gate_exit_code(gate.findings)
-        if draft_pr:
+        markdown_report = render_markdown(run.data, gate.findings)
+        exit_code = gate_exit_code(gate.findings)
+        workflow = "pull-request draft" if draft_pr else "validate"
+        draft_pr_url = None
+        if not has_blockers(gate.findings) and draft_pr:
             title = args.title or last_commit_subject(run.root)
             pr_base = args.base_branch or infer_pr_base(args.base)
             pr_head = args.head_branch or current_branch(run.root) or None
-            url = create_draft_pr(
+            draft_pr_url = create_draft_pr(
                 run.root,
                 DraftPrOptions(
                     title=title,
                     base=pr_base,
                     head=pr_head,
-                    body=build_pr_body(run.pr_description, report),
+                    body=build_pr_body(run.pr_description, markdown_report),
                 ),
             )
-            if url:
-                print(url)
+        report = render_gate_output(
+            args.format,
+            gate,
+            workflow=workflow,
+            exit_code=exit_code,
+            markdown_output=markdown_report,
+            draft_pr_url=draft_pr_url,
+        )
+        write_output(report, args.output)
+        write_annotations(gate.findings, args.annotations)
+        if has_blockers(gate.findings):
+            return exit_code
+        if draft_pr and draft_pr_url and args.format == "markdown":
+            print(draft_pr_url)
         return 0
     except (DraftPrError, GitError, OSError, ValueError) as exc:
         print(f"themis error: {exc}", file=sys.stderr)
@@ -247,6 +264,22 @@ def write_annotations(findings: list[Finding], mode: str) -> None:
     annotations = render_annotations(findings, mode)
     if annotations:
         print(annotations, end="", file=sys.stderr)
+
+
+def render_gate_output(
+    output_format: str,
+    gate: GateRun,
+    *,
+    workflow: str,
+    exit_code: int,
+    markdown_output: str,
+    draft_pr_url: str | None = None,
+) -> str:
+    if output_format == "markdown":
+        return markdown_output
+    if output_format == "json":
+        return render_json(gate.validation.data, gate.findings, workflow=workflow, exit_code=exit_code, draft_pr_url=draft_pr_url)
+    raise ValueError(f"unsupported output format: {output_format}")
 
 
 def has_blockers(findings: list[Finding]) -> bool:
