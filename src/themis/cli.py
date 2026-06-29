@@ -173,7 +173,10 @@ def main(argv: list[str] | None = None) -> int:
         if args.command == "config":
             from .config_check import config_exit_code, inspect_config, render_config_json, render_config_markdown
 
-            root = repo_root(args.repo.resolve())
+            try:
+                root = repo_root(args.repo.resolve())
+            except GitError:
+                root = args.repo.resolve()
             inspection = inspect_config(root)
             output = render_config_json(inspection) if args.format == "json" else render_config_markdown(inspection)
             write_output(output, args.output)

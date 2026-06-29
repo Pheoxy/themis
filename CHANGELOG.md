@@ -42,6 +42,8 @@ The format follows Keep a Changelog conventions, and this project uses semantic 
 - Fail-closed rejection for configs that mix `[policy]` with top-level policy-key shorthand.
 - Release checks now verify core release files are present and non-empty.
 - Release checks now reject placeholder package metadata URLs.
+- `nix flake check` now validates the repository `.themis.toml` with `themis config check`.
+- `themis config check` now works on plain directories, not only git repositories.
 - Configuration, GitHub Action, and development documentation.
 - Direct CLI parser tests for command forms.
 - `themis init` setup command for target repositories.

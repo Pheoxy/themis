@@ -63,6 +63,11 @@
             PYTHONPATH=${self}/src python -m themis docs cli --check
             touch $out
           '';
+          config-check = pkgs.runCommand "themis-config-check" { nativeBuildInputs = [ python pkgs.git ]; } ''
+            cd ${self}
+            PYTHONPATH=${self}/src python -m themis config check
+            touch $out
+          '';
           release-check = pkgs.runCommand "themis-release-check" { nativeBuildInputs = [ python pkgs.git ]; } ''
             cd ${self}
             PYTHONPATH=${self}/src python -m themis release check

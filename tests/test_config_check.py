@@ -8,6 +8,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 from example_repo import create_example_target_repo, write
+from themis.cli import main
 from themis.config_check import config_exit_code, inspect_config, render_config_json, render_config_markdown
 
 
@@ -43,6 +44,15 @@ class ConfigCheckTests(unittest.TestCase):
             payload = json.loads(render_config_json(inspection))
             self.assertIn("Themis Config Check", markdown)
             self.assertEqual(payload["workflow"], "config check")
+            self.assertEqual(payload["status"], "pass")
+
+    def test_cli_config_check_allows_plain_directory(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            repo = Path(raw)
+            write(repo / ".themis.toml", '[policy]\nmax_changed_files = 5\n')
+            output = repo / "config.json"
+            self.assertEqual(main(["config", "check", "--repo", str(repo), "--format", "json", "--output", str(output)]), 0)
+            payload = json.loads(output.read_text(encoding="utf-8"))
             self.assertEqual(payload["status"], "pass")
 
 
