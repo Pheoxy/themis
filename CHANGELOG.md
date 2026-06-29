@@ -49,6 +49,7 @@ The format follows Keep a Changelog conventions, and this project uses semantic 
 - Executable tests for GitHub Action PR comment step behavior.
 - Executable tests for GitHub Action Step Summary rendering behavior.
 - Release process documentation covering version updates, gates, and tagging.
+- Ecosystem integration documentation for Nix, Python, Rust, Node, Go, and GitHub Actions.
 - Configuration, GitHub Action, and development documentation.
 - Direct CLI parser tests for command forms.
 - `themis init` setup command for target repositories.

@@ -213,6 +213,7 @@ Additional docs:
 - `docs/schema/themis.schema.json`: JSON Schema for `.themis.toml`.
 - `docs/cli-style.md`: CLI command/output style rules and naming guidance.
 - `docs/github-action.md`: GitHub Action usage and inputs.
+- `docs/integrations.md`: Nix, Python, Rust, Node, Go, and CI integration patterns.
 - `docs/ai-providers.md`: safe AI backend/provider configuration and roadmap.
 - `docs/development.md`: local development and self-check workflow.
 - `docs/release.md`: release checks, generated docs, and tagging process.
