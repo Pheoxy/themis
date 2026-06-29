@@ -192,6 +192,11 @@ Which command to use:
 | `themis guide` | `themis g` | You are preparing a contribution and want next steps. |
 | `themis maintainer-packet` | `themis mp` | You need maintainer-facing feedback/triage notes. |
 | `themis pull-request draft` | `themis pr d` | You want Themis to gate the patch and create a GitHub draft PR if clean. |
+| `themis self-check` | none | You want doctor, rules, providers, and gate output together. |
+| `themis doctor` | none | You need repository/tooling readiness diagnostics. |
+| `themis rules` | none | You need effective policy and inferred upstream process rules. |
+| `themis providers` | none | You need AI provider configuration diagnostics. |
+| `themis config check` | none | You need standalone `.themis.toml` validation. |
 
 `themis check` is intentionally not a command. It duplicates `validate` while also colliding with required checks and `--check` documentation workflows.
 
@@ -212,7 +217,7 @@ Additional docs:
 - `docs/development.md`: local development and self-check workflow.
 - `docs/assets/README.md`: visual concept artwork and future brand asset notes.
 - `examples/pr-body.md`: minimal PR body template that includes required accountability sections.
-- `examples/github-actions/`: copyable GitHub workflows for validation, PR comments, and self-check.
+- `examples/github-actions/`: copyable GitHub workflows for validation, PR comments, self-check, and config-check.
 
 ## Shell Completion
 

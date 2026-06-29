@@ -38,6 +38,7 @@ The format follows Keep a Changelog conventions, and this project uses semantic 
 - Executable tests for GitHub Action workflow argument routing.
 - JSON Schema alignment for top-level policy-key shorthand.
 - Shell completion coverage for the `config` command.
+- README command table coverage for diagnostics and config validation workflows.
 - Configuration, GitHub Action, and development documentation.
 - Direct CLI parser tests for command forms.
 - `themis init` setup command for target repositories.
