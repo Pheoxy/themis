@@ -52,6 +52,12 @@ jobs:
 - `head-branch`: draft PR source branch override.
 - `install-nix`: install Nix before running. Default: `true`.
 
+## Outputs
+
+- `status`: `pass` when Themis exits `0`, otherwise `blocked`.
+- `exit-code`: Themis CLI exit code.
+- `report`: path to the generated gate output artifact.
+
 Draft PR creation from CI requires write permissions and GitHub CLI authentication. Keep it opt-in.
 
 Markdown reports are appended directly to the summary. JSON and SARIF are wrapped in fenced code blocks so the check summary remains readable.

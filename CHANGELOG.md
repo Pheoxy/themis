@@ -26,6 +26,7 @@ The format follows Keep a Changelog conventions, and this project uses semantic 
 - `themis self-check` combined diagnostics/rules/providers/gate workflow.
 - `themis init` now writes safe disabled-by-default AI provider configuration.
 - `themis release check` version consistency workflow enforced by `nix flake check`.
+- GitHub Action outputs for gate status, exit code, and report path.
 - Configuration, GitHub Action, and development documentation.
 - Direct CLI parser tests for command forms.
 - `themis init` setup command for target repositories.

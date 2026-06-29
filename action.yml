@@ -51,6 +51,17 @@ inputs:
     description: Install Nix before running.
     default: "true"
 
+outputs:
+  status:
+    description: Themis gate status, either pass or blocked.
+    value: ${{ steps.validate.outputs.status }}
+  exit-code:
+    description: Themis CLI exit code.
+    value: ${{ steps.validate.outputs.exit-code }}
+  report:
+    description: Path to the generated Themis gate output.
+    value: ${{ steps.validate.outputs.report }}
+
 runs:
   using: composite
   steps:
@@ -59,6 +70,7 @@ runs:
       uses: DeterminateSystems/nix-installer-action@v16
 
     - name: Validate upstream readiness
+      id: validate
       shell: bash
       env:
         INPUT_REPO: ${{ inputs.repo }}
@@ -109,7 +121,20 @@ runs:
         if [[ -n "$INPUT_HEAD_BRANCH" ]]; then
           args+=(--head-branch "$INPUT_HEAD_BRANCH")
         fi
+        set +e
         nix run "$GITHUB_ACTION_PATH" -- "${command[@]}" "${args[@]}"
+        exit_code=$?
+        set -e
+        status=pass
+        if [[ "$exit_code" != "0" ]]; then
+          status=blocked
+        fi
+        {
+          printf 'status=%s\n' "$status"
+          printf 'exit-code=%s\n' "$exit_code"
+          printf 'report=%s\n' "$INPUT_OUTPUT"
+        } >> "$GITHUB_OUTPUT"
+        exit "$exit_code"
 
     - name: Write step summary
       if: always() && inputs.step-summary == 'true' && inputs.output != ''
