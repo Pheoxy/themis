@@ -35,6 +35,7 @@ The format follows Keep a Changelog conventions, and this project uses semantic 
 - Fail-closed handling for unknown top-level `.themis.toml` tables while allowing `[ai]`-only configs.
 - `themis config check` for validating `.themis.toml` without running a gate workflow.
 - GitHub Action `config-check` workflow support and copyable example.
+- Executable tests for GitHub Action workflow argument routing.
 - Configuration, GitHub Action, and development documentation.
 - Direct CLI parser tests for command forms.
 - `themis init` setup command for target repositories.
