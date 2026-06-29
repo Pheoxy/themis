@@ -21,12 +21,6 @@ classifiers = [
   "Topic :: Software Development :: Quality Assurance",
 ]
 
-[project.urls]
-Homepage = "https://github.com/OWNER/themis"
-Documentation = "https://github.com/OWNER/themis/tree/main/docs"
-Issues = "https://github.com/OWNER/themis/issues"
-Source = "https://github.com/OWNER/themis"
-
 [project.scripts]
 themis = "themis.cli:main"
 

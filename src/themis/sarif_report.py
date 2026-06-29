@@ -16,7 +16,6 @@ def render_sarif(data: ValidationInput, findings: list[Finding]) -> str:
                 "tool": {
                     "driver": {
                         "name": "Themis",
-                        "informationUri": "https://github.com/OWNER/themis",
                         "version": __version__,
                         "rules": rules(findings),
                     }
