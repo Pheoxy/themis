@@ -53,6 +53,15 @@ class DoctorTests(unittest.TestCase):
             self.assertEqual(payload["tool"], "themis")
             self.assertEqual(payload["workflow"], "doctor")
 
+    def test_doctor_includes_provider_diagnostics(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            repo = create_example_target_repo(Path(raw))
+            with patch("themis.doctor.shutil.which", return_value="/bin/tool"):
+                result = run_doctor(repo)
+            codes = {check.code for check in result.checks}
+            self.assertIn("ai-provider-config", codes)
+            self.assertIn("ai-provider-disabled", codes)
+
 
 if __name__ == "__main__":
     unittest.main()

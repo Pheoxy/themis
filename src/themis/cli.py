@@ -104,6 +104,11 @@ def build_parser() -> argparse.ArgumentParser:
     rules_parser.add_argument("--format", choices=["markdown", "json"], default="markdown", help="Rules output format.")
     rules_parser.add_argument("-o", "--output", type=Path, help="Write rules output to this path.")
 
+    providers_parser = subcommands.add_parser("providers", help="Inspect configured AI provider backend readiness.")
+    providers_parser.add_argument("-r", "--repo", type=Path, default=Path.cwd(), help="Target git repository to inspect.")
+    providers_parser.add_argument("--format", choices=["markdown", "json"], default="markdown", help="Providers output format.")
+    providers_parser.add_argument("-o", "--output", type=Path, help="Write providers output to this path.")
+
     init_parser = subcommands.add_parser("init", help="Create starter Themis files in a target repository.")
     init_parser.add_argument("-r", "--repo", type=Path, default=Path.cwd(), help="Target repository to initialize.")
     init_parser.add_argument("--force", action="store_true", help="Overwrite existing generated files.")
@@ -157,6 +162,14 @@ def main(argv: list[str] | None = None) -> int:
             output = render_rules_json(inspection) if args.format == "json" else render_rules_markdown(inspection)
             write_output(output, args.output)
             return rules_exit_code(inspection)
+        if args.command == "providers":
+            from .providers import inspect_providers, providers_exit_code, render_providers_json, render_providers_markdown
+
+            root = repo_root(args.repo.resolve())
+            diagnostics = inspect_providers(root)
+            output = render_providers_json(diagnostics) if args.format == "json" else render_providers_markdown(diagnostics)
+            write_output(output, args.output)
+            return providers_exit_code(diagnostics)
         if args.command == "init":
             from .init import init_repo
 

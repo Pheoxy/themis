@@ -7,6 +7,7 @@ import shutil
 
 from .git import GitError, current_branch, repo_root
 from .policy import PolicyConfig, load_rule_docs
+from .providers import inspect_providers
 
 
 PASS = "PASS"
@@ -59,6 +60,7 @@ def run_doctor(repo: Path) -> DoctorResult:
         checks.append(DoctorCheck(WARN, "upstream-rules", "No upstream rule documents detected."))
 
     checks.extend(tool_checks(config))
+    checks.extend(provider_checks(root))
     checks.extend(repo_state_checks(root))
     if config.required_checks:
         checks.append(DoctorCheck(PASS, "required-checks", f"Configured required checks: {', '.join(config.required_checks)}"))
@@ -81,6 +83,17 @@ def tool_check(name: str, *, required: bool) -> DoctorCheck:
     status = FAIL if required else WARN
     requirement = "required" if required else "optional"
     return DoctorCheck(status, f"tool-{name}", f"Missing {requirement} tool `{name}`.")
+
+
+def provider_checks(root: Path) -> list[DoctorCheck]:
+    try:
+        diagnostics = inspect_providers(root)
+    except ValueError as exc:
+        return [DoctorCheck(FAIL, "ai-provider-config", "AI provider configuration is invalid.", str(exc))]
+    output: list[DoctorCheck] = []
+    for check in diagnostics.checks:
+        output.append(DoctorCheck(check.status, f"ai-{check.code}", check.message, check.detail))
+    return output
 
 
 def repo_state_checks(root: Path) -> list[DoctorCheck]:

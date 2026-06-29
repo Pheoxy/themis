@@ -14,3 +14,11 @@ block_placeholders = true
 required_checks = [
   "nix flake check",
 ]
+
+[ai]
+enabled = false
+provider = "none"
+model = ""
+api_key_env = ""
+endpoint_env = ""
+allowed_workflows = ["explain", "guide", "maintainer-packet", "rules"]

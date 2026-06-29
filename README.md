@@ -56,6 +56,12 @@ Inspect the effective policy and inferred upstream rules:
 themis rules --repo /path/to/target/repo
 ```
 
+Inspect configured AI provider backend readiness:
+
+```bash
+themis providers --repo /path/to/target/repo
+```
+
 Ask Themis to run the gate and organize the upstream prep work for the current change:
 
 ```bash
@@ -175,6 +181,7 @@ Additional docs:
 - `docs/configuration.md`: `.themis.toml` policy fields and examples.
 - `docs/cli-style.md`: CLI command/output style rules and naming guidance.
 - `docs/github-action.md`: GitHub Action usage and inputs.
+- `docs/ai-providers.md`: safe AI backend/provider configuration and roadmap.
 - `docs/development.md`: local development and self-check workflow.
 - `docs/assets/README.md`: visual concept artwork and future brand asset notes.
 - `examples/pr-body.md`: minimal PR body template that includes required accountability sections.

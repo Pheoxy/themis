@@ -11,6 +11,7 @@ COMMANDS = [
     "explain",
     "doctor",
     "rules",
+    "providers",
     "pull-request",
     "pr",
     "draft",
