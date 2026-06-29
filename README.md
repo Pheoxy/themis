@@ -62,6 +62,12 @@ Inspect configured AI provider backend readiness:
 themis providers --repo /path/to/target/repo
 ```
 
+Run the combined local readiness workflow:
+
+```bash
+themis self-check --repo /path/to/target/repo --base origin/main --body-file pr-body.md --evidence "nix flake check passed" --run-checks
+```
+
 Preview explicit provider-backed assistant output without changing gate results:
 
 ```bash

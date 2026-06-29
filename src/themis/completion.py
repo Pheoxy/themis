@@ -14,6 +14,7 @@ COMMANDS = [
     "providers",
     "inspect",
     "preview",
+    "self-check",
     "pull-request",
     "pr",
     "draft",

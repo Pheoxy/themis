@@ -112,6 +112,10 @@ def build_parser() -> argparse.ArgumentParser:
     providers_parser.add_argument("--workflow", default="guide", help="Assistant workflow for provider preview.")
     providers_parser.add_argument("--prompt", default="Summarize the current upstream readiness state.", help="Prompt text for provider preview.")
 
+    self_check_parser = subcommands.add_parser("self-check", help="Run diagnostics, rules, provider checks, and the gate together.")
+    add_validation_args(self_check_parser, base_default="origin/main")
+    self_check_parser.add_argument("--run-checks", action="store_true", help="Run required checks from .themis.toml during the gate stage.")
+
     init_parser = subcommands.add_parser("init", help="Create starter Themis files in a target repository.")
     init_parser.add_argument("-r", "--repo", type=Path, default=Path.cwd(), help="Target repository to initialize.")
     init_parser.add_argument("--force", action="store_true", help="Overwrite existing generated files.")
@@ -186,6 +190,26 @@ def main(argv: list[str] | None = None) -> int:
             output = render_providers_json(diagnostics) if args.format == "json" else render_providers_markdown(diagnostics)
             write_output(output, args.output)
             return providers_exit_code(diagnostics)
+        if args.command == "self-check":
+            from .doctor import run_doctor
+            from .providers import inspect_providers
+            from .rules import inspect_rules
+            from .self_check import SelfCheckResult, render_self_check_json, render_self_check_markdown, self_check_exit_code
+
+            if args.format == "sarif":
+                raise ValueError("self-check supports markdown and json output, not sarif")
+            gate = evaluate_gate(args, run_checks=args.run_checks)
+            root = gate.validation.root
+            result = SelfCheckResult(
+                doctor=run_doctor(root),
+                rules=inspect_rules(root, gate.validation.config),
+                providers=inspect_providers(root),
+                findings=gate.findings,
+            )
+            output = render_self_check_json(result) if args.format == "json" else render_self_check_markdown(result)
+            write_output(output, args.output)
+            write_annotations(gate.findings, args.annotations)
+            return self_check_exit_code(result)
         if args.command == "init":
             from .init import init_repo
 

@@ -8,13 +8,13 @@ This file is generated from the argparse command tree. Update CLI code first, th
 
 ```text
 usage: themis [-h] [--version]
-              {validate,v,guide,g,maintainer-packet,mp,pull-request,pr,docs,explain,doctor,rules,providers,init,completion}
+              {validate,v,guide,g,maintainer-packet,mp,pull-request,pr,docs,explain,doctor,rules,providers,self-check,init,completion}
               ...
 
 Paranoid upstream PR validator for AI-assisted code.
 
 positional arguments:
-  {validate,v,guide,g,maintainer-packet,mp,pull-request,pr,docs,explain,doctor,rules,providers,init,completion}
+  {validate,v,guide,g,maintainer-packet,mp,pull-request,pr,docs,explain,doctor,rules,providers,self-check,init,completion}
     validate (v)        Run the hard upstream-readiness gate.
     guide (g)           Run the gate and generate an upstream readiness guide.
     maintainer-packet (mp)
@@ -25,6 +25,8 @@ positional arguments:
     doctor              Diagnose target repository and local Themis readiness.
     rules               Show effective policy and inferred upstream rules.
     providers           Inspect configured AI provider backend readiness.
+    self-check          Run diagnostics, rules, provider checks, and the gate
+                        together.
     init                Create starter Themis files in a target repository.
     completion          Print shell completion script.
 
@@ -269,6 +271,38 @@ options:
                         Write providers output to this path.
   --workflow WORKFLOW   Assistant workflow for provider preview.
   --prompt PROMPT       Prompt text for provider preview.
+```
+
+## `themis self-check`
+
+```text
+usage: themis self-check [-h] [-r REPO] [-b BASE] [--ai | --human]
+                         [-B BODY_FILE] [-e EVIDENCE] [-E EVIDENCE_FILE]
+                         [-o OUTPUT] [--format {markdown,json,sarif}]
+                         [--annotations {none,github}] [--run-checks]
+
+options:
+  -h, --help            show this help message and exit
+  -r REPO, --repo REPO  Target git repository to validate.
+  -b BASE, --base BASE  Base ref for PR diff, for example origin/main.
+                        Defaults to HEAD plus working tree changes.
+  --ai, --ai-assisted   Treat the patch as AI-assisted. This is the default.
+  --human, --human-authored
+                        Explicitly declare the patch was not AI-assisted.
+  -B BODY_FILE, --body-file BODY_FILE
+                        File containing the pull request body.
+  -e EVIDENCE, --evidence EVIDENCE
+                        Short text proving which tests/checks passed.
+  -E EVIDENCE_FILE, --evidence-file EVIDENCE_FILE
+                        File containing test/check evidence.
+  -o OUTPUT, --output OUTPUT
+                        Write gate output to this path.
+  --format {markdown,json,sarif}
+                        Output format for gate results.
+  --annotations {none,github}
+                        Emit CI annotations for findings.
+  --run-checks          Run required checks from .themis.toml during the gate
+                        stage.
 ```
 
 ## `themis init`

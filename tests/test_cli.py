@@ -86,6 +86,14 @@ class CliTests(unittest.TestCase):
         self.assertEqual(args.workflow, "guide")
         self.assertEqual(args.prompt, "help")
 
+    def test_self_check_command_parses(self) -> None:
+        parser = build_parser()
+        args = parser.parse_args(["self-check", "--repo", ".", "--format", "json", "--human"])
+        self.assertEqual(args.command, "self-check")
+        self.assertEqual(args.repo, Path("."))
+        self.assertEqual(args.format, "json")
+        self.assertFalse(args.ai_assisted)
+
     def test_generated_cli_docs_include_canonical_commands(self) -> None:
         docs = render_cli_docs()
         self.assertIn(GENERATED_HEADER, docs)
@@ -97,6 +105,7 @@ class CliTests(unittest.TestCase):
         self.assertIn("doctor", docs)
         self.assertIn("rules", docs)
         self.assertIn("providers", docs)
+        self.assertIn("self-check", docs)
         self.assertIn("pull-request (pr)", docs)
         self.assertIn("draft (d)", docs)
         self.assertNotIn("validate (check", docs)
