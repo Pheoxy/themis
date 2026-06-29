@@ -8,19 +8,20 @@ This file is generated from the argparse command tree. Update CLI code first, th
 
 ```text
 usage: themis [-h] [--version]
-              {validate,v,guide,g,maintainer-packet,mp,pull-request,pr,docs,init,completion}
+              {validate,v,guide,g,maintainer-packet,mp,pull-request,pr,docs,explain,init,completion}
               ...
 
 Paranoid upstream PR validator for AI-assisted code.
 
 positional arguments:
-  {validate,v,guide,g,maintainer-packet,mp,pull-request,pr,docs,init,completion}
+  {validate,v,guide,g,maintainer-packet,mp,pull-request,pr,docs,explain,init,completion}
     validate (v)        Run the hard upstream-readiness gate.
     guide (g)           Run the gate and generate an upstream readiness guide.
     maintainer-packet (mp)
                         Run the gate and generate a maintainer-facing packet.
     pull-request (pr)   Pull request workflows.
     docs                Documentation workflows.
+    explain             Explain a Themis finding code and how to fix it.
     init                Create starter Themis files in a target repository.
     completion          Print shell completion script.
 
@@ -204,6 +205,18 @@ options:
   --write               Write generated CLI docs to disk.
   --check               Fail if generated CLI docs differ from disk.
   -p PATH, --path PATH  Generated docs path.
+```
+
+## `themis explain`
+
+```text
+usage: themis explain [-h] [code]
+
+positional arguments:
+  code        Finding code to explain. Omit to list known codes.
+
+options:
+  -h, --help  show this help message and exit
 ```
 
 ## `themis init`

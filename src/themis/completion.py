@@ -8,6 +8,7 @@ COMMANDS = [
     "g",
     "maintainer-packet",
     "mp",
+    "explain",
     "pull-request",
     "pr",
     "draft",

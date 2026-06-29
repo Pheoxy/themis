@@ -62,6 +62,7 @@ The commands are intentionally separated by audience and output, not by differen
 | `themis validate` | `themis v` | contributor / CI | Run the hard gate and produce the base validation report. |
 | `themis guide` | `themis g` | contributor | Run the same gate and produce preparation guidance for fixing the submission. |
 | `themis maintainer-packet` | `themis mp` | maintainer | Run the same gate and produce maintainer-facing feedback and triage notes. |
+| `themis explain` | none | contributor / maintainer | Explain a finding code and expected remediation. |
 | `themis pull-request draft` | `themis pr d` | contributor | Run the gate, run configured checks by default, and create a GitHub draft PR only if clean. |
 | `themis init` | none | setup | Create starter Themis policy/template files in a target repo. |
 | `themis docs cli` | none | project maintenance | Generate/check parser-derived CLI docs. |
@@ -84,6 +85,7 @@ themis guide
 themis g
 themis maintainer-packet
 themis mp
+themis explain missing-test-evidence
 themis pull-request draft
 themis pr d
 ```

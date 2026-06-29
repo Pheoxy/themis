@@ -50,6 +50,12 @@ class CliTests(unittest.TestCase):
                 with self.assertRaises(SystemExit):
                     parser.parse_args(argv)
 
+    def test_explain_command_parses_optional_code(self) -> None:
+        parser = build_parser()
+        args = parser.parse_args(["explain", "missing-test-evidence"])
+        self.assertEqual(args.command, "explain")
+        self.assertEqual(args.code, "missing-test-evidence")
+
     def test_generated_cli_docs_include_canonical_commands(self) -> None:
         docs = render_cli_docs()
         self.assertIn(GENERATED_HEADER, docs)
@@ -57,6 +63,7 @@ class CliTests(unittest.TestCase):
         self.assertIn("validate (v)", docs)
         self.assertIn("guide (g)", docs)
         self.assertIn("maintainer-packet (mp)", docs)
+        self.assertIn("explain", docs)
         self.assertIn("pull-request (pr)", docs)
         self.assertIn("draft (d)", docs)
         self.assertNotIn("validate (check", docs)

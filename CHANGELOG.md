@@ -15,6 +15,7 @@ The format follows Keep a Changelog conventions, and this project uses semantic 
 - Richer validation reports with changed files, bounded check output snippets, and next actions.
 - CLI style guidance and target-repository CLI integration tests.
 - Machine-readable JSON gate output through `--format json`.
+- `themis explain` finding-code remediation catalog for contributor/maintainer back-and-forth.
 - Configuration, GitHub Action, and development documentation.
 - Direct CLI parser tests for command forms.
 - `themis init` setup command for target repositories.

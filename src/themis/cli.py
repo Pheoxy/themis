@@ -90,6 +90,9 @@ def build_parser() -> argparse.ArgumentParser:
     cli_docs_mode.add_argument("--check", action="store_true", help="Fail if generated CLI docs differ from disk.")
     cli_docs_parser.add_argument("-p", "--path", type=Path, default=Path("docs/cli.md"), help="Generated docs path.")
 
+    explain_parser = subcommands.add_parser("explain", help="Explain a Themis finding code and how to fix it.")
+    explain_parser.add_argument("code", nargs="?", help="Finding code to explain. Omit to list known codes.")
+
     init_parser = subcommands.add_parser("init", help="Create starter Themis files in a target repository.")
     init_parser.add_argument("-r", "--repo", type=Path, default=Path.cwd(), help="Target repository to initialize.")
     init_parser.add_argument("--force", action="store_true", help="Overwrite existing generated files.")
@@ -123,6 +126,11 @@ def main(argv: list[str] | None = None) -> int:
             from .docs import handle_cli_docs
 
             return handle_cli_docs(args)
+        if args.command == "explain":
+            from .explain import render_explanation
+
+            print(render_explanation(args.code), end="")
+            return 0
         if args.command == "init":
             from .init import init_repo
 

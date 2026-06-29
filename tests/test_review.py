@@ -30,7 +30,7 @@ class ReviewPacketTests(unittest.TestCase):
             self.assertIn("exact passing command output", packet)
 
     def test_feedback_for_common_blockers(self) -> None:
-        self.assertIn("AI assistance disclosure", feedback_for("missing-ai-disclosure"))
+        self.assertIn("AI assistance:` section", feedback_for("missing-ai-disclosure"))
         self.assertIn("Signed-off-by", feedback_for("missing-signed-off-by"))
         self.assertIn("warning", feedback_for("upstream-ai-policy-present", "WARNING"))
         self.assertIn("No action required", feedback_for("clean-static-gate", "INFO"))

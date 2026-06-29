@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
+from .explain import remediation_for
 from .git import ChangedFile, Numstat
 from .policy import BLOCKER, INFO, WARNING, Finding, PolicyConfig, is_source_path, is_test_path, load_rule_docs
 
@@ -108,20 +109,4 @@ def render_reviewer_questions(code_changes: list[str], test_changes: list[str], 
 
 
 def feedback_for(code: str, severity: str = BLOCKER) -> str:
-    if code.startswith("missing-ai") or code.startswith("weak-ai"):
-        return "Add a specific AI assistance disclosure explaining tool use and human review."
-    if "accountability" in code:
-        return "State that the submitter owns the work; Themis and AI tools do not."
-    if "test" in code or "check" in code:
-        return "Provide exact passing command output or CI evidence."
-    if "changelog" in code:
-        return "Update release notes or explain why no entry is needed."
-    if "signed-off" in code or "dco" in code:
-        return "Add required Signed-off-by trailers or fix the commit range."
-    if "generated" in code or "vendor" in code:
-        return "Remove generated/vendor noise or provide an explicit project-approved exception."
-    if severity == WARNING:
-        return "Review this warning against the target repository rules before approval."
-    if severity == INFO:
-        return "No action required unless normal human review finds a concern."
-    return "Resolve this blocker according to the target repository rules, then re-run Themis."
+    return remediation_for(code, severity)

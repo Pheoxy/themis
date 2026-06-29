@@ -56,6 +56,12 @@ Generate maintainer-facing feedback that can be sent back to a contributor:
 themis maintainer-packet --repo /path/to/target/repo --base origin/main --body-file pr-body.md --evidence "pytest -q passed" --run-checks
 ```
 
+Explain a blocker or warning code during back-and-forth review:
+
+```bash
+themis explain missing-test-evidence
+```
+
 In GitHub Actions, Themis can annotate blockers and warnings directly in the check UI:
 
 ```bash
