@@ -22,6 +22,15 @@ class SchemaTests(unittest.TestCase):
         root_policy_keys = set(schema["properties"]) & config_keys
         self.assertEqual(root_policy_keys, config_keys)
 
+    def test_schema_rejects_mixing_policy_table_and_shorthand(self) -> None:
+        schema = load_schema()
+        blocked_keys = {
+            tuple(rule["not"]["required"])[1]
+            for rule in schema["allOf"]
+            if tuple(rule.get("not", {}).get("required", ()))[:1] == ("policy",)
+        }
+        self.assertEqual(blocked_keys, set(PolicyConfig.__dataclass_fields__))  # type: ignore[attr-defined]
+
     def test_schema_covers_ai_provider_config_keys(self) -> None:
         schema = load_schema()
         schema_keys = set(schema["properties"]["ai"]["properties"])

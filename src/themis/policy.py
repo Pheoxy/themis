@@ -149,6 +149,9 @@ class PolicyConfig:
         unknown_top_level = sorted(set(data) - allowed - known_tables)
         if unknown_top_level:
             raise ValueError(f"unknown top-level keys in {path}: {', '.join(unknown_top_level)}")
+        top_level_policy_keys = sorted(set(data) & allowed)
+        if "policy" in data and top_level_policy_keys:
+            raise ValueError(f"policy keys must not be mixed with [policy] in {path}: {', '.join(top_level_policy_keys)}")
         policy = data.get("policy", {key: value for key, value in data.items() if key in allowed})
         unknown = sorted(set(policy) - allowed)
         if unknown:

@@ -39,6 +39,7 @@ The format follows Keep a Changelog conventions, and this project uses semantic 
 - JSON Schema alignment for top-level policy-key shorthand.
 - Shell completion coverage for the `config` command.
 - README command table coverage for diagnostics and config validation workflows.
+- Fail-closed rejection for configs that mix `[policy]` with top-level policy-key shorthand.
 - Configuration, GitHub Action, and development documentation.
 - Direct CLI parser tests for command forms.
 - `themis init` setup command for target repositories.

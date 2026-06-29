@@ -82,4 +82,4 @@ docs/schema/themis.schema.json
 
 The schema is checked by unit tests to stay aligned with Themis's policy and AI provider config dataclasses.
 
-Prefer the explicit `[policy]` table for readability. The schema also accepts top-level policy keys because Themis supports that shorthand for small configs.
+Prefer the explicit `[policy]` table for readability. The schema also accepts top-level policy keys because Themis supports that shorthand for small configs. Do not mix `[policy]` with top-level policy keys in the same file; Themis rejects that ambiguous form.

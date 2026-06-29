@@ -45,6 +45,13 @@ class PolicyTests(unittest.TestCase):
             (tmp / ".themis.toml").write_text("max_changed_files = 5\n", encoding="utf-8")
             self.assertEqual(PolicyConfig.load(tmp).max_changed_files, 5)
 
+    def test_policy_config_rejects_mixed_policy_table_and_shorthand(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            tmp = Path(raw)
+            (tmp / ".themis.toml").write_text('max_added_lines = 10\n\n[policy]\nmax_changed_files = 5\n', encoding="utf-8")
+            with self.assertRaisesRegex(ValueError, "must not be mixed"):
+                PolicyConfig.load(tmp)
+
     def test_ai_assisted_requires_disclosure_and_accountability(self) -> None:
         with tempfile.TemporaryDirectory() as raw:
             tmp = Path(raw)

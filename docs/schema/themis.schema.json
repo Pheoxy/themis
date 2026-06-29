@@ -4,6 +4,21 @@
   "title": "Themis configuration",
   "type": "object",
   "additionalProperties": false,
+  "allOf": [
+    { "not": { "required": ["policy", "max_changed_files"] } },
+    { "not": { "required": ["policy", "max_added_lines"] } },
+    { "not": { "required": ["policy", "max_deleted_lines"] } },
+    { "not": { "required": ["policy", "max_file_added_lines"] } },
+    { "not": { "required": ["policy", "require_upstream_rules"] } },
+    { "not": { "required": ["policy", "require_tests_for_code"] } },
+    { "not": { "required": ["policy", "require_test_changes_for_code"] } },
+    { "not": { "required": ["policy", "block_generated_paths"] } },
+    { "not": { "required": ["policy", "block_vendor_paths"] } },
+    { "not": { "required": ["policy", "block_ai_markers"] } },
+    { "not": { "required": ["policy", "block_placeholders"] } },
+    { "not": { "required": ["policy", "allow_paths"] } },
+    { "not": { "required": ["policy", "required_checks"] } }
+  ],
   "properties": {
     "max_changed_files": { "type": "integer", "minimum": 1 },
     "max_added_lines": { "type": "integer", "minimum": 0 },
