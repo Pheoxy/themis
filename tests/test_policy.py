@@ -5,7 +5,7 @@ import unittest
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from themis.git import ChangedFile, Numstat
+from themis.git import ChangedFile, CommitInfo, Numstat
 from themis.policy import BLOCKER, PolicyConfig, ValidationInput, validate
 
 
@@ -157,6 +157,25 @@ class PolicyTests(unittest.TestCase):
             data = make_input(tmp, diff="", files=[ChangedFile("README.md", "M")], pr=pr)
             findings = validate(data, PolicyConfig())
             self.assertIn("pr-template-not-acknowledged", {item.code for item in findings if item.severity == BLOCKER})
+
+    def test_issue_reference_requirement_blocks_missing_pr_link(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            tmp = Path(raw)
+            (tmp / "CONTRIBUTING.md").write_text("Before opening a pull request, reference the issue this closes and run pytest.\n", encoding="utf-8")
+            pr = "AI assistance: Used for implementation suggestions and reviewed manually.\n\nHuman accountability: I own every line and take responsibility for tests."
+            data = make_input(tmp, diff="", files=[ChangedFile("README.md", "M")], pr=pr)
+            findings = validate(data, PolicyConfig())
+            self.assertIn("missing-issue-link", {item.code for item in findings if item.severity == BLOCKER})
+
+    def test_conventional_commit_requirement_blocks_invalid_subject(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            tmp = Path(raw)
+            (tmp / "CONTRIBUTING.md").write_text("Commits must follow Conventional Commits. Run cargo test.\n", encoding="utf-8")
+            pr = "AI assistance: Used for implementation suggestions and reviewed manually.\n\nHuman accountability: I own every line and take responsibility for tests."
+            data = make_input(tmp, diff="", files=[ChangedFile("README.md", "M")], pr=pr)
+            data.commits.append(CommitInfo("abc123", "update docs", ""))
+            findings = validate(data, PolicyConfig())
+            self.assertIn("invalid-commit-style", {item.code for item in findings if item.severity == BLOCKER})
 
     def test_issue_templates_do_not_create_pr_issue_link_rule(self) -> None:
         with tempfile.TemporaryDirectory() as raw:
