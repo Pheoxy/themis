@@ -7,7 +7,7 @@ inputs:
     default: .
   base:
     description: Base ref for the PR diff, for example origin/main.
-    required: true
+    default: ""
   body-file:
     description: File containing the pull request body.
     default: ""
@@ -24,7 +24,7 @@ inputs:
     description: Run required_checks from .themis.toml.
     default: "true"
   workflow:
-    description: Themis workflow to run. Use validate, guide, maintainer-packet, or self-check.
+    description: Themis workflow to run. Use validate, guide, maintainer-packet, self-check, or config-check.
     default: validate
   output:
     description: Gate output path.
@@ -62,13 +62,13 @@ inputs:
 
 outputs:
   status:
-    description: Themis gate status, either pass or blocked.
+    description: Themis workflow status, either pass or blocked.
     value: ${{ steps.validate.outputs.status }}
   exit-code:
     description: Themis CLI exit code.
     value: ${{ steps.validate.outputs.exit-code }}
   report:
-    description: Path to the generated Themis gate output.
+    description: Path to the generated Themis output.
     value: ${{ steps.validate.outputs.report }}
 
 runs:
@@ -112,6 +112,9 @@ runs:
           self-check)
             command=(self-check)
             ;;
+          config-check)
+            command=(config check)
+            ;;
           *)
             printf 'Unsupported Themis workflow: %s\n' "$INPUT_WORKFLOW" >&2
             exit 3
@@ -120,20 +123,26 @@ runs:
         if [[ "$INPUT_DRAFT_PR" == "true" ]]; then
           command=(pull-request draft)
         fi
-        args=(--repo "$INPUT_REPO" --base "$INPUT_BASE" --output "$INPUT_OUTPUT" --format "$INPUT_FORMAT" --annotations "$INPUT_ANNOTATIONS")
-        if [[ -n "$INPUT_BODY_FILE" ]]; then
+        args=(--repo "$INPUT_REPO" --output "$INPUT_OUTPUT" --format "$INPUT_FORMAT")
+        if [[ "${command[0]}" != "config" && -n "$INPUT_BASE" ]]; then
+          args+=(--base "$INPUT_BASE")
+        fi
+        if [[ "${command[0]}" != "config" ]]; then
+          args+=(--annotations "$INPUT_ANNOTATIONS")
+        fi
+        if [[ "${command[0]}" != "config" && -n "$INPUT_BODY_FILE" ]]; then
           args+=(--body-file "$INPUT_BODY_FILE")
         fi
-        if [[ -n "$INPUT_EVIDENCE" ]]; then
+        if [[ "${command[0]}" != "config" && -n "$INPUT_EVIDENCE" ]]; then
           args+=(--evidence "$INPUT_EVIDENCE")
         fi
-        if [[ -n "$INPUT_EVIDENCE_FILE" ]]; then
+        if [[ "${command[0]}" != "config" && -n "$INPUT_EVIDENCE_FILE" ]]; then
           args+=(--evidence-file "$INPUT_EVIDENCE_FILE")
         fi
-        if [[ "$INPUT_HUMAN_AUTHORED" == "true" ]]; then
+        if [[ "${command[0]}" != "config" && "$INPUT_HUMAN_AUTHORED" == "true" ]]; then
           args+=(--human-authored)
         fi
-        if [[ "${command[0]}" != "pull-request" && "$INPUT_RUN_CHECKS" == "true" ]]; then
+        if [[ "${command[0]}" != "pull-request" && "${command[0]}" != "config" && "$INPUT_RUN_CHECKS" == "true" ]]; then
           args+=(--run-checks)
         fi
         if [[ "${command[0]}" == "pull-request" && "$INPUT_RUN_CHECKS" != "true" ]]; then

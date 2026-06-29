@@ -1,0 +1,22 @@
+name: Themis Config Check
+
+on:
+  pull_request:
+    paths:
+      - ".themis.toml"
+      - "docs/schema/themis.schema.json"
+      - ".github/workflows/**"
+
+permissions:
+  contents: read
+
+jobs:
+  config-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: OWNER/themis@main
+        with:
+          workflow: config-check
+          format: markdown
+          output: themis-config-check.md

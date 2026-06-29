@@ -8,6 +8,7 @@ class ExampleWorkflowTests(unittest.TestCase):
         validate = (root / "examples" / "github-actions" / "validate.yml").read_text(encoding="utf-8")
         comment = (root / "examples" / "github-actions" / "comment.yml").read_text(encoding="utf-8")
         self_check = (root / "examples" / "github-actions" / "self-check.yml").read_text(encoding="utf-8")
+        config_check = (root / "examples" / "github-actions" / "config-check.yml").read_text(encoding="utf-8")
 
         self.assertIn("workflow: validate", validate)
         self.assertIn("pull-requests: read", validate)
@@ -17,6 +18,9 @@ class ExampleWorkflowTests(unittest.TestCase):
         self.assertIn("pull-requests: write", comment)
         self.assertIn("GH_TOKEN", comment)
         self.assertIn("workflow: self-check", self_check)
+        self.assertIn("workflow: config-check", config_check)
+        self.assertIn("contents: read", config_check)
+        self.assertIn(".themis.toml", config_check)
 
 
 if __name__ == "__main__":

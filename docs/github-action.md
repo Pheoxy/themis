@@ -38,17 +38,18 @@ More complete copyable examples live in `examples/github-actions/`:
 - `validate.yml`: default hard gate with read-only pull request permissions.
 - `comment.yml`: maintainer-facing comment workflow with `format: comment` and `comment-pr: "true"`.
 - `self-check.yml`: combined doctor/rules/providers/gate workflow.
+- `config-check.yml`: lightweight `.themis.toml` validation workflow.
 
 ## Inputs
 
 - `repo`: repository path to validate. Default: `.`.
-- `base`: base ref for the diff. Required.
+- `base`: base ref for the diff. Optional for `config-check`; recommended for PR gate workflows.
 - `body-file`: file containing the pull request body.
 - `evidence`: inline test/check evidence.
 - `evidence-file`: file containing test/check evidence.
 - `human-authored`: set to `true` only when no AI assistance was used.
 - `run-checks`: run `.themis.toml` required checks. Default: `true`.
-- `workflow`: Themis workflow to run. Use `validate`, `guide`, `maintainer-packet`, or `self-check`. Default: `validate`.
+- `workflow`: Themis workflow to run. Use `validate`, `guide`, `maintainer-packet`, `self-check`, or `config-check`. Default: `validate`.
 - `output`: report path. Default: `upstream-validation-report.md`.
 - `format`: gate output format. Use `markdown`, `comment`, `json`, or `sarif`. Default: `markdown`.
 - `annotations`: CI annotation mode. Use `github` or `none`. Default: `github`.
@@ -65,7 +66,7 @@ More complete copyable examples live in `examples/github-actions/`:
 
 - `status`: `pass` when Themis exits `0`, otherwise `blocked`.
 - `exit-code`: Themis CLI exit code.
-- `report`: path to the generated gate output artifact.
+- `report`: path to the generated Themis output artifact.
 
 Draft PR creation from CI requires write permissions and GitHub CLI authentication. Keep it opt-in.
 When `draft-pr` is `true`, the action runs `themis pull-request draft` regardless of `workflow`.
@@ -74,9 +75,12 @@ Markdown and comment reports are appended directly to the summary. JSON and SARI
 
 PR commenting requires `pull-requests: write` and a valid `GH_TOKEN`. Comment failures emit a warning instead of replacing the gate result. Use `format: comment` for concise comment bodies.
 
+The `config-check` workflow ignores gate-only inputs such as `base`, `body-file`, `evidence`, and `annotations`; it supports `markdown` and `json` output.
+
 The examples in `examples/github-actions/` show the expected permission split:
 
 - validation and self-check use `pull-requests: read`.
+- config-check uses `contents: read` only.
 - PR comments use `pull-requests: write` and `GH_TOKEN`.
 
 ## Maintainer Packet Workflow
