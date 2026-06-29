@@ -20,6 +20,7 @@ The format follows Keep a Changelog conventions, and this project uses semantic 
 - `themis doctor` repository and local-tool readiness diagnostics.
 - `themis rules` effective policy and inferred upstream rule inspection.
 - Explicit AI provider configuration diagnostics through `themis providers`.
+- Provider adapter interface with fake and custom command preview adapters.
 - Configuration, GitHub Action, and development documentation.
 - Direct CLI parser tests for command forms.
 - `themis init` setup command for target repositories.

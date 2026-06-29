@@ -254,6 +254,11 @@ options:
 
 ```text
 usage: themis providers [-h] [-r REPO] [--format {markdown,json}] [-o OUTPUT]
+                        [--workflow WORKFLOW] [--prompt PROMPT]
+                        [{inspect,preview}]
+
+positional arguments:
+  {inspect,preview}     Provider workflow to run.
 
 options:
   -h, --help            show this help message and exit
@@ -262,6 +267,8 @@ options:
                         Providers output format.
   -o OUTPUT, --output OUTPUT
                         Write providers output to this path.
+  --workflow WORKFLOW   Assistant workflow for provider preview.
+  --prompt PROMPT       Prompt text for provider preview.
 ```
 
 ## `themis init`

@@ -105,9 +105,12 @@ def build_parser() -> argparse.ArgumentParser:
     rules_parser.add_argument("-o", "--output", type=Path, help="Write rules output to this path.")
 
     providers_parser = subcommands.add_parser("providers", help="Inspect configured AI provider backend readiness.")
+    providers_parser.add_argument("providers_command", nargs="?", choices=["inspect", "preview"], default="inspect", help="Provider workflow to run.")
     providers_parser.add_argument("-r", "--repo", type=Path, default=Path.cwd(), help="Target git repository to inspect.")
     providers_parser.add_argument("--format", choices=["markdown", "json"], default="markdown", help="Providers output format.")
     providers_parser.add_argument("-o", "--output", type=Path, help="Write providers output to this path.")
+    providers_parser.add_argument("--workflow", default="guide", help="Assistant workflow for provider preview.")
+    providers_parser.add_argument("--prompt", default="Summarize the current upstream readiness state.", help="Prompt text for provider preview.")
 
     init_parser = subcommands.add_parser("init", help="Create starter Themis files in a target repository.")
     init_parser.add_argument("-r", "--repo", type=Path, default=Path.cwd(), help="Target repository to initialize.")
@@ -163,9 +166,22 @@ def main(argv: list[str] | None = None) -> int:
             write_output(output, args.output)
             return rules_exit_code(inspection)
         if args.command == "providers":
-            from .providers import inspect_providers, providers_exit_code, render_providers_json, render_providers_markdown
+            from .providers import (
+                inspect_providers,
+                preview_provider,
+                providers_exit_code,
+                render_provider_preview_json,
+                render_provider_preview_markdown,
+                render_providers_json,
+                render_providers_markdown,
+            )
 
             root = repo_root(args.repo.resolve())
+            if args.providers_command == "preview":
+                preview = preview_provider(root, workflow=args.workflow, prompt=args.prompt)
+                output = render_provider_preview_json(preview) if args.format == "json" else render_provider_preview_markdown(preview)
+                write_output(output, args.output)
+                return 0
             diagnostics = inspect_providers(root)
             output = render_providers_json(diagnostics) if args.format == "json" else render_providers_markdown(diagnostics)
             write_output(output, args.output)

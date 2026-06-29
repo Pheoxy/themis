@@ -12,6 +12,8 @@ COMMANDS = [
     "doctor",
     "rules",
     "providers",
+    "inspect",
+    "preview",
     "pull-request",
     "pr",
     "draft",
@@ -47,6 +49,8 @@ OPTIONS = [
     "--path",
     "--force",
     "--no-body",
+    "--workflow",
+    "--prompt",
 ]
 
 

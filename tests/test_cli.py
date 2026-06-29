@@ -74,8 +74,17 @@ class CliTests(unittest.TestCase):
         parser = build_parser()
         args = parser.parse_args(["providers", "--repo", ".", "--format", "json"])
         self.assertEqual(args.command, "providers")
+        self.assertEqual(args.providers_command, "inspect")
         self.assertEqual(args.repo, Path("."))
         self.assertEqual(args.format, "json")
+
+    def test_providers_preview_command_parses(self) -> None:
+        parser = build_parser()
+        args = parser.parse_args(["providers", "preview", "--repo", ".", "--workflow", "guide", "--prompt", "help"])
+        self.assertEqual(args.command, "providers")
+        self.assertEqual(args.providers_command, "preview")
+        self.assertEqual(args.workflow, "guide")
+        self.assertEqual(args.prompt, "help")
 
     def test_generated_cli_docs_include_canonical_commands(self) -> None:
         docs = render_cli_docs()
@@ -92,7 +101,7 @@ class CliTests(unittest.TestCase):
         self.assertIn("draft (d)", docs)
         self.assertNotIn("validate (check", docs)
         self.assertNotIn("{validate,check", docs)
-        self.assertNotIn("review", docs)
+        self.assertNotIn("themis review", docs)
         self.assertIn("-B BODY_FILE, --body-file BODY_FILE", docs)
         self.assertIn("--run-checks", docs)
         self.assertIn("--format", docs)
@@ -201,6 +210,17 @@ class CliTests(unittest.TestCase):
             payload = json.loads(output.read_text(encoding="utf-8"))
             self.assertEqual(payload["version"], "2.1.0")
             self.assertEqual(payload["runs"][0]["results"][0]["ruleId"], "blocked")
+
+    def test_validate_does_not_call_provider_preview(self) -> None:
+        run = fake_validation_run()
+        with (
+            patch("themis.cli.build_validation_run", return_value=run),
+            patch("themis.cli.validate", return_value=[]),
+            patch("themis.cli.render_markdown", return_value="# report\n"),
+            patch("themis.providers.preview_provider") as preview,
+        ):
+            self.assertEqual(main(["validate", "--human"]), 0)
+        preview.assert_not_called()
 
 
 def fake_validation_run() -> SimpleNamespace:

@@ -5,7 +5,10 @@ Themis is allowed to use AI assistance for assistant workflows, but provider use
 Current status:
 
 - Provider configuration and diagnostics exist.
-- Provider-backed assistant calls are not implemented yet.
+- Provider adapter interfaces exist.
+- Built-in fake provider preview exists for tests and demos.
+- Custom command provider preview exists for local experimentation.
+- Network providers are not implemented yet.
 - The deterministic gate remains the authority for pass/fail results.
 
 ## Safety Contract
@@ -30,6 +33,7 @@ provider = "none"
 model = ""
 api_key_env = ""
 endpoint_env = ""
+command_env = ""
 allowed_workflows = ["explain", "guide", "maintainer-packet", "rules"]
 ```
 
@@ -47,16 +51,56 @@ External providers require an environment variable name in `api_key_env`. Themis
 
 ```bash
 themis providers --repo .
+themis providers preview --repo . --workflow guide --prompt "Summarize what to fix next."
 themis providers --repo . --format json
 themis doctor --repo .
 ```
 
 `themis doctor` includes provider diagnostics so a project can see provider readiness alongside git, policy, rule-doc, and required-check readiness.
 
+## Fake Provider
+
+The fake provider is deterministic and makes no network calls. It exists for tests, demos, and integration development.
+
+```toml
+[ai]
+enabled = true
+provider = "fake"
+model = "fake-test-model"
+allowed_workflows = ["guide"]
+```
+
+## Custom Command Provider
+
+The custom provider runs an explicit local command read from `command_env`. The command receives a JSON provider request on stdin and should write assistant text to stdout.
+
+```toml
+[ai]
+enabled = true
+provider = "custom"
+model = "local-script"
+command_env = "THEMIS_PROVIDER_COMMAND"
+allowed_workflows = ["guide", "explain"]
+```
+
+The command is never inferred by Themis. It must be explicitly configured through the named environment variable.
+
+Provider request shape:
+
+```json
+{
+  "workflow": "guide",
+  "prompt": "Summarize what to fix next.",
+  "context": {
+    "repo": "/path/to/repo"
+  }
+}
+```
+
 ## Implementation Roadmap
 
 1. Keep provider configuration and diagnostics stable.
-2. Add provider adapter interfaces with strict request/response logging that excludes secrets.
-3. Add provider-backed summaries only for assistant workflows.
-4. Add explicit disclosure markers to provider-backed output.
-5. Add tests proving provider output cannot suppress or downgrade hard blockers.
+2. Add provider-backed summaries only for assistant workflows.
+3. Add explicit disclosure markers to provider-backed output.
+4. Add tests proving provider output cannot suppress or downgrade hard blockers.
+5. Add network providers only after adapter safety tests are mature.

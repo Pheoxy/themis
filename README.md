@@ -62,6 +62,12 @@ Inspect configured AI provider backend readiness:
 themis providers --repo /path/to/target/repo
 ```
 
+Preview explicit provider-backed assistant output without changing gate results:
+
+```bash
+themis providers preview --repo /path/to/target/repo --workflow guide --prompt "Summarize what to fix next."
+```
+
 Ask Themis to run the gate and organize the upstream prep work for the current change:
 
 ```bash

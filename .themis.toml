@@ -21,4 +21,5 @@ provider = "none"
 model = ""
 api_key_env = ""
 endpoint_env = ""
+command_env = ""
 allowed_workflows = ["explain", "guide", "maintainer-packet", "rules"]

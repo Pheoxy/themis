@@ -66,6 +66,7 @@ The commands are intentionally separated by audience and output, not by differen
 | `themis doctor` | none | contributor / maintainer / CI | Diagnose repository and tool readiness before gate workflows. |
 | `themis rules` | none | contributor / maintainer / CI | Show effective policy and inferred upstream rules. |
 | `themis providers` | none | contributor / maintainer / CI | Inspect explicit AI provider backend readiness. |
+| `themis providers preview` | none | contributor / maintainer | Preview provider-backed assistant output without changing gate results. |
 | `themis pull-request draft` | `themis pr d` | contributor | Run the gate, run configured checks by default, and create a GitHub draft PR only if clean. |
 | `themis init` | none | setup | Create starter Themis policy/template files in a target repo. |
 | `themis docs cli` | none | project maintenance | Generate/check parser-derived CLI docs. |
@@ -92,6 +93,7 @@ themis explain missing-test-evidence
 themis doctor
 themis rules
 themis providers
+themis providers preview
 themis pull-request draft
 themis pr d
 ```
