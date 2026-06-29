@@ -23,7 +23,7 @@ class ReviewPacketTests(unittest.TestCase):
                 config=PolicyConfig(required_checks=["nix flake check"]),
                 findings=[Finding(BLOCKER, "missing-test-evidence", "No tests were provided.")],
             )
-            self.assertIn("Themis Reviewer Packet", packet)
+            self.assertIn("Themis Maintainer Packet", packet)
             self.assertIn("Status: **BLOCKED**", packet)
             self.assertIn("Do not spend deep review time yet", packet)
             self.assertIn("missing-test-evidence", packet)

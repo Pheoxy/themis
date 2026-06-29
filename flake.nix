@@ -28,6 +28,7 @@
 
             build-system = [ python.pkgs.setuptools ];
             nativeBuildInputs = [ pkgs.makeWrapper ];
+            nativeCheckInputs = [ pkgs.git ];
 
             postInstall = ''
               wrapProgram $out/bin/themis \
@@ -52,7 +53,7 @@
         in
         {
           default = self.packages.${system}.default;
-          unit-tests = pkgs.runCommand "themis-unit-tests" { nativeBuildInputs = [ python ]; } ''
+          unit-tests = pkgs.runCommand "themis-unit-tests" { nativeBuildInputs = [ python pkgs.git ]; } ''
             cd ${self}
             PYTHONPATH=${self}/src python -m unittest discover -s tests
             touch $out

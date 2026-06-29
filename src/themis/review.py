@@ -25,7 +25,7 @@ def render_review_packet(
     rule_docs = load_rule_docs(repo)
 
     lines = [
-        "# Themis Reviewer Packet",
+        "# Themis Maintainer Packet",
         "",
         "Themis helps reviewers and maintainers reduce repeat process work. This packet is still a pass/fail gate result, not a substitute for human review or contributor accountability.",
         "",
