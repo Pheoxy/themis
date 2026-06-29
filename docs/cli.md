@@ -8,19 +8,20 @@ This file is generated from the argparse command tree. Update CLI code first, th
 
 ```text
 usage: themis [-h] [--version]
-              {validate,v,guide,g,maintainer-packet,mp,pull-request,pr,docs,explain,doctor,rules,providers,self-check,init,completion}
+              {validate,v,guide,g,maintainer-packet,mp,pull-request,pr,docs,release,explain,doctor,rules,providers,self-check,init,completion}
               ...
 
 Paranoid upstream PR validator for AI-assisted code.
 
 positional arguments:
-  {validate,v,guide,g,maintainer-packet,mp,pull-request,pr,docs,explain,doctor,rules,providers,self-check,init,completion}
+  {validate,v,guide,g,maintainer-packet,mp,pull-request,pr,docs,release,explain,doctor,rules,providers,self-check,init,completion}
     validate (v)        Run the hard upstream-readiness gate.
     guide (g)           Run the gate and generate an upstream readiness guide.
     maintainer-packet (mp)
                         Run the gate and generate a maintainer-facing packet.
     pull-request (pr)   Pull request workflows.
     docs                Documentation workflows.
+    release             Release maintenance workflows.
     explain             Explain a Themis finding code and how to fix it.
     doctor              Diagnose target repository and local Themis readiness.
     rules               Show effective policy and inferred upstream rules.
@@ -210,6 +211,34 @@ options:
   --write               Write generated CLI docs to disk.
   --check               Fail if generated CLI docs differ from disk.
   -p PATH, --path PATH  Generated docs path.
+```
+
+## `themis release`
+
+```text
+usage: themis release [-h] {check} ...
+
+positional arguments:
+  {check}
+    check     Check release/version consistency.
+
+options:
+  -h, --help  show this help message and exit
+```
+
+## `themis release check`
+
+```text
+usage: themis release check [-h] [-r REPO] [--format {markdown,json}]
+                            [-o OUTPUT]
+
+options:
+  -h, --help            show this help message and exit
+  -r REPO, --repo REPO  Themis repository to inspect.
+  --format {markdown,json}
+                        Release check output format.
+  -o OUTPUT, --output OUTPUT
+                        Write release check output to this path.
 ```
 
 ## `themis explain`

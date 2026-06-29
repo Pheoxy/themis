@@ -91,6 +91,13 @@ def build_parser() -> argparse.ArgumentParser:
     cli_docs_mode.add_argument("--check", action="store_true", help="Fail if generated CLI docs differ from disk.")
     cli_docs_parser.add_argument("-p", "--path", type=Path, default=Path("docs/cli.md"), help="Generated docs path.")
 
+    release_parser = subcommands.add_parser("release", help="Release maintenance workflows.")
+    release_subcommands = release_parser.add_subparsers(dest="release_command", required=True)
+    release_check_parser = release_subcommands.add_parser("check", help="Check release/version consistency.")
+    release_check_parser.add_argument("-r", "--repo", type=Path, default=Path.cwd(), help="Themis repository to inspect.")
+    release_check_parser.add_argument("--format", choices=["markdown", "json"], default="markdown", help="Release check output format.")
+    release_check_parser.add_argument("-o", "--output", type=Path, help="Write release check output to this path.")
+
     explain_parser = subcommands.add_parser("explain", help="Explain a Themis finding code and how to fix it.")
     explain_parser.add_argument("code", nargs="?", help="Finding code to explain. Omit to list known codes.")
 
@@ -149,6 +156,13 @@ def main(argv: list[str] | None = None) -> int:
             from .docs import handle_cli_docs
 
             return handle_cli_docs(args)
+        if args.command == "release":
+            from .version_check import inspect_versions, render_version_check_json, render_version_check_markdown, version_check_exit_code
+
+            result = inspect_versions(args.repo.resolve())
+            output = render_version_check_json(result) if args.format == "json" else render_version_check_markdown(result)
+            write_output(output, args.output)
+            return version_check_exit_code(result)
         if args.command == "explain":
             from .explain import render_explanation
 

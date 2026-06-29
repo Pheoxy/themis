@@ -86,6 +86,14 @@ class CliTests(unittest.TestCase):
         self.assertEqual(args.workflow, "guide")
         self.assertEqual(args.prompt, "help")
 
+    def test_release_check_command_parses(self) -> None:
+        parser = build_parser()
+        args = parser.parse_args(["release", "check", "--repo", ".", "--format", "json"])
+        self.assertEqual(args.command, "release")
+        self.assertEqual(args.release_command, "check")
+        self.assertEqual(args.repo, Path("."))
+        self.assertEqual(args.format, "json")
+
     def test_self_check_command_parses(self) -> None:
         parser = build_parser()
         args = parser.parse_args(["self-check", "--repo", ".", "--format", "json", "--human"])
@@ -106,6 +114,7 @@ class CliTests(unittest.TestCase):
         self.assertIn("rules", docs)
         self.assertIn("providers", docs)
         self.assertIn("self-check", docs)
+        self.assertIn("release", docs)
         self.assertIn("pull-request (pr)", docs)
         self.assertIn("draft (d)", docs)
         self.assertNotIn("validate (check", docs)

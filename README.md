@@ -146,6 +146,12 @@ Project verification is intentionally Nix-first:
 nix flake check
 ```
 
+Before releases, verify version consistency:
+
+```bash
+themis release check
+```
+
 ## Draft PR
 
 When local work is ready, use the PR draft command. It runs the hard gate, runs configured required checks, writes a validation report, and creates a GitHub draft PR only if there are no blockers.
