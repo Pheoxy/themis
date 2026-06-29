@@ -8,13 +8,13 @@ This file is generated from the argparse command tree. Update CLI code first, th
 
 ```text
 usage: themis [-h] [--version]
-              {validate,v,guide,g,maintainer-packet,mp,pull-request,pr,docs,explain,init,completion}
+              {validate,v,guide,g,maintainer-packet,mp,pull-request,pr,docs,explain,doctor,init,completion}
               ...
 
 Paranoid upstream PR validator for AI-assisted code.
 
 positional arguments:
-  {validate,v,guide,g,maintainer-packet,mp,pull-request,pr,docs,explain,init,completion}
+  {validate,v,guide,g,maintainer-packet,mp,pull-request,pr,docs,explain,doctor,init,completion}
     validate (v)        Run the hard upstream-readiness gate.
     guide (g)           Run the gate and generate an upstream readiness guide.
     maintainer-packet (mp)
@@ -22,6 +22,7 @@ positional arguments:
     pull-request (pr)   Pull request workflows.
     docs                Documentation workflows.
     explain             Explain a Themis finding code and how to fix it.
+    doctor              Diagnose target repository and local Themis readiness.
     init                Create starter Themis files in a target repository.
     completion          Print shell completion script.
 
@@ -217,6 +218,20 @@ positional arguments:
 
 options:
   -h, --help  show this help message and exit
+```
+
+## `themis doctor`
+
+```text
+usage: themis doctor [-h] [-r REPO] [--format {markdown,json}] [-o OUTPUT]
+
+options:
+  -h, --help            show this help message and exit
+  -r REPO, --repo REPO  Target git repository to diagnose.
+  --format {markdown,json}
+                        Doctor output format.
+  -o OUTPUT, --output OUTPUT
+                        Write doctor output to this path.
 ```
 
 ## `themis init`

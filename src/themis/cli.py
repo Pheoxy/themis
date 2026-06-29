@@ -94,6 +94,11 @@ def build_parser() -> argparse.ArgumentParser:
     explain_parser = subcommands.add_parser("explain", help="Explain a Themis finding code and how to fix it.")
     explain_parser.add_argument("code", nargs="?", help="Finding code to explain. Omit to list known codes.")
 
+    doctor_parser = subcommands.add_parser("doctor", help="Diagnose target repository and local Themis readiness.")
+    doctor_parser.add_argument("-r", "--repo", type=Path, default=Path.cwd(), help="Target git repository to diagnose.")
+    doctor_parser.add_argument("--format", choices=["markdown", "json"], default="markdown", help="Doctor output format.")
+    doctor_parser.add_argument("-o", "--output", type=Path, help="Write doctor output to this path.")
+
     init_parser = subcommands.add_parser("init", help="Create starter Themis files in a target repository.")
     init_parser.add_argument("-r", "--repo", type=Path, default=Path.cwd(), help="Target repository to initialize.")
     init_parser.add_argument("--force", action="store_true", help="Overwrite existing generated files.")
@@ -132,6 +137,13 @@ def main(argv: list[str] | None = None) -> int:
 
             print(render_explanation(args.code), end="")
             return 0
+        if args.command == "doctor":
+            from .doctor import doctor_exit_code, render_doctor_json, render_doctor_markdown, run_doctor
+
+            result = run_doctor(args.repo.resolve())
+            output = render_doctor_json(result) if args.format == "json" else render_doctor_markdown(result)
+            write_output(output, args.output)
+            return doctor_exit_code(result)
         if args.command == "init":
             from .init import init_repo
 

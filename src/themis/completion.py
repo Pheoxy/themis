@@ -9,6 +9,7 @@ COMMANDS = [
     "maintainer-packet",
     "mp",
     "explain",
+    "doctor",
     "pull-request",
     "pr",
     "draft",

@@ -44,6 +44,12 @@ Create starter config and a PR body template in a target repository:
 themis init --repo /path/to/target/repo
 ```
 
+Diagnose whether the repository and local tools are ready for Themis workflows:
+
+```bash
+themis doctor --repo /path/to/target/repo
+```
+
 Ask Themis to run the gate and organize the upstream prep work for the current change:
 
 ```bash
