@@ -46,6 +46,7 @@ The format follows Keep a Changelog conventions, and this project uses semantic 
 - `themis config check` now works on plain directories, not only git repositories.
 - Rule inference fixture coverage for common Python, Rust, and Node upstream contribution styles.
 - Gate fixture coverage for inferred issue-link and Conventional Commits requirements.
+- Executable tests for GitHub Action PR comment step behavior.
 - Configuration, GitHub Action, and development documentation.
 - Direct CLI parser tests for command forms.
 - `themis init` setup command for target repositories.
