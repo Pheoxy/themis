@@ -16,6 +16,12 @@ class SchemaTests(unittest.TestCase):
         config_keys = set(PolicyConfig.__dataclass_fields__)  # type: ignore[attr-defined]
         self.assertEqual(schema_keys, config_keys)
 
+    def test_schema_allows_top_level_policy_key_shorthand(self) -> None:
+        schema = load_schema()
+        config_keys = set(PolicyConfig.__dataclass_fields__)  # type: ignore[attr-defined]
+        root_policy_keys = set(schema["properties"]) & config_keys
+        self.assertEqual(root_policy_keys, config_keys)
+
     def test_schema_covers_ai_provider_config_keys(self) -> None:
         schema = load_schema()
         schema_keys = set(schema["properties"]["ai"]["properties"])

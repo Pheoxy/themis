@@ -36,6 +36,7 @@ The format follows Keep a Changelog conventions, and this project uses semantic 
 - `themis config check` for validating `.themis.toml` without running a gate workflow.
 - GitHub Action `config-check` workflow support and copyable example.
 - Executable tests for GitHub Action workflow argument routing.
+- JSON Schema alignment for top-level policy-key shorthand.
 - Configuration, GitHub Action, and development documentation.
 - Direct CLI parser tests for command forms.
 - `themis init` setup command for target repositories.

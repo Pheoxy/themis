@@ -5,6 +5,25 @@
   "type": "object",
   "additionalProperties": false,
   "properties": {
+    "max_changed_files": { "type": "integer", "minimum": 1 },
+    "max_added_lines": { "type": "integer", "minimum": 0 },
+    "max_deleted_lines": { "type": "integer", "minimum": 0 },
+    "max_file_added_lines": { "type": "integer", "minimum": 0 },
+    "require_upstream_rules": { "type": "boolean" },
+    "require_tests_for_code": { "type": "boolean" },
+    "require_test_changes_for_code": { "type": "boolean" },
+    "block_generated_paths": { "type": "boolean" },
+    "block_vendor_paths": { "type": "boolean" },
+    "block_ai_markers": { "type": "boolean" },
+    "block_placeholders": { "type": "boolean" },
+    "allow_paths": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "required_checks": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
     "policy": {
       "type": "object",
       "additionalProperties": false,
