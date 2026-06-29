@@ -1,9 +1,11 @@
 from __future__ import annotations
 
 from dataclasses import asdict, dataclass, field
+import hashlib
 import json
 import os
 from pathlib import Path
+import re
 import shlex
 import subprocess
 import tomllib
@@ -17,6 +19,12 @@ SUPPORTED_PROVIDERS = {"none", "fake", "openai", "anthropic", "ollama", "custom"
 EXTERNAL_API_KEY_PROVIDERS = {"openai", "anthropic", "custom"}
 ASSISTANT_WORKFLOWS = {"guide", "maintainer-packet", "explain", "rules"}
 PROVIDER_TIMEOUT_SECONDS = 30
+REDACTION = "[REDACTED]"
+REDACTION_PATTERNS = (
+    re.compile(r"AKIA[0-9A-Z]{16}"),
+    re.compile(r"(?i)-----BEGIN (RSA |DSA |EC |OPENSSH )?PRIVATE KEY-----.*?-----END (RSA |DSA |EC |OPENSSH )?PRIVATE KEY-----", re.DOTALL),
+    re.compile(r"(?i)(api[_-]?key|secret|token|password)\s*[:=]\s*['\"]?[^'\"\s]{8,}['\"]?"),
+)
 
 
 @dataclass
@@ -50,6 +58,7 @@ class ProviderRequest:
     workflow: str
     prompt: str
     context: dict[str, str]
+    redactions_applied: int = 0
 
 
 @dataclass(frozen=True)
@@ -59,6 +68,8 @@ class ProviderResult:
     workflow: str
     text: str
     disclosure: str
+    prompt_sha256: str
+    redactions_applied: int
 
 
 def load_provider_config(repo: Path) -> AIProviderConfig:
@@ -212,6 +223,8 @@ class DisabledProviderAdapter(ProviderAdapter):
             workflow=request.workflow,
             text="AI provider use is disabled; deterministic Themis guidance remains active.",
             disclosure="No AI provider was called.",
+            prompt_sha256=hash_text(request.prompt),
+            redactions_applied=request.redactions_applied,
         )
 
 
@@ -226,6 +239,8 @@ class FakeProviderAdapter(ProviderAdapter):
             workflow=request.workflow,
             text=f"Fake provider preview for `{request.workflow}`. Prompt length: {len(request.prompt)}.",
             disclosure="AI provider preview used the built-in fake adapter; no network call was made.",
+            prompt_sha256=hash_text(request.prompt),
+            redactions_applied=request.redactions_applied,
         )
 
 
@@ -251,13 +266,16 @@ class CustomCommandProviderAdapter(ProviderAdapter):
         )
         if completed.returncode != 0:
             detail = completed.stderr.strip() or completed.stdout.strip() or "custom provider command failed"
-            raise ValueError(detail)
+            raise ValueError(sanitize_provider_text(detail, self.config)[0])
+        text, output_redactions = sanitize_provider_text(completed.stdout.strip(), self.config)
         return ProviderResult(
             provider="custom",
             model=self.config.model,
             workflow=request.workflow,
-            text=completed.stdout.strip(),
+            text=text,
             disclosure=f"AI provider preview used custom command from `{self.config.command_env}`.",
+            prompt_sha256=hash_text(request.prompt),
+            redactions_applied=request.redactions_applied + output_redactions,
         )
 
 
@@ -280,7 +298,14 @@ def preview_provider(repo: Path, *, workflow: str, prompt: str) -> ProviderResul
         raise ValueError(f"workflow `{workflow}` is not eligible for provider assistance")
     if workflow not in config.allowed_workflows:
         raise ValueError(f"workflow `{workflow}` is not allowed by provider configuration")
-    request = ProviderRequest(workflow=workflow, prompt=prompt, context={"repo": str(repo)})
+    redacted_prompt, prompt_redactions = sanitize_provider_text(prompt, config)
+    redacted_repo, repo_redactions = sanitize_provider_text(str(repo), config)
+    request = ProviderRequest(
+        workflow=workflow,
+        prompt=redacted_prompt,
+        context={"repo": redacted_repo},
+        redactions_applied=prompt_redactions + repo_redactions,
+    )
     return create_provider_adapter(config).generate(request)
 
 
@@ -292,6 +317,8 @@ def render_provider_preview_markdown(result: ProviderResult) -> str:
             f"Provider: `{result.provider}`",
             f"Model: `{result.model}`",
             f"Workflow: `{result.workflow}`",
+            f"Prompt SHA-256: `{result.prompt_sha256}`",
+            f"Redactions applied: `{result.redactions_applied}`",
             "",
             "## Disclosure",
             "",
@@ -318,6 +345,37 @@ def render_provider_preview_json(result: ProviderResult) -> str:
         "assisted_workflow": result.workflow,
         "text": result.text,
         "disclosure": result.disclosure,
+        "prompt_sha256": result.prompt_sha256,
+        "redactions_applied": result.redactions_applied,
         "safety": "provider preview cannot change gate findings, severities, or exit codes",
     }
     return json.dumps(payload, indent=2, sort_keys=True) + "\n"
+
+
+def sanitize_provider_text(value: str, config: AIProviderConfig) -> tuple[str, int]:
+    redactions = 0
+    sanitized = value
+    for env_name in (config.api_key_env, config.endpoint_env):
+        if not env_name:
+            continue
+        env_value = os.environ.get(env_name)
+        if env_value and env_value in sanitized:
+            sanitized = sanitized.replace(env_value, REDACTION)
+            redactions += 1
+    for pattern in REDACTION_PATTERNS:
+        sanitized, count = pattern.subn(redact_match, sanitized)
+        redactions += count
+    return sanitized, redactions
+
+
+def redact_match(match: re.Match[str]) -> str:
+    value = match.group(0)
+    if "=" in value:
+        return value.split("=", 1)[0] + "=" + REDACTION
+    if ":" in value:
+        return value.split(":", 1)[0] + ":" + REDACTION
+    return REDACTION
+
+
+def hash_text(value: str) -> str:
+    return hashlib.sha256(value.encode("utf-8")).hexdigest()

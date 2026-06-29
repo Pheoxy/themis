@@ -16,6 +16,7 @@ Current status:
 - Providers are disabled by default.
 - Themis must never make hidden AI calls.
 - API key values must never be printed in diagnostics, reports, annotations, JSON, or SARIF.
+- Prompt/context text is redacted for secret-looking values before provider preview execution.
 - Provider output may assist workflows such as `guide`, `maintainer-packet`, `rules`, and `explain`.
 - Provider output must not decide `validate` pass/fail status.
 - Provider-backed output must disclose that an AI provider was used.
@@ -83,7 +84,7 @@ command_env = "THEMIS_PROVIDER_COMMAND"
 allowed_workflows = ["guide", "explain"]
 ```
 
-The command is never inferred by Themis. It must be explicitly configured through the named environment variable.
+The command is never inferred by Themis. It must be explicitly configured through the named environment variable. Provider stdout and error output are redacted for secret-looking values before Themis prints them.
 
 Provider request shape:
 
@@ -97,10 +98,19 @@ Provider request shape:
 }
 ```
 
+Provider preview output includes audit metadata:
+
+- provider name
+- model
+- assisted workflow
+- disclosure text
+- SHA-256 hash of the redacted prompt
+- number of redactions applied
+
 ## Implementation Roadmap
 
 1. Keep provider configuration and diagnostics stable.
 2. Add provider-backed summaries only for assistant workflows.
-3. Add explicit disclosure markers to provider-backed output.
+3. Expand provider context packets for assistant workflows without exposing secrets.
 4. Add tests proving provider output cannot suppress or downgrade hard blockers.
 5. Add network providers only after adapter safety tests are mature.

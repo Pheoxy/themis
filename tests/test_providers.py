@@ -83,6 +83,7 @@ class ProviderTests(unittest.TestCase):
             self.assertEqual(result.provider, "fake")
             self.assertIn("Fake provider preview", result.text)
             self.assertIn("no network call", result.disclosure)
+            self.assertRegex(result.prompt_sha256, r"^[0-9a-f]{64}$")
 
     def test_custom_provider_preview_uses_explicit_command_env(self) -> None:
         with tempfile.TemporaryDirectory() as raw:
@@ -112,6 +113,37 @@ class ProviderTests(unittest.TestCase):
             self.assertIn("Themis Provider Preview", markdown)
             self.assertEqual(payload["workflow"], "providers preview")
             self.assertIn("cannot change gate", payload["safety"])
+            self.assertIn("prompt_sha256", payload)
+
+    def test_provider_preview_redacts_secret_like_prompt_before_adapter(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            repo = create_example_target_repo(Path(raw))
+            write(repo / ".themis.toml", '[ai]\nenabled = true\nprovider = "fake"\nmodel = "fake-model"\n')
+            result = preview_provider(repo, workflow="guide", prompt="api_key = supersecretvalue")
+            self.assertEqual(result.redactions_applied, 1)
+            self.assertIn("Prompt length", result.text)
+
+    def test_custom_provider_output_is_redacted(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            repo = create_example_target_repo(Path(raw))
+            write(repo / ".themis.toml", '[ai]\nenabled = true\nprovider = "custom"\nmodel = "custom-model"\ncommand_env = "THEMIS_PROVIDER_COMMAND"\napi_key_env = "THEMIS_TEST_KEY"\nallowed_workflows = ["guide"]\n')
+            command = f"{sys.executable} -c \"print('token=supersecretvalue')\""
+            with patch.dict(os.environ, {"THEMIS_PROVIDER_COMMAND": command, "THEMIS_TEST_KEY": "supersecretvalue"}, clear=True):
+                result = preview_provider(repo, workflow="guide", prompt="help")
+            self.assertIn("token=[REDACTED]", result.text)
+            self.assertNotIn("supersecretvalue", result.text)
+            self.assertGreaterEqual(result.redactions_applied, 1)
+
+    def test_custom_provider_error_is_redacted(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            repo = create_example_target_repo(Path(raw))
+            write(repo / ".themis.toml", '[ai]\nenabled = true\nprovider = "custom"\nmodel = "custom-model"\ncommand_env = "THEMIS_PROVIDER_COMMAND"\napi_key_env = "THEMIS_TEST_KEY"\nallowed_workflows = ["guide"]\n')
+            command = f"{sys.executable} -c \"import sys; print('password=supersecretvalue', file=sys.stderr); raise SystemExit(1)\""
+            with patch.dict(os.environ, {"THEMIS_PROVIDER_COMMAND": command, "THEMIS_TEST_KEY": "supersecretvalue"}, clear=True):
+                with self.assertRaises(ValueError) as raised:
+                    preview_provider(repo, workflow="guide", prompt="help")
+            self.assertIn("password=[REDACTED]", str(raised.exception))
+            self.assertNotIn("supersecretvalue", str(raised.exception))
 
 
 if __name__ == "__main__":
