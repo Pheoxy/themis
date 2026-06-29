@@ -92,6 +92,8 @@ In GitHub Actions, Themis can annotate blockers and warnings directly in the che
 themis validate --repo . --base origin/main --body-file pr-body.md --evidence "nix flake check passed" --annotations github
 ```
 
+The GitHub Action also writes the gate output to the workflow Step Summary by default, so maintainers can read blockers and next actions without downloading artifacts.
+
 For bots and dashboards, request machine-readable JSON:
 
 ```bash

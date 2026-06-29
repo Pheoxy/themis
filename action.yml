@@ -32,6 +32,9 @@ inputs:
   annotations:
     description: CI annotation mode. Use github for GitHub workflow annotations or none to disable.
     default: github
+  step-summary:
+    description: Write the gate output to the GitHub Step Summary when possible.
+    default: "true"
   draft-pr:
     description: Create a draft PR with gh after validation passes.
     default: "false"
@@ -107,6 +110,28 @@ runs:
           args+=(--head-branch "$INPUT_HEAD_BRANCH")
         fi
         nix run "$GITHUB_ACTION_PATH" -- "${command[@]}" "${args[@]}"
+
+    - name: Write step summary
+      if: always() && inputs.step-summary == 'true' && inputs.output != ''
+      shell: bash
+      env:
+        INPUT_OUTPUT: ${{ inputs.output }}
+        INPUT_FORMAT: ${{ inputs.format }}
+      run: |
+        set -euo pipefail
+        if [[ ! -f "$INPUT_OUTPUT" || -z "${GITHUB_STEP_SUMMARY:-}" ]]; then
+          exit 0
+        fi
+        if [[ "$INPUT_FORMAT" == "markdown" ]]; then
+          cat "$INPUT_OUTPUT" >> "$GITHUB_STEP_SUMMARY"
+        else
+          {
+            printf '## Themis %s output\n\n' "$INPUT_FORMAT"
+            printf '```%s\n' "$INPUT_FORMAT"
+            cat "$INPUT_OUTPUT"
+            printf '\n```\n'
+          } >> "$GITHUB_STEP_SUMMARY"
+        fi
 
     - name: Upload validation report
       if: always() && inputs.output != ''

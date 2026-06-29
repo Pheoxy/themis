@@ -1,6 +1,6 @@
 # GitHub Action
 
-Themis can run as a composite GitHub Action. The action installs Nix by default, runs the flake-packaged CLI, and uploads the Markdown validation report.
+Themis can run as a composite GitHub Action. The action installs Nix by default, runs the flake-packaged CLI, writes the gate output to the GitHub Step Summary, and uploads the report artifact.
 
 ![Themis validation card](assets/themis-validation-card.png)
 
@@ -45,6 +45,7 @@ jobs:
 - `output`: report path. Default: `upstream-validation-report.md`.
 - `format`: gate output format. Use `markdown`, `json`, or `sarif`. Default: `markdown`.
 - `annotations`: CI annotation mode. Use `github` or `none`. Default: `github`.
+- `step-summary`: write gate output to the GitHub Step Summary when possible. Default: `true`.
 - `draft-pr`: create a draft PR after validation passes. Default: `false`.
 - `title`: draft PR title override.
 - `base-branch`: draft PR target branch override.
@@ -52,3 +53,5 @@ jobs:
 - `install-nix`: install Nix before running. Default: `true`.
 
 Draft PR creation from CI requires write permissions and GitHub CLI authentication. Keep it opt-in.
+
+Markdown reports are appended directly to the summary. JSON and SARIF are wrapped in fenced code blocks so the check summary remains readable.
