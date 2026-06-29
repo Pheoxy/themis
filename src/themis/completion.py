@@ -3,11 +3,11 @@ from __future__ import annotations
 
 COMMANDS = [
     "validate",
-    "check",
     "v",
     "guide",
     "g",
-    "review",
+    "maintainer-packet",
+    "mp",
     "pull-request",
     "pr",
     "draft",
@@ -31,6 +31,7 @@ OPTIONS = [
     "--evidence",
     "--evidence-file",
     "--output",
+    "--annotations",
     "--run-checks",
     "--skip-checks",
     "--title",

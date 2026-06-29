@@ -8,17 +8,17 @@ This file is generated from the argparse command tree. Update CLI code first, th
 
 ```text
 usage: themis [-h] [--version]
-              {validate,check,v,guide,g,review,pull-request,pr,docs,init,completion}
+              {validate,v,guide,g,maintainer-packet,mp,pull-request,pr,docs,init,completion}
               ...
 
 Paranoid upstream PR validator for AI-assisted code.
 
 positional arguments:
-  {validate,check,v,guide,g,review,pull-request,pr,docs,init,completion}
-    validate (check, v)
-                        Run the hard upstream-readiness gate.
+  {validate,v,guide,g,maintainer-packet,mp,pull-request,pr,docs,init,completion}
+    validate (v)        Run the hard upstream-readiness gate.
     guide (g)           Run the gate and generate an upstream readiness guide.
-    review              Run the gate and generate a maintainer review packet.
+    maintainer-packet (mp)
+                        Run the gate and generate a maintainer-facing packet.
     pull-request (pr)   Pull request workflows.
     docs                Documentation workflows.
     init                Create starter Themis files in a target repository.
@@ -34,7 +34,8 @@ options:
 ```text
 usage: themis validate [-h] [-r REPO] [-b BASE] [--ai | --human]
                        [-B BODY_FILE] [-e EVIDENCE] [-E EVIDENCE_FILE]
-                       [-o OUTPUT] [--run-checks]
+                       [-o OUTPUT] [--annotations {none,github}]
+                       [--run-checks]
 
 options:
   -h, --help            show this help message and exit
@@ -52,6 +53,8 @@ options:
                         File containing test/check evidence.
   -o OUTPUT, --output OUTPUT
                         Write Markdown report to this path.
+  --annotations {none,github}
+                        Emit CI annotations for findings.
   --run-checks          Run required checks from .themis.toml in the target
                         repo.
 ```
@@ -61,7 +64,7 @@ options:
 ```text
 usage: themis guide [-h] [-r REPO] [-b BASE] [--ai | --human] [-B BODY_FILE]
                     [-e EVIDENCE] [-E EVIDENCE_FILE] [-o OUTPUT]
-                    [--run-checks]
+                    [--annotations {none,github}] [--run-checks]
 
 options:
   -h, --help            show this help message and exit
@@ -79,16 +82,19 @@ options:
                         File containing test/check evidence.
   -o OUTPUT, --output OUTPUT
                         Write Markdown report to this path.
+  --annotations {none,github}
+                        Emit CI annotations for findings.
   --run-checks          Run required checks from .themis.toml in the target
                         repo.
 ```
 
-## `themis review`
+## `themis maintainer-packet`
 
 ```text
-usage: themis review [-h] [-r REPO] [-b BASE] [--ai | --human] [-B BODY_FILE]
-                     [-e EVIDENCE] [-E EVIDENCE_FILE] [-o OUTPUT]
-                     [--run-checks]
+usage: themis maintainer-packet [-h] [-r REPO] [-b BASE] [--ai | --human]
+                                [-B BODY_FILE] [-e EVIDENCE]
+                                [-E EVIDENCE_FILE] [-o OUTPUT]
+                                [--annotations {none,github}] [--run-checks]
 
 options:
   -h, --help            show this help message and exit
@@ -106,6 +112,8 @@ options:
                         File containing test/check evidence.
   -o OUTPUT, --output OUTPUT
                         Write Markdown report to this path.
+  --annotations {none,github}
+                        Emit CI annotations for findings.
   --run-checks          Run required checks from .themis.toml in the target
                         repo.
 ```
@@ -129,7 +137,8 @@ options:
 ```text
 usage: themis pull-request draft [-h] [-r REPO] [-b BASE] [--ai | --human] -B
                                  BODY_FILE [-e EVIDENCE] [-E EVIDENCE_FILE]
-                                 [-o OUTPUT] [--skip-checks] [--title TITLE]
+                                 [-o OUTPUT] [--annotations {none,github}]
+                                 [--skip-checks] [--title TITLE]
                                  [--base-branch BASE_BRANCH]
                                  [--head-branch HEAD_BRANCH]
 
@@ -149,6 +158,8 @@ options:
                         File containing test/check evidence.
   -o OUTPUT, --output OUTPUT
                         Write Markdown report to this path.
+  --annotations {none,github}
+                        Emit CI annotations for findings.
   --skip-checks         Do not run configured required checks. This usually
                         causes a blocker when checks are configured.
   --title TITLE         Draft PR title. Defaults to the latest commit subject.

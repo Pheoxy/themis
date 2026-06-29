@@ -1,14 +1,51 @@
 from __future__ import annotations
 
 import argparse
+from dataclasses import dataclass
 from pathlib import Path
 import sys
 
 from . import __version__
-from .git import GitError, changed_files, commits, current_branch, diff_text, last_commit_subject, numstat, repo_root, tracked_files
-from .policy import BLOCKER, PolicyConfig, ValidationInput, run_required_checks, validate
+from .annotations import render_annotations
+from .git import (
+    ChangedFile,
+    GitError,
+    Numstat,
+    changed_files,
+    commits,
+    current_branch,
+    diff_text,
+    last_commit_subject,
+    numstat,
+    repo_root,
+    tracked_files,
+)
+from .policy import (
+    BLOCKER,
+    Finding,
+    PolicyConfig,
+    ValidationInput,
+    run_required_checks,
+    validate,
+)
 from .pr import DraftPrError, DraftPrOptions, build_pr_body, create_draft_pr, infer_pr_base
 from .report import render_markdown
+
+
+@dataclass(frozen=True)
+class ValidationRun:
+    root: Path
+    config: PolicyConfig
+    pr_description: str
+    changed: list[ChangedFile]
+    stats: list[Numstat]
+    data: ValidationInput
+
+
+@dataclass(frozen=True)
+class GateRun:
+    validation: ValidationRun
+    findings: list[Finding]
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -19,7 +56,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--version", action="version", version=f"%(prog)s {__version__}")
     subcommands = parser.add_subparsers(dest="command", required=True)
 
-    validate_parser = subcommands.add_parser("validate", aliases=["check", "v"], help="Run the hard upstream-readiness gate.")
+    validate_parser = subcommands.add_parser("validate", aliases=["v"], help="Run the hard upstream-readiness gate.")
     add_validation_args(validate_parser)
     validate_parser.add_argument("--run-checks", action="store_true", help="Run required checks from .themis.toml in the target repo.")
 
@@ -27,9 +64,13 @@ def build_parser() -> argparse.ArgumentParser:
     add_validation_args(guide_parser, base_default="origin/main")
     guide_parser.add_argument("--run-checks", action="store_true", help="Run required checks from .themis.toml in the target repo.")
 
-    review_parser = subcommands.add_parser("review", help="Run the gate and generate a maintainer review packet.")
-    add_validation_args(review_parser, base_default="origin/main")
-    review_parser.add_argument("--run-checks", action="store_true", help="Run required checks from .themis.toml in the target repo.")
+    packet_parser = subcommands.add_parser(
+        "maintainer-packet",
+        aliases=["mp"],
+        help="Run the gate and generate a maintainer-facing packet.",
+    )
+    add_validation_args(packet_parser, base_default="origin/main")
+    packet_parser.add_argument("--run-checks", action="store_true", help="Run required checks from .themis.toml in the target repo.")
 
     pr_parser = subcommands.add_parser("pull-request", aliases=["pr"], help="Pull request workflows.")
     pr_subcommands = pr_parser.add_subparsers(dest="pr_command", required=True)
@@ -69,6 +110,7 @@ def add_validation_args(parser: argparse.ArgumentParser, *, base_default: str | 
     parser.add_argument("-e", "--evidence", default="", help="Short text proving which tests/checks passed.")
     parser.add_argument("-E", "--evidence-file", type=Path, help="File containing test/check evidence.")
     parser.add_argument("-o", "--output", type=Path, help="Write Markdown report to this path.")
+    parser.add_argument("--annotations", choices=["none", "github"], default="none", help="Emit CI annotations for findings.")
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -93,83 +135,53 @@ def main(argv: list[str] | None = None) -> int:
 
             print(render_completion(args.shell), end="")
             return 0
-        if args.command in {"guide", "g", "review"}:
+        if args.command in {"guide", "g", "maintainer-packet", "mp"}:
             from .guide import render_guide
             from .review import render_review_packet
 
-            root = repo_root(args.repo.resolve())
-            config = PolicyConfig.load(root)
-            pr_description = read_optional(args.body_file)
-            test_evidence = args.evidence
-            if args.evidence_file:
-                test_evidence = join_evidence(test_evidence, read_optional(args.evidence_file))
-            checks = run_required_checks(root, config.required_checks) if args.run_checks else []
-            current_changes = changed_files(root, args.base)
-            current_stats = numstat(root, args.base)
-            data = ValidationInput(
-                repo=root,
-                base=args.base,
-                changed_files=current_changes,
-                numstat=current_stats,
-                diff_text=diff_text(root, args.base),
-                tracked_files=tracked_files(root),
-                commits=commits(root, args.base),
-                pr_description=pr_description,
-                test_evidence=test_evidence,
-                ai_assisted=args.ai_assisted,
-                check_results=checks,
-            )
-            findings = validate(data, config)
-            if args.command == "review":
-                output = render_review_packet(root, base=args.base, changed=current_changes, stats=current_stats, config=config, findings=findings)
+            gate = evaluate_gate(args, run_checks=args.run_checks)
+            run = gate.validation
+            if args.command in {"maintainer-packet", "mp"}:
+                output = render_review_packet(
+                    run.root,
+                    base=args.base,
+                    changed=run.changed,
+                    stats=run.stats,
+                    config=run.config,
+                    findings=gate.findings,
+                )
             else:
-                output = render_guide(root, base=args.base, changed=current_changes, stats=current_stats, config=config, findings=findings)
-            if args.output:
-                args.output.write_text(output, encoding="utf-8")
-            else:
-                print(output)
-            return 2 if any(item.severity == BLOCKER for item in findings) else 0
+                output = render_guide(
+                    run.root,
+                    base=args.base,
+                    changed=run.changed,
+                    stats=run.stats,
+                    config=run.config,
+                    findings=gate.findings,
+                )
+            write_output(output, args.output)
+            write_annotations(gate.findings, args.annotations)
+            return gate_exit_code(gate.findings)
         draft_pr = args.command in {"pull-request", "pr"} and args.pr_command in {"draft", "d"}
-        run_checks = args.run_checks if args.command == "validate" else not args.skip_checks
-        root = repo_root(args.repo.resolve())
-        config = PolicyConfig.load(root)
-        pr_description = read_optional(args.body_file)
-        test_evidence = args.evidence
-        if args.evidence_file:
-            test_evidence = join_evidence(test_evidence, read_optional(args.evidence_file))
-        checks = run_required_checks(root, config.required_checks) if run_checks else []
-        data = ValidationInput(
-            repo=root,
-            base=args.base,
-            changed_files=changed_files(root, args.base),
-            numstat=numstat(root, args.base),
-            diff_text=diff_text(root, args.base),
-            tracked_files=tracked_files(root),
-            commits=commits(root, args.base),
-            pr_description=pr_description,
-            test_evidence=test_evidence,
-            ai_assisted=args.ai_assisted,
-            check_results=checks,
-        )
-        findings = validate(data, config)
-        report = render_markdown(data, findings)
-        if args.output:
-            args.output.write_text(report, encoding="utf-8")
-        else:
-            print(report)
-        if any(item.severity == BLOCKER for item in findings):
-            return 2
+        run_checks = args.run_checks if args.command in {"validate", "v"} else not args.skip_checks
+        gate = evaluate_gate(args, run_checks=run_checks)
+        run = gate.validation
+        report = render_markdown(run.data, gate.findings)
+        write_output(report, args.output)
+        write_annotations(gate.findings, args.annotations)
+        if has_blockers(gate.findings):
+            return gate_exit_code(gate.findings)
         if draft_pr:
-            title = args.title or last_commit_subject(root)
+            title = args.title or last_commit_subject(run.root)
             pr_base = args.base_branch or infer_pr_base(args.base)
-            pr_head = args.head_branch or current_branch(root) or None
+            pr_head = args.head_branch or current_branch(run.root) or None
             url = create_draft_pr(
-                root,
+                run.root,
                 DraftPrOptions(
                     title=title,
                     base=pr_base,
                     head=pr_head,
-                    body=build_pr_body(pr_description, report),
+                    body=build_pr_body(run.pr_description, report),
                 ),
             )
             if url:
@@ -184,6 +196,65 @@ def read_optional(path: Path | None) -> str:
     if not path:
         return ""
     return path.read_text(encoding="utf-8", errors="replace")
+
+
+def build_validation_run(args: argparse.Namespace, *, run_checks: bool) -> ValidationRun:
+    root = repo_root(args.repo.resolve())
+    config = PolicyConfig.load(root)
+    pr_description = read_optional(args.body_file)
+    test_evidence = args.evidence
+    if args.evidence_file:
+        test_evidence = join_evidence(test_evidence, read_optional(args.evidence_file))
+    checks = run_required_checks(root, config.required_checks) if run_checks else []
+    changed = changed_files(root, args.base)
+    stats = numstat(root, args.base)
+    data = ValidationInput(
+        repo=root,
+        base=args.base,
+        changed_files=changed,
+        numstat=stats,
+        diff_text=diff_text(root, args.base),
+        tracked_files=tracked_files(root),
+        commits=commits(root, args.base),
+        pr_description=pr_description,
+        test_evidence=test_evidence,
+        ai_assisted=args.ai_assisted,
+        check_results=checks,
+    )
+    return ValidationRun(
+        root=root,
+        config=config,
+        pr_description=pr_description,
+        changed=changed,
+        stats=stats,
+        data=data,
+    )
+
+
+def evaluate_gate(args: argparse.Namespace, *, run_checks: bool) -> GateRun:
+    run = build_validation_run(args, run_checks=run_checks)
+    return GateRun(validation=run, findings=validate(run.data, run.config))
+
+
+def write_output(output: str, path: Path | None) -> None:
+    if path:
+        path.write_text(output, encoding="utf-8")
+    else:
+        print(output)
+
+
+def write_annotations(findings: list[Finding], mode: str) -> None:
+    annotations = render_annotations(findings, mode)
+    if annotations:
+        print(annotations, end="", file=sys.stderr)
+
+
+def has_blockers(findings: list[Finding]) -> bool:
+    return any(item.severity == BLOCKER for item in findings)
+
+
+def gate_exit_code(findings: list[Finding]) -> int:
+    return 2 if has_blockers(findings) else 0
 
 
 def join_evidence(first: str, second: str) -> str:

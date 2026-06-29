@@ -10,11 +10,13 @@ The format follows Keep a Changelog conventions, and this project uses semantic 
 
 - Initial Themis scaffold with Nix packaging, CLI validation, generated CLI docs, GitHub Action support, and draft pull request creation.
 - `themis guide` assistant command that runs the gate and produces upstream readiness checklists.
-- `themis review` command that runs the gate and produces maintainer-focused feedback packets.
+- `themis maintainer-packet` command that runs the gate and produces maintainer-focused feedback packets.
+- Optional GitHub workflow annotations for blockers, warnings, and informational findings.
 - Configuration, GitHub Action, and development documentation.
-- Direct CLI parser tests for normal and shorthand command forms.
+- Direct CLI parser tests for command forms.
 - `themis init` setup command for target repositories.
 - Shell completion generation for Bash, Zsh, and Fish.
+- CLI style documentation covering command naming, output shape, status language, and machine-output rules.
 
 ### Changed
 

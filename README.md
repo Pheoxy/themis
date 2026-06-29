@@ -28,7 +28,7 @@ Themis does not take accountability for users. It blocks risky or under-evidence
 - Blocks generated, vendored, minified, binary, oversized, secret-looking, placeholder, or AI-slop-looking diff content.
 - Produces a Markdown report and exits non-zero when blockers are present. The report is a gate result, not a certification.
 - Generates an upstream readiness guide that summarizes detected rules, changed files, likely obligations, and suggested next commands.
-- Generates a reviewer packet that groups blockers into contributor-facing feedback and suggested maintainer actions.
+- Generates a maintainer packet that groups blockers into contributor-facing feedback and suggested maintainer actions.
 
 ## Quick Start
 
@@ -50,10 +50,16 @@ Ask Themis to run the gate and organize the upstream prep work for the current c
 themis guide --repo /path/to/target/repo --base origin/main --body-file pr-body.md --evidence "pytest -q passed" --run-checks
 ```
 
-Generate reviewer-facing feedback that maintainers can send back to a contributor:
+Generate maintainer-facing feedback that can be sent back to a contributor:
 
 ```bash
-themis review --repo /path/to/target/repo --base origin/main --body-file pr-body.md --evidence "pytest -q passed" --run-checks
+themis maintainer-packet --repo /path/to/target/repo --base origin/main --body-file pr-body.md --evidence "pytest -q passed" --run-checks
+```
+
+In GitHub Actions, Themis can annotate blockers and warnings directly in the check UI:
+
+```bash
+themis validate --repo . --base origin/main --body-file pr-body.md --evidence "nix flake check passed" --annotations github
 ```
 
 ```bash
@@ -95,13 +101,13 @@ nix flake check
 When local work is ready, use the PR draft command. It runs the hard gate, runs configured required checks, writes a validation report, and creates a GitHub draft PR only if there are no blockers.
 
 ```bash
-nix run . -- pr draft --base origin/main --body-file pr-body.md --evidence "nix flake check passed"
+nix run . -- pull-request draft --base origin/main --body-file pr-body.md --evidence "nix flake check passed"
 ```
 
-Equivalent full command. `pr` is shorthand for `pull-request`; `d` is shorthand for `draft`.
+Short form:
 
 ```bash
-nix run . -- pull-request draft --base origin/main --body-file pr-body.md --evidence "nix flake check passed"
+nix run . -- pr d --base origin/main --body-file pr-body.md --evidence "nix flake check passed"
 ```
 
 The draft PR body includes the original PR description plus the validator report. The command requires GitHub CLI authentication for draft PR creation.
@@ -109,12 +115,23 @@ The draft PR body includes the original PR description plus the validator report
 Equivalent direct validator form:
 
 ```bash
-nix run . -- pr draft --repo . --base origin/main --body-file pr-body.md
+nix run . -- pull-request draft --repo . --base origin/main --body-file pr-body.md
 ```
 
 ## CLI Reference
 
 The CLI reference is generated directly from the parser code so docs and implementation stay tied together.
+
+Which command to use:
+
+| Command | Short form | Use when |
+| --- | --- | --- |
+| `themis validate` | `themis v` | You need the hard gate result for local use or CI. |
+| `themis guide` | `themis g` | You are preparing a contribution and want next steps. |
+| `themis maintainer-packet` | `themis mp` | You need maintainer-facing feedback/triage notes. |
+| `themis pull-request draft` | `themis pr d` | You want Themis to gate the patch and create a GitHub draft PR if clean. |
+
+`themis check` is intentionally not a command. It duplicates `validate` while also colliding with required checks and `--check` documentation workflows.
 
 ```bash
 nix run . -- docs cli --write
@@ -126,6 +143,7 @@ nix run . -- docs cli --check
 Additional docs:
 
 - `docs/configuration.md`: `.themis.toml` policy fields and examples.
+- `docs/cli-style.md`: CLI command/output style rules and naming guidance.
 - `docs/github-action.md`: GitHub Action usage and inputs.
 - `docs/development.md`: local development and self-check workflow.
 - `docs/assets/README.md`: visual concept artwork and future brand asset notes.
