@@ -29,6 +29,7 @@ The format follows Keep a Changelog conventions, and this project uses semantic 
 - GitHub Action outputs for gate status, exit code, and report path.
 - GitHub Action `workflow` input for `validate`, `guide`, `maintainer-packet`, and `self-check`.
 - Concise PR-comment output through `--format comment`.
+- Optional GitHub Action PR comments through `comment-pr`.
 - Configuration, GitHub Action, and development documentation.
 - Direct CLI parser tests for command forms.
 - `themis init` setup command for target repositories.

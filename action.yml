@@ -38,6 +38,12 @@ inputs:
   step-summary:
     description: Write the gate output to the GitHub Step Summary when possible.
     default: "true"
+  comment-pr:
+    description: Post the generated gate output as a pull request comment using gh.
+    default: "false"
+  pr-number:
+    description: Pull request number for comment-pr. Defaults to github.event.pull_request.number when available.
+    default: ""
   draft-pr:
     description: Create a draft PR with gh after validation passes.
     default: "false"
@@ -177,6 +183,31 @@ runs:
             cat "$INPUT_OUTPUT"
             printf '\n```\n'
           } >> "$GITHUB_STEP_SUMMARY"
+        fi
+
+    - name: Comment on pull request
+      if: always() && inputs.comment-pr == 'true' && inputs.output != ''
+      shell: bash
+      env:
+        INPUT_OUTPUT: ${{ inputs.output }}
+        INPUT_PR_NUMBER: ${{ inputs.pr-number }}
+        EVENT_PR_NUMBER: ${{ github.event.pull_request.number }}
+      run: |
+        set -euo pipefail
+        if [[ ! -f "$INPUT_OUTPUT" ]]; then
+          printf '::warning::Themis report file does not exist; skipping PR comment.\n'
+          exit 0
+        fi
+        pr_number="$INPUT_PR_NUMBER"
+        if [[ -z "$pr_number" ]]; then
+          pr_number="$EVENT_PR_NUMBER"
+        fi
+        if [[ -z "$pr_number" ]]; then
+          printf '::warning::No pull request number available; skipping Themis PR comment.\n'
+          exit 0
+        fi
+        if ! gh pr comment "$pr_number" --body-file "$INPUT_OUTPUT"; then
+          printf '::warning::Failed to post Themis PR comment. Check pull-requests: write permission and GH_TOKEN.\n'
         fi
 
     - name: Upload validation report

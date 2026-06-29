@@ -47,6 +47,8 @@ jobs:
 - `format`: gate output format. Use `markdown`, `comment`, `json`, or `sarif`. Default: `markdown`.
 - `annotations`: CI annotation mode. Use `github` or `none`. Default: `github`.
 - `step-summary`: write gate output to the GitHub Step Summary when possible. Default: `true`.
+- `comment-pr`: post the generated gate output as a pull request comment using `gh`. Default: `false`.
+- `pr-number`: pull request number for `comment-pr`. Defaults to `github.event.pull_request.number` when available.
 - `draft-pr`: create a draft PR after validation passes. Default: `false`.
 - `title`: draft PR title override.
 - `base-branch`: draft PR target branch override.
@@ -64,6 +66,8 @@ When `draft-pr` is `true`, the action runs `themis pull-request draft` regardles
 
 Markdown and comment reports are appended directly to the summary. JSON and SARIF are wrapped in fenced code blocks so the check summary remains readable.
 
+PR commenting requires `pull-requests: write` and a valid `GH_TOKEN`. Comment failures emit a warning instead of replacing the gate result. Use `format: comment` for concise comment bodies.
+
 ## Maintainer Packet Workflow
 
 Use the maintainer packet workflow when the action should produce contributor-facing feedback instead of the default validation report:
@@ -75,4 +79,22 @@ Use the maintainer packet workflow when the action should produce contributor-fa
     body-file: pr-body.md
     workflow: maintainer-packet
     run-checks: "true"
+```
+
+## PR Comment Workflow
+
+```yaml
+permissions:
+  contents: read
+  pull-requests: write
+
+steps:
+  - uses: OWNER/themis@main
+    env:
+      GH_TOKEN: ${{ github.token }}
+    with:
+      base: origin/${{ github.base_ref }}
+      body-file: pr-body.md
+      format: comment
+      comment-pr: "true"
 ```
