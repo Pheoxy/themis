@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import hashlib
 import json
 from typing import Any
 
@@ -57,6 +58,7 @@ def result(finding: Finding) -> dict[str, Any]:
         "ruleId": finding.code,
         "level": level(finding.severity),
         "message": {"text": message(finding)},
+        "partialFingerprints": {"themis/v1": fingerprint(finding)},
     }
     if finding.file:
         item["locations"] = [
@@ -84,3 +86,8 @@ def message(finding: Finding) -> str:
     if finding.detail:
         return f"{finding.message}\n{finding.detail}"
     return finding.message
+
+
+def fingerprint(finding: Finding) -> str:
+    value = "\0".join([finding.code, finding.file or "", finding.message])
+    return hashlib.sha256(value.encode("utf-8")).hexdigest()

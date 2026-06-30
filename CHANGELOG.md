@@ -60,6 +60,7 @@ The format follows Keep a Changelog conventions, and this project uses semantic 
 - GitHub Action now ignores draft PR-only inputs unless `draft-pr` is enabled.
 - GitHub Action now fails early when `draft-pr` is enabled without `body-file`.
 - GitHub Action docs now state the draft PR `body-file` requirement.
+- SARIF results now include stable Themis fingerprints and stronger output coverage.
 - Configuration, GitHub Action, and development documentation.
 - Direct CLI parser tests for command forms.
 - `themis init` setup command for target repositories.
