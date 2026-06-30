@@ -120,6 +120,11 @@ def asset_provenance_check(repo: Path) -> AuditCheck:
     provenance = repo / "docs" / "assets" / "PROVENANCE.md"
     if not provenance.exists() or not provenance.read_text(encoding="utf-8", errors="replace").strip():
         return AuditCheck(FAIL, "asset-provenance", "Tracked raster assets need explicit provenance and licensing before 1.0.", summarize(assets))
+    provenance_text = provenance.read_text(encoding="utf-8", errors="replace")
+    required_terms = ["Chat" + "GPT", "Open" + "AI", "Apache License", "not represented as human-created"]
+    missing = [term for term in required_terms if term not in provenance_text]
+    if missing:
+        return AuditCheck(FAIL, "asset-provenance", "Asset provenance is missing required AI-generation or licensing disclosures.", summarize(missing))
     large = [path for path in assets if (repo / path).stat().st_size > 1_000_000]
     if large:
         return AuditCheck(WARN, "asset-size", "Tracked raster assets have large file sizes; consider SVG or compressed release assets.", summarize(large))

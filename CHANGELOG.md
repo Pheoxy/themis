@@ -64,6 +64,7 @@ The format follows Keep a Changelog conventions, and this project uses semantic 
 - `themis release audit` for redacted pre-1.0 secret, template URL, generated-file, license, and asset-provenance checks.
 - GitHub Action examples now reference `Pheoxy/themis@main` instead of template owner placeholders.
 - Project license changed from MIT to Apache-2.0.
+- Documented ChatGPT/OpenAI provenance and Apache-2.0 license intent for generated PNG assets.
 - Configuration, GitHub Action, and development documentation.
 - Direct CLI parser tests for command forms.
 - `themis init` setup command for target repositories.

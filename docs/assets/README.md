@@ -2,6 +2,8 @@
 
 The images in `concepts/` are concept artwork for the Themis brand direction. They are not final canonical logos.
 
+Asset provenance and license intent are documented in `PROVENANCE.md`.
+
 They capture the intended mood for future project artwork:
 
 - Cute but serious.
@@ -36,6 +38,7 @@ These files are useful style references, but should not be treated as ready offi
 - `themis-compact-icon.png`: replace with a real transparent-alpha compact icon.
 - SVG logo/icon variants: create simplified hand-authored versions for small-size use.
 - Favicon source: create after the compact icon direction is finalized.
+- Final 1.0 logo/trademark review: complete before treating any raster asset as canonical project branding.
 
 Generation prompts for follow-up work live in `PROMPTS.md`.
 
