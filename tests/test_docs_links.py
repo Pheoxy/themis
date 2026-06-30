@@ -10,6 +10,7 @@ class DocsLinksTests(unittest.TestCase):
         docs = sorted(set(re.findall(r"`(docs/[^`]+\.md)`", readme)))
         self.assertIn("docs/integrations.md", docs)
         self.assertIn("docs/positioning.md", docs)
+        self.assertIn("docs/release-notes-template.md", docs)
         self.assertIn("docs/release.md", docs)
         self.assertIn("docs/threat-model.md", docs)
         for relative in docs:
