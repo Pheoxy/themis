@@ -1,167 +1,147 @@
 # Themis Generated Asset Prompts
 
-Generate these only if the project needs raster artwork before final SVG/logo work. Save new images in `docs/assets/` and use the target filenames listed here.
+This file records the best available prompt provenance for tracked raster image assets. Exact submitted prompts are not independently available from the repository. The entries below are concise approximate reconstructions or follow-up/regeneration prompts, not legal conclusions.
 
-## Required Before Public Branding
+The assets were generated with ChatGPT/OpenAI image generation according to project discussion. The files were copied into the repository by a human and renamed. No repository-side image editing, upscaling, cropping, or background removal is known, except where noted.
+
+## Common Direction
+
+The requested visual direction was a cute Themis-themed open-source project mascot/brand system for a pre-upstream pull request validator.
+
+Common elements:
+
+- Greek Themis/law/order cues: scales, shield, laurel, robe/cloak, blindfold or headband.
+- Developer-tooling cues: pull request branch, terminal, checkmark, progress/check screen.
+- Palette: deep navy, warm gold, soft teal, blush accents, warm off-white.
+- Mood: friendly but strict, cute but serious, maintainer-protective.
+
+Common negative constraints:
+
+- Original artwork only.
+- No third-party logos or brand identities.
+- No existing mascots or mascot copying.
+- No copyrighted characters.
+- No celebrity likenesses.
+- No named living-artist styles.
+- No watermark.
+- No photorealism.
+
+## Tracked Assets
+
+### `docs/assets/themis-banner-dark.png`
+
+Prompt status: follow-up/regeneration prompt; exact submitted prompt cannot be independently verified.
+
+Approximate prompt:
+
+```text
+Create a wide dark-themed README banner for Themis, an open-source pre-upstream PR validation tool. Put a cute Themis guardian mascot on the left and the title "Themis" plus subtitle "Pre-upstream PR validation" on the right. Use Greek law/order cues, developer-tooling cues, dark navy or midnight background, warm gold, soft teal, cream, and blush accents. Keep text crisp and readable. Original artwork only; no third-party mascots, copyrighted characters, logos, watermarks, or photorealism.
+```
+
+Post-generation notes: copied into `docs/assets/` and renamed. No known repository-side edits.
+
+### `docs/assets/themis-banner-light.png`
+
+Prompt status: follow-up/regeneration prompt; exact submitted prompt cannot be independently verified.
+
+Approximate prompt:
+
+```text
+Create a wide light README banner for Themis, an open-source pre-upstream PR validation tool. Put a cute Themis guardian mascot on the left and the title "Themis" plus subtitle "Pre-upstream PR validation" on the right. Use warm off-white background, deep navy, warm gold, soft teal, and blush accents. Keep text crisp and readable. Original artwork only; no third-party mascots, copyrighted characters, logos, watermarks, or photorealism.
+```
+
+Post-generation notes: copied into `docs/assets/` and renamed. No known repository-side edits.
+
+### `docs/assets/themis-compact-icon.png`
+
+Prompt status: follow-up/regeneration prompt; exact submitted prompt cannot be independently verified.
+
+Approximate prompt:
+
+```text
+Create a compact Themis icon for an open-source PR validation tool. Use a cute chibi Themis guardian head-and-shoulders composition with simplified laurel or headband, shield with checkmark, and optional small scales. Make it readable at small sizes. Original artwork only; no third-party mascots, copyrighted characters, logos, text, watermarks, or photorealism.
+```
+
+Post-generation notes: copied into `docs/assets/` and renamed. Transparency is uncertain; this asset is treated as a reference candidate, not a final transparent icon.
+
+### `docs/assets/themis-primary-mascot.png`
+
+Prompt status: approximate reconstruction / follow-up prompt; exact submitted prompt is unknown.
+
+Approximate prompt:
+
+```text
+Create a full-body cute Themis guardian mascot for an open-source pre-upstream pull request validator. The mascot should hold simple scales and a shield with a checkmark. Use Greek law/order cues, developer-tooling cues, deep navy, warm gold, soft teal, blush accents, and warm off-white. Make it friendly but strict and suitable for public project branding. Original artwork only; no third-party mascots, copyrighted characters, logos, text, watermarks, or photorealism.
+```
+
+Post-generation notes: copied into `docs/assets/` and renamed. Transparency is uncertain; this asset is treated as a reference candidate, not a final transparent mascot.
+
+### `docs/assets/themis-validation-card.png`
+
+Prompt status: approximate reconstruction / follow-up-regeneration prompt. Earlier generated validation-card files were removed because they had unsuitable characters. The exact final regeneration prompt is unknown.
+
+Approximate prompt:
+
+```text
+Create a friendly validation-card illustration for Themis, an open-source pre-upstream PR validation tool. Main text: "Themis is validating this PR". Subtext: "Protecting maintainer time." Include checklist rows for PR rules, test evidence, AI disclosure, contribution guide, generated/vendor noise, and secrets. Include terminal text "themis validate". Use the cute Themis guardian mascot, simple scales, shield with checkmark, warm off-white background, deep navy, warm gold, soft teal, and blush accents. Original artwork only; no third-party mascots, copyrighted characters, logos, watermarks, or photorealism.
+```
+
+Post-generation notes: copied into `docs/assets/` and renamed. No known repository-side edits.
+
+### `docs/assets/concepts/themis-banner-concept.png`
+
+Prompt status: approximate reconstruction. Concept images were supplied before asset-specific prompts were documented.
+
+Approximate prompt:
+
+```text
+Create concept branding for Themis, a paranoid pre-upstream pull request validator for AI-assisted code. Explore a cute Themis-themed mascot/logo system with law/order cues, developer validation cues, a friendly verification-gate mood, and a clean vector-like style. Include concepts for a primary mascot, compact icon, validation card, and wordmark/banner direction. Original artwork only; no third-party mascots, copyrighted characters, logos, named artist styles, watermarks, or photorealism.
+```
+
+Post-generation notes: copied into `docs/assets/concepts/` and renamed. Concept artwork only, not final canonical branding.
+
+### `docs/assets/concepts/themis-icon-concept.png`
+
+Prompt status: approximate reconstruction. Same concept-set direction as `themis-banner-concept.png`.
+
+Post-generation notes: copied into `docs/assets/concepts/` and renamed. Concept artwork only, not final canonical branding.
+
+### `docs/assets/concepts/themis-mascot-concept.png`
+
+Prompt status: approximate reconstruction. Same concept-set direction as `themis-banner-concept.png`.
+
+Post-generation notes: copied into `docs/assets/concepts/` and renamed. Concept artwork only, not final canonical branding.
+
+### `docs/assets/concepts/themis-validation-card-concept.png`
+
+Prompt status: approximate reconstruction. Same concept-set direction as `themis-banner-concept.png`.
+
+Post-generation notes: copied into `docs/assets/concepts/` and renamed. Concept artwork only, not final canonical branding.
+
+## Future Regeneration Prompts
+
+Use future prompts only if the project needs refreshed raster artwork before final SVG/logo work.
 
 ### Transparent Primary Mascot
 
-Target filename: `themis-primary-mascot-transparent.png`
-
 ```text
-Regenerate the Themis primary mascot with actual transparent alpha background.
-
-Subject:
-A full-body cute chibi Themis guardian mascot holding simple scales and a shield with a clear checkmark. Greek law/order cues: gold laurel, soft teal blindfold/headband, cream robe, navy cloak, warm gold trim. Developer tooling cue: small terminal or pull-request symbol on the chest plate.
-
-Style:
-Clean polished vector-like project branding, rounded shapes, consistent line weight, deep navy, warm gold, soft teal, cream, blush accents. Friendly, strict-but-kind, maintainer-protective.
-
-Requirements:
-- Actual transparent alpha background.
-- Do not draw a checkerboard background.
-- Do not include any fake transparency grid.
-- No text.
-- No watermark.
-- Centered square composition.
-- Clear silhouette.
-- Shield checkmark must be readable.
-- Reduce tiny details where possible.
-
-Constraints:
-Original artwork only. No third-party mascot copying and no copyrighted mascot references, no photorealism.
+Regenerate the Themis primary mascot with actual transparent alpha background. Create a full-body cute Themis guardian mascot holding simple scales and a shield with a clear checkmark. Use Greek law/order cues, developer-tooling cues, deep navy, warm gold, soft teal, cream, and blush accents. No text, watermark, fake transparency grid, third-party mascots, copyrighted characters, logos, named artist styles, or photorealism.
 ```
 
 ### Transparent Compact Icon
 
-Target filename: `themis-compact-icon-transparent.png`
-
 ```text
-Regenerate the Themis compact icon with actual transparent alpha background.
-
-Subject:
-A cute chibi Themis guardian head-and-shoulders icon. Include a simplified gold laurel/headband, soft teal blindfold/headband, small shield with a clear checkmark, and optionally tiny simplified scales.
-
-Style:
-Clean polished vector-like logo, rounded shapes, consistent line weight, deep navy, warm gold, soft teal, cream, blush accents.
-
-Icon requirements:
-- Actual transparent alpha background.
-- Do not draw a checkerboard background.
-- Do not include any fake transparency grid.
-- No text.
-- No watermark.
-- Centered square icon composition.
-- Must remain readable at 64px.
-- Reduce tiny details compared to the mascot.
-- Keep the shield checkmark obvious.
-
-Constraints:
-Original artwork only. No third-party mascot copying and no copyrighted mascot references, no photorealism.
+Regenerate the Themis compact icon with actual transparent alpha background. Create a cute chibi Themis guardian head-and-shoulders icon with a simplified gold laurel/headband, soft teal blindfold/headband, small shield with a clear checkmark, and optional tiny simplified scales. Keep it readable at 64px. No text, watermark, fake transparency grid, third-party mascots, copyrighted characters, logos, named artist styles, or photorealism.
 ```
-
-### Validation Card
-
-Target filename: `themis-validation-card.png`
-
-```text
-Generate only the Themis validation card.
-
-Create a friendly bot-check style validation card for “Themis”, an open-source pre-upstream PR validation tool.
-
-Main text:
-Themis is validating this PR
-
-Subtext:
-Protecting maintainer time.
-
-Checklist rows:
-- PR rules: Passed
-- Test evidence: Passed
-- AI disclosure: Passed
-- Contribution guide: Passed
-- Generated/vendor noise: Checking
-- Secrets: Pending
-
-Bottom developer context:
-Branch: feature/auth
-Terminal: themis validate
-
-Subject:
-Use the cute Themis guardian mascot on the left, holding simple scales and a shield with a clear checkmark.
-
-Style:
-Clean polished vector-like illustration, rounded UI card, warm off-white background, deep navy text, warm gold, soft teal, blush accents. Friendly strict-but-kind mood.
-
-Requirements:
-- Wide card layout, suitable for docs and README.
-- No fake transparency checkerboard.
-- No watermark.
-- Keep all text readable and correctly spelled.
-- Use exactly “themis validate”, not “themis --validate”.
-- Avoid tiny unreadable text.
-- Avoid clutter.
-- Make it feel like a cute validation/check screen, similar in spirit to bot-check pages but original.
-
-Constraints:
-Original artwork only. No third-party mascot copying and no copyrighted mascot references, no photorealism.
-```
-
-## Useful Later
 
 ### Social Preview Card
 
-Target filename: `themis-og-card.png`
-
 ```text
-Generate a social preview card for “Themis”, an open-source pre-upstream PR validation tool.
-
-Canvas:
-1200x630 landscape social card.
-
-Text:
-Themis
-Pre-upstream PR validation
-Protect maintainer time before review.
-
-Subject:
-Use the cute Themis guardian mascot on the left or lower-left, with a shield checkmark and simple scales. Keep the text large and readable on the right.
-
-Style:
-Dark navy or warm off-white background, polished vector-like branding, deep navy, warm gold, soft teal, cream, blush accents. Friendly but serious open-source developer tooling mood.
-
-Requirements:
-- No fake transparency checkerboard.
-- No watermark.
-- Large readable text.
-- Suitable for GitHub/social previews.
-- Avoid tiny UI details.
-
-Constraints:
-Original artwork only. No third-party mascot copying and no copyrighted mascot references, no photorealism.
+Generate a social preview card for Themis, an open-source pre-upstream PR validation tool. Canvas: 1200x630. Text: "Themis", "Pre-upstream PR validation", "Protect maintainer time before review." Use Themis guardian artwork or shield/checkmark/scales motifs. Keep text large and readable. No watermark, third-party mascots, copyrighted characters, logos, named artist styles, or photorealism.
 ```
 
 ### Favicon Source
 
-Target filename: `themis-favicon-source.png`
-
 ```text
-Generate a very simple favicon source icon for “Themis”.
-
-Subject:
-A minimal shield with a checkmark, small gold laurel accent, and optional tiny scale silhouette. No character face unless it remains readable at tiny sizes.
-
-Style:
-Flat vector-like icon, high contrast, deep navy shield, warm gold trim, soft teal checkmark, transparent background.
-
-Requirements:
-- Actual transparent alpha background.
-- Do not draw a checkerboard background.
-- No text.
-- No watermark.
-- Readable at 16px, 32px, and 64px.
-- Very simple shapes.
-
-Constraints:
-Original artwork only. No third-party mascot copying and no copyrighted mascot references, no photorealism.
+Generate a very simple favicon source icon for Themis. Use a minimal shield with a checkmark, small gold laurel accent, and optional tiny scale silhouette. Transparent background. No text, watermark, third-party mascots, copyrighted characters, logos, named artist styles, or photorealism.
 ```
