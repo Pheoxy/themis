@@ -71,6 +71,7 @@ The format follows Keep a Changelog conventions, and this project uses semantic 
 - Monorepo contribution docs are discovered outside generated/vendor trees, with generated/vendor allowlist fixture coverage.
 - `themis release audit --history` now fails cleanly outside git repositories.
 - Threat model documentation covering scope, adversary model, provider boundaries, and non-guarantees.
+- Positioning documentation comparing Themis with scanners, CI, PR bots, AI reviewers, and maintainer review.
 - Configuration, GitHub Action, and development documentation.
 - Direct CLI parser tests for command forms.
 - `themis init` setup command for target repositories.

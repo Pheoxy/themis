@@ -212,6 +212,7 @@ Additional docs:
 - `docs/configuration.md`: `.themis.toml` policy fields and examples.
 - `docs/schema/themis.schema.json`: JSON Schema for `.themis.toml`.
 - `docs/cli-style.md`: CLI command/output style rules and naming guidance.
+- `docs/positioning.md`: what Themis is, is not, and how it differs from adjacent tools.
 - `docs/github-action.md`: GitHub Action usage and inputs.
 - `docs/integrations.md`: Nix, Python, Rust, Node, Go, and CI integration patterns.
 - `docs/threat-model.md`: scope, adversary model, guarantees, and non-guarantees.
