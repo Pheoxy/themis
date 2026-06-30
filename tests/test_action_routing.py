@@ -31,6 +31,21 @@ class ActionRoutingTests(unittest.TestCase):
         self.assertIn("--human-authored", argv)
         self.assertIn("--annotations", argv)
         self.assertIn("--run-checks", argv)
+        self.assertEqual(result.outputs["status"], "pass")
+        self.assertEqual(result.outputs["exit-code"], "0")
+        self.assertEqual(result.outputs["report"], "report.md")
+
+    def test_validate_route_outputs_blocked_status_on_nonzero_exit(self) -> None:
+        result = run_action_route(
+            {
+                "THEMIS_FAKE_EXIT": "2",
+            }
+        )
+
+        self.assertEqual(result.returncode, 2)
+        self.assertEqual(result.outputs["status"], "blocked")
+        self.assertEqual(result.outputs["exit-code"], "2")
+        self.assertEqual(result.outputs["report"], "report.md")
 
     def test_validate_route_ignores_draft_pr_only_flags(self) -> None:
         result = run_action_route(
@@ -181,10 +196,11 @@ class ActionStepSummaryTests(unittest.TestCase):
 
 
 class ActionRouteResult:
-    def __init__(self, completed: subprocess.CompletedProcess[str], argv: list[str]) -> None:
+    def __init__(self, completed: subprocess.CompletedProcess[str], argv: list[str], outputs: dict[str, str] | None = None) -> None:
         self.returncode = completed.returncode
         self.stderr = completed.stderr
         self.argv = argv
+        self.outputs = outputs or {}
 
 
 class ActionSummaryResult:
@@ -245,7 +261,8 @@ def run_action_route(overrides: dict[str, str]) -> ActionRouteResult:
         env.update(overrides)
         completed = subprocess.run(["bash", str(route_script)], cwd=root, env=env, text=True, capture_output=True)
         argv = capture.read_text(encoding="utf-8").splitlines() if capture.exists() else []
-        return ActionRouteResult(completed, argv)
+        outputs = parse_github_output(output)
+        return ActionRouteResult(completed, argv, outputs)
 
 
 def run_step_summary(overrides: dict[str, str], *, report: str, report_exists: bool) -> ActionSummaryResult:
@@ -313,6 +330,18 @@ def run_comment_step(overrides: dict[str, str], *, report_exists: bool) -> Actio
         completed = subprocess.run(["bash", str(route_script)], cwd=tmp, env=env, text=True, capture_output=True)
         argv = capture.read_text(encoding="utf-8").splitlines() if capture.exists() else []
         return ActionRouteResult(completed, argv)
+
+
+def parse_github_output(path: Path) -> dict[str, str]:
+    if not path.exists():
+        return {}
+    output: dict[str, str] = {}
+    for line in path.read_text(encoding="utf-8").splitlines():
+        if "=" not in line:
+            continue
+        key, value = line.split("=", 1)
+        output[key] = value
+    return output
 
 
 def extract_action_script(action_path: Path, step_name: str) -> str:
