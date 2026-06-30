@@ -51,6 +51,7 @@ class ActionRoutingTests(unittest.TestCase):
         result = run_action_route(
             {
                 "INPUT_DRAFT_PR": "true",
+                "INPUT_BODY_FILE": "pr-body.md",
                 "INPUT_TITLE": "Draft title",
                 "INPUT_BASE_BRANCH": "main",
                 "INPUT_HEAD_BRANCH": "feature",
@@ -66,6 +67,18 @@ class ActionRoutingTests(unittest.TestCase):
         self.assertIn("main", result.argv)
         self.assertIn("--head-branch", result.argv)
         self.assertIn("feature", result.argv)
+
+    def test_draft_pr_route_requires_body_file(self) -> None:
+        result = run_action_route(
+            {
+                "INPUT_DRAFT_PR": "true",
+                "INPUT_BODY_FILE": "",
+            }
+        )
+
+        self.assertEqual(result.returncode, 3)
+        self.assertEqual(result.argv, [])
+        self.assertIn("draft-pr requires body-file", result.stderr)
 
     def test_config_check_route_excludes_gate_flags(self) -> None:
         result = run_action_route(

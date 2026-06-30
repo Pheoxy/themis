@@ -123,6 +123,10 @@ runs:
         if [[ "$INPUT_DRAFT_PR" == "true" ]]; then
           command=(pull-request draft)
         fi
+        if [[ "${command[0]}" == "pull-request" && -z "$INPUT_BODY_FILE" ]]; then
+          printf 'draft-pr requires body-file so Themis can build the draft pull request body.\n' >&2
+          exit 3
+        fi
         if [[ "${command[0]}" == "self-check" && "$INPUT_FORMAT" != "markdown" && "$INPUT_FORMAT" != "json" ]]; then
           printf 'Unsupported format for self-check: %s\n' "$INPUT_FORMAT" >&2
           exit 3
