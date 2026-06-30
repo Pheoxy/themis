@@ -34,6 +34,14 @@ Run the full Nix gate:
 nix flake check
 ```
 
+Run the redacted pre-1.0 release audit, including reachable git history:
+
+```bash
+nix run . -- release audit --history
+```
+
+The audit checks for secret-like material, generated/cache files, unresolved template repository URLs, license metadata, and asset provenance. It reports locations, not secret values.
+
 Run Themis against the committed release change before tagging:
 
 ```bash

@@ -218,14 +218,15 @@ options:
 ## `themis release`
 
 ```text
-usage: themis release [-h] {check} ...
+usage: themis release [-h] {check,audit} ...
 
 positional arguments:
-  {check}
-    check     Check release/version consistency.
+  {check,audit}
+    check        Check release/version consistency.
+    audit        Run redacted pre-1.0 security/provenance audit checks.
 
 options:
-  -h, --help  show this help message and exit
+  -h, --help     show this help message and exit
 ```
 
 ## `themis release check`
@@ -241,6 +242,22 @@ options:
                         Release check output format.
   -o OUTPUT, --output OUTPUT
                         Write release check output to this path.
+```
+
+## `themis release audit`
+
+```text
+usage: themis release audit [-h] [-r REPO] [--history]
+                            [--format {markdown,json}] [-o OUTPUT]
+
+options:
+  -h, --help            show this help message and exit
+  -r REPO, --repo REPO  Themis repository to inspect.
+  --history             Scan reachable git history for secret-like values.
+  --format {markdown,json}
+                        Release audit output format.
+  -o OUTPUT, --output OUTPUT
+                        Write release audit output to this path.
 ```
 
 ## `themis config`

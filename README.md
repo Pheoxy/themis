@@ -255,7 +255,7 @@ jobs:
         env:
           PR_BODY: ${{ github.event.pull_request.body }}
         run: printf '%s' "$PR_BODY" > pr-body.md
-      - uses: OWNER/themis@main
+      - uses: Pheoxy/themis@main
         with:
           base: origin/${{ github.base_ref }}
           body-file: pr-body.md

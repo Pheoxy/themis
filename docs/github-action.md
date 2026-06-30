@@ -26,7 +26,7 @@ jobs:
         env:
           PR_BODY: ${{ github.event.pull_request.body }}
         run: printf '%s' "$PR_BODY" > pr-body.md
-      - uses: OWNER/themis@main
+      - uses: Pheoxy/themis@main
         with:
           base: origin/${{ github.base_ref }}
           body-file: pr-body.md
@@ -91,7 +91,7 @@ The examples in `examples/github-actions/` show the expected permission split:
 Use the maintainer packet workflow when the action should produce contributor-facing feedback instead of the default validation report:
 
 ```yaml
-- uses: OWNER/themis@main
+- uses: Pheoxy/themis@main
   with:
     base: origin/${{ github.base_ref }}
     body-file: pr-body.md
@@ -107,7 +107,7 @@ permissions:
   pull-requests: write
 
 steps:
-  - uses: OWNER/themis@main
+  - uses: Pheoxy/themis@main
     env:
       GH_TOKEN: ${{ github.token }}
     with:

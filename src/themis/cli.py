@@ -97,6 +97,11 @@ def build_parser() -> argparse.ArgumentParser:
     release_check_parser.add_argument("-r", "--repo", type=Path, default=Path.cwd(), help="Themis repository to inspect.")
     release_check_parser.add_argument("--format", choices=["markdown", "json"], default="markdown", help="Release check output format.")
     release_check_parser.add_argument("-o", "--output", type=Path, help="Write release check output to this path.")
+    release_audit_parser = release_subcommands.add_parser("audit", help="Run redacted pre-1.0 security/provenance audit checks.")
+    release_audit_parser.add_argument("-r", "--repo", type=Path, default=Path.cwd(), help="Themis repository to inspect.")
+    release_audit_parser.add_argument("--history", action="store_true", help="Scan reachable git history for secret-like values.")
+    release_audit_parser.add_argument("--format", choices=["markdown", "json"], default="markdown", help="Release audit output format.")
+    release_audit_parser.add_argument("-o", "--output", type=Path, help="Write release audit output to this path.")
 
     config_parser = subcommands.add_parser("config", help="Configuration workflows.")
     config_subcommands = config_parser.add_subparsers(dest="config_command", required=True)
@@ -170,6 +175,13 @@ def main(argv: list[str] | None = None) -> int:
 
             return handle_cli_docs(args)
         if args.command == "release":
+            if args.release_command == "audit":
+                from .release_audit import audit_exit_code, inspect_release_audit, render_audit_json, render_audit_markdown
+
+                result = inspect_release_audit(args.repo.resolve(), include_history=args.history)
+                output = render_audit_json(result) if args.format == "json" else render_audit_markdown(result)
+                write_output(output, args.output)
+                return audit_exit_code(result)
             from .version_check import inspect_versions, render_version_check_json, render_version_check_markdown, version_check_exit_code
 
             result = inspect_versions(args.repo.resolve())
