@@ -27,10 +27,10 @@ inputs:
     description: Themis workflow to run. Use validate, guide, maintainer-packet, self-check, or config-check.
     default: validate
   output:
-    description: Gate output path.
+    description: Themis output path.
     default: upstream-validation-report.md
   format:
-    description: Gate output format. Use markdown, comment, json, or sarif.
+    description: Themis output format. Use markdown, comment, json, or sarif. config-check supports markdown or json.
     default: markdown
   annotations:
     description: CI annotation mode. Use github for GitHub workflow annotations or none to disable.
@@ -122,6 +122,10 @@ runs:
         esac
         if [[ "$INPUT_DRAFT_PR" == "true" ]]; then
           command=(pull-request draft)
+        fi
+        if [[ "${command[0]}" == "config" && "$INPUT_FORMAT" != "markdown" && "$INPUT_FORMAT" != "json" ]]; then
+          printf 'Unsupported format for config-check: %s\n' "$INPUT_FORMAT" >&2
+          exit 3
         fi
         args=(--repo "$INPUT_REPO" --output "$INPUT_OUTPUT" --format "$INPUT_FORMAT")
         if [[ "${command[0]}" != "config" && -n "$INPUT_BASE" ]]; then

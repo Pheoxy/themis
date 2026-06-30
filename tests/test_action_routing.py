@@ -65,6 +65,18 @@ class ActionRoutingTests(unittest.TestCase):
             ],
         )
 
+    def test_config_check_rejects_gate_only_output_formats(self) -> None:
+        result = run_action_route(
+            {
+                "INPUT_WORKFLOW": "config-check",
+                "INPUT_FORMAT": "comment",
+            }
+        )
+
+        self.assertEqual(result.returncode, 3)
+        self.assertEqual(result.argv, [])
+        self.assertIn("Unsupported format for config-check", result.stderr)
+
 
 class ActionCommentTests(unittest.TestCase):
     def test_comment_step_uses_explicit_pr_number(self) -> None:
@@ -93,6 +105,11 @@ class ActionStepSummaryTests(unittest.TestCase):
         result = run_step_summary({"INPUT_FORMAT": "json"}, report='{"status":"pass"}\n', report_exists=True)
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertEqual(result.summary, '## Themis json output\n\n```json\n{"status":"pass"}\n\n```\n')
+
+    def test_step_summary_wraps_comment_report_in_fence(self) -> None:
+        result = run_step_summary({"INPUT_FORMAT": "comment"}, report="Blocked\n", report_exists=True)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(result.summary, "## Themis comment output\n\n```comment\nBlocked\n\n```\n")
 
     def test_step_summary_skips_missing_report(self) -> None:
         result = run_step_summary({"INPUT_FORMAT": "markdown"}, report="", report_exists=False)
