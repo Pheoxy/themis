@@ -160,12 +160,13 @@ def approved_large_assets(repo: Path) -> set[str]:
 
 def current_secret_check(repo: Path) -> AuditCheck:
     hits = scan_files_for_secrets(repo, tracked_files(repo))
-    real_hits = [hit for hit in hits if not is_synthetic_secret_fixture(hit)]
-    synthetic = [hit for hit in hits if is_synthetic_secret_fixture(hit)]
+    approved = approved_secret_fixtures(repo)
+    real_hits = [hit for hit in hits if not is_synthetic_secret_fixture(hit, approved)]
+    synthetic = [hit for hit in hits if is_synthetic_secret_fixture(hit, approved)]
     if real_hits:
         return AuditCheck(FAIL, "tracked-secret-patterns", "Tracked files contain secret-like values. Values are not printed.", summarize_hits(real_hits))
     if synthetic:
-        return AuditCheck(WARN, "tracked-secret-fixtures", "Only synthetic redaction fixtures matched secret-like patterns.", summarize_hits(synthetic))
+        return AuditCheck(PASS, "tracked-secret-fixtures", "Only approved synthetic redaction fixtures matched secret-like patterns.", summarize_hits(synthetic))
     return AuditCheck(PASS, "tracked-secret-patterns", "No tracked secret-like values found.")
 
 
@@ -198,12 +199,13 @@ def history_secret_check(repo: Path) -> AuditCheck:
                 if len(parts) >= 4:
                     _, path, line_no, _ = parts
                     hits.append(SecretHit(pattern_name, path, int(line_no)))
-    real_hits = [hit for hit in hits if not is_synthetic_secret_fixture(hit)]
-    synthetic = [hit for hit in hits if is_synthetic_secret_fixture(hit)]
+    approved = approved_secret_fixtures(repo)
+    real_hits = [hit for hit in hits if not is_synthetic_secret_fixture(hit, approved)]
+    synthetic = [hit for hit in hits if is_synthetic_secret_fixture(hit, approved)]
     if real_hits:
         return AuditCheck(FAIL, "history-secret-patterns", "Git history contains secret-like values. Values are not printed.", summarize_hits(real_hits))
     if synthetic:
-        return AuditCheck(WARN, "history-secret-fixtures", "Git history contains only synthetic redaction fixtures matching secret-like patterns.", summarize_hits(synthetic))
+        return AuditCheck(PASS, "history-secret-fixtures", "Git history contains only approved synthetic redaction fixtures matching secret-like patterns.", summarize_hits(synthetic))
     return AuditCheck(PASS, "history-secret-patterns", "No secret-like values found in reachable git history.")
 
 
@@ -224,8 +226,15 @@ def scan_files_for_secrets(repo: Path, paths: list[str]) -> list[SecretHit]:
     return hits
 
 
-def is_synthetic_secret_fixture(hit: SecretHit) -> bool:
-    return hit.path == "tests/test_providers.py" and hit.line in {122, 130, 141}
+def is_synthetic_secret_fixture(hit: SecretHit, approved: set[str]) -> bool:
+    return f"{hit.pattern}:{hit.path}:{hit.line}" in approved
+
+
+def approved_secret_fixtures(repo: Path) -> set[str]:
+    path = repo / "docs" / "security-fixtures.md"
+    if not path.exists():
+        return set()
+    return set(re.findall(r"`([a-z0-9-]+:[^`:]+:\d+)`", path.read_text(encoding="utf-8", errors="replace")))
 
 
 def tracked_files(repo: Path) -> list[str]:

@@ -7,6 +7,7 @@ import unittest
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 from themis.release_audit import audit_exit_code, inspect_release_audit, render_audit_json, render_audit_markdown
+from themis.release_audit import approved_secret_fixtures
 
 
 class ReleaseAuditTests(unittest.TestCase):
@@ -18,7 +19,20 @@ class ReleaseAuditTests(unittest.TestCase):
         self.assertEqual(checks["template-references"].status, "PASS")
         self.assertEqual(checks["asset-provenance"].status, "PASS")
         self.assertEqual(checks["asset-size"].status, "PASS")
+        self.assertEqual(checks["tracked-secret-fixtures"].status, "PASS")
         self.assertNotIn("supersecretvalue", render_audit_markdown(result))
+
+    def test_approved_secret_fixtures_are_documented(self) -> None:
+        repo = Path(__file__).resolve().parents[1]
+        fixtures = approved_secret_fixtures(repo)
+        self.assertEqual(
+            fixtures,
+            {
+                "generic-secret-assignment:tests/test_providers.py:122",
+                "generic-secret-assignment:tests/test_providers.py:130",
+                "generic-secret-assignment:tests/test_providers.py:141",
+            },
+        )
 
     def test_large_asset_without_explicit_approval_warns(self) -> None:
         with tempfile.TemporaryDirectory() as raw:

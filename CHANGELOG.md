@@ -78,6 +78,7 @@ The format follows Keep a Changelog conventions, and this project uses semantic 
 - Added a release checklist issue template that keeps remote/push work last.
 - Added a release notes template for 1.0 and later releases.
 - Release audit supports explicitly approved large raster assets in provenance documentation.
+- Release audit now treats documented synthetic secret-like redaction fixtures as approved and fails on unapproved hits.
 - Configuration, GitHub Action, and development documentation.
 - Direct CLI parser tests for command forms.
 - `themis init` setup command for target repositories.

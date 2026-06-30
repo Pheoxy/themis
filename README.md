@@ -220,6 +220,7 @@ Additional docs:
 - `docs/development.md`: local development and self-check workflow.
 - `docs/release.md`: release checks, generated docs, and tagging process.
 - `docs/release-notes-template.md`: release notes template for 1.0 and later releases.
+- `docs/security-fixtures.md`: approved synthetic secret-like test fixtures for redaction coverage.
 - `docs/assets/README.md`: visual assets and future brand asset notes.
 - `examples/pr-body.md`: minimal PR body template that includes required accountability sections.
 - `examples/github-actions/`: copyable GitHub workflows for validation, PR comments, self-check, and config-check.
