@@ -70,6 +70,7 @@ The format follows Keep a Changelog conventions, and this project uses semantic 
 - Rule inference and gate fixtures now cover Go and Java/Maven/Gradle test workflows.
 - Monorepo contribution docs are discovered outside generated/vendor trees, with generated/vendor allowlist fixture coverage.
 - `themis release audit --history` now fails cleanly outside git repositories.
+- Threat model documentation covering scope, adversary model, provider boundaries, and non-guarantees.
 - Configuration, GitHub Action, and development documentation.
 - Direct CLI parser tests for command forms.
 - `themis init` setup command for target repositories.
