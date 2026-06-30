@@ -19,10 +19,16 @@ class ActionMetadataTests(unittest.TestCase):
         self.assertIn("self-check", action)
         self.assertIn("config-check", action)
         self.assertIn("command=(config check)", action)
+        self.assertIn("draft-pr requires body-file", action)
         self.assertIn('"${command[0]}" != "config"', action)
         self.assertIn("id: validate", action)
         self.assertIn("GITHUB_OUTPUT", action)
         self.assertIn("exit \"$exit_code\"", action)
+
+    def test_action_docs_cover_draft_body_file_requirement(self) -> None:
+        docs = (Path(__file__).resolve().parents[1] / "docs" / "github-action.md").read_text(encoding="utf-8")
+        self.assertIn("Required when `draft-pr` is `true`", docs)
+        self.assertIn("Draft PR mode requires `body-file`", docs)
 
 
 if __name__ == "__main__":

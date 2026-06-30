@@ -44,7 +44,7 @@ More complete copyable examples live in `examples/github-actions/`:
 
 - `repo`: repository path to validate. Default: `.`.
 - `base`: base ref for the diff. Optional for `config-check`; recommended for PR gate workflows.
-- `body-file`: file containing the pull request body.
+- `body-file`: file containing the pull request body. Required when `draft-pr` is `true`.
 - `evidence`: inline test/check evidence.
 - `evidence-file`: file containing test/check evidence.
 - `human-authored`: set to `true` only when no AI assistance was used.
@@ -70,6 +70,7 @@ More complete copyable examples live in `examples/github-actions/`:
 
 Draft PR creation from CI requires write permissions and GitHub CLI authentication. Keep it opt-in.
 When `draft-pr` is `true`, the action runs `themis pull-request draft` regardless of `workflow`.
+Draft PR mode requires `body-file` so Themis can build the PR body from the submitter's text plus the validation report.
 
 Markdown reports are appended directly to the summary. Comment, JSON, and SARIF reports are wrapped in fenced code blocks so the check summary remains readable.
 
