@@ -77,6 +77,18 @@ class ActionRoutingTests(unittest.TestCase):
         self.assertEqual(result.argv, [])
         self.assertIn("Unsupported format for config-check", result.stderr)
 
+    def test_self_check_rejects_gate_only_output_formats(self) -> None:
+        result = run_action_route(
+            {
+                "INPUT_WORKFLOW": "self-check",
+                "INPUT_FORMAT": "comment",
+            }
+        )
+
+        self.assertEqual(result.returncode, 3)
+        self.assertEqual(result.argv, [])
+        self.assertIn("Unsupported format for self-check", result.stderr)
+
 
 class ActionCommentTests(unittest.TestCase):
     def test_comment_step_uses_explicit_pr_number(self) -> None:

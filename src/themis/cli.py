@@ -228,8 +228,8 @@ def main(argv: list[str] | None = None) -> int:
             from .rules import inspect_rules
             from .self_check import SelfCheckResult, render_self_check_json, render_self_check_markdown, self_check_exit_code
 
-            if args.format == "sarif":
-                raise ValueError("self-check supports markdown and json output, not sarif")
+            if args.format not in {"markdown", "json"}:
+                raise ValueError(f"self-check supports markdown and json output, not {args.format}")
             gate = evaluate_gate(args, run_checks=args.run_checks)
             root = gate.validation.root
             result = SelfCheckResult(

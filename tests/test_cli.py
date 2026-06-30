@@ -110,6 +110,11 @@ class CliTests(unittest.TestCase):
         self.assertEqual(args.format, "json")
         self.assertFalse(args.ai_assisted)
 
+    def test_self_check_rejects_comment_format(self) -> None:
+        from themis.cli import main
+
+        self.assertEqual(main(["self-check", "--repo", ".", "--format", "comment"]), 3)
+
     def test_generated_cli_docs_include_canonical_commands(self) -> None:
         docs = render_cli_docs()
         self.assertIn(GENERATED_HEADER, docs)
