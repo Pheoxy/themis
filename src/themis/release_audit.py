@@ -125,9 +125,6 @@ def asset_provenance_check(repo: Path) -> AuditCheck:
     missing = [term for term in required_terms if term not in provenance_text]
     if missing:
         return AuditCheck(FAIL, "asset-provenance", "Asset provenance is missing required AI-generation or licensing disclosures.", summarize(missing))
-    large = [path for path in assets if (repo / path).stat().st_size > 1_000_000]
-    if large:
-        return AuditCheck(WARN, "asset-size", "Tracked raster assets have large file sizes; consider SVG or compressed release assets.", summarize(large))
     return AuditCheck(PASS, "asset-provenance", "Tracked raster assets have provenance documentation.")
 
 

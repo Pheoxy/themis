@@ -16,7 +16,8 @@ class ReleaseAuditTests(unittest.TestCase):
         checks = {check.code: check for check in result.checks}
         self.assertEqual(audit_exit_code(result), 0)
         self.assertEqual(checks["template-references"].status, "PASS")
-        self.assertIn(checks["asset-size"].status, {"WARN", "PASS"})
+        self.assertEqual(checks["asset-provenance"].status, "PASS")
+        self.assertNotIn("asset-size", checks)
         self.assertNotIn("supersecretvalue", render_audit_markdown(result))
 
     def test_release_audit_passes_minimal_clean_repo(self) -> None:
