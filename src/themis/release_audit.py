@@ -144,7 +144,10 @@ def current_secret_check(repo: Path) -> AuditCheck:
 
 def history_secret_check(repo: Path) -> AuditCheck:
     hits: list[SecretHit] = []
-    commits = git(repo, "rev-list", "--all").splitlines()
+    try:
+        commits = git(repo, "rev-list", "--all").splitlines()
+    except subprocess.CalledProcessError:
+        return AuditCheck(FAIL, "history-secret-scan", "Git history audit requires a git repository.")
     for commit in commits:
         for pattern_name, (pattern, ignore_case) in GIT_SECRET_PATTERNS.items():
             command = ["git", "grep", "-I", "-n", "-E"]

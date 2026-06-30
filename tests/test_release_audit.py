@@ -52,6 +52,17 @@ class ReleaseAuditTests(unittest.TestCase):
             self.assertEqual(checks["tracked-secret-patterns"].status, "FAIL")
             self.assertNotIn("abcdefghijklmnopqrstuvwxyz", render_audit_markdown(result))
 
+    def test_history_audit_fails_cleanly_outside_git_repo(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            repo = Path(raw)
+            (repo / "LICENSE").write_text("Apache License\n", encoding="utf-8")
+            (repo / "pyproject.toml").write_text('[project]\nlicense = { text = "Apache-2.0" }\n', encoding="utf-8")
+            result = inspect_release_audit(repo, include_history=True)
+            checks = {check.code: check for check in result.checks}
+            self.assertEqual(audit_exit_code(result), 2)
+            self.assertEqual(checks["history-secret-scan"].status, "FAIL")
+            self.assertIn("requires a git repository", checks["history-secret-scan"].message)
+
 
 def run(repo: Path, *args: str) -> None:
     import subprocess
