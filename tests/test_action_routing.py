@@ -32,6 +32,41 @@ class ActionRoutingTests(unittest.TestCase):
         self.assertIn("--annotations", argv)
         self.assertIn("--run-checks", argv)
 
+    def test_validate_route_ignores_draft_pr_only_flags(self) -> None:
+        result = run_action_route(
+            {
+                "INPUT_WORKFLOW": "validate",
+                "INPUT_TITLE": "Draft title",
+                "INPUT_BASE_BRANCH": "main",
+                "INPUT_HEAD_BRANCH": "feature",
+            }
+        )
+
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertNotIn("--title", result.argv)
+        self.assertNotIn("--base-branch", result.argv)
+        self.assertNotIn("--head-branch", result.argv)
+
+    def test_draft_pr_route_includes_draft_pr_only_flags(self) -> None:
+        result = run_action_route(
+            {
+                "INPUT_DRAFT_PR": "true",
+                "INPUT_TITLE": "Draft title",
+                "INPUT_BASE_BRANCH": "main",
+                "INPUT_HEAD_BRANCH": "feature",
+            }
+        )
+
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("pull-request", result.argv)
+        self.assertIn("draft", result.argv)
+        self.assertIn("--title", result.argv)
+        self.assertIn("Draft title", result.argv)
+        self.assertIn("--base-branch", result.argv)
+        self.assertIn("main", result.argv)
+        self.assertIn("--head-branch", result.argv)
+        self.assertIn("feature", result.argv)
+
     def test_config_check_route_excludes_gate_flags(self) -> None:
         result = run_action_route(
             {
@@ -44,6 +79,9 @@ class ActionRoutingTests(unittest.TestCase):
                 "INPUT_RUN_CHECKS": "true",
                 "INPUT_FORMAT": "json",
                 "INPUT_ANNOTATIONS": "github",
+                "INPUT_TITLE": "Draft title",
+                "INPUT_BASE_BRANCH": "main",
+                "INPUT_HEAD_BRANCH": "feature",
             }
         )
 

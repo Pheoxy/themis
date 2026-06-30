@@ -57,6 +57,7 @@ The format follows Keep a Changelog conventions, and this project uses semantic 
 - GitHub Action `config-check` now rejects incompatible output formats before invoking Themis.
 - `self-check` now rejects unsupported `comment` and `sarif` output formats consistently in CLI and action routing.
 - Generated CLI docs now advertise only `markdown` and `json` for `self-check` output.
+- GitHub Action now ignores draft PR-only inputs unless `draft-pr` is enabled.
 - Configuration, GitHub Action, and development documentation.
 - Direct CLI parser tests for command forms.
 - `themis init` setup command for target repositories.

@@ -156,13 +156,13 @@ runs:
         if [[ "${command[0]}" == "pull-request" && "$INPUT_RUN_CHECKS" != "true" ]]; then
           args+=(--skip-checks)
         fi
-        if [[ -n "$INPUT_TITLE" ]]; then
+        if [[ "${command[0]}" == "pull-request" && -n "$INPUT_TITLE" ]]; then
           args+=(--title "$INPUT_TITLE")
         fi
-        if [[ -n "$INPUT_BASE_BRANCH" ]]; then
+        if [[ "${command[0]}" == "pull-request" && -n "$INPUT_BASE_BRANCH" ]]; then
           args+=(--base-branch "$INPUT_BASE_BRANCH")
         fi
-        if [[ -n "$INPUT_HEAD_BRANCH" ]]; then
+        if [[ "${command[0]}" == "pull-request" && -n "$INPUT_HEAD_BRANCH" ]]; then
           args+=(--head-branch "$INPUT_HEAD_BRANCH")
         fi
         set +e

@@ -57,9 +57,9 @@ More complete copyable examples live in `examples/github-actions/`:
 - `comment-pr`: post the generated gate output as a pull request comment using `gh`. Default: `false`.
 - `pr-number`: pull request number for `comment-pr`. Defaults to `github.event.pull_request.number` when available.
 - `draft-pr`: create a draft PR after validation passes. Default: `false`.
-- `title`: draft PR title override.
-- `base-branch`: draft PR target branch override.
-- `head-branch`: draft PR source branch override.
+- `title`: draft PR title override. Used only when `draft-pr` is `true`.
+- `base-branch`: draft PR target branch override. Used only when `draft-pr` is `true`.
+- `head-branch`: draft PR source branch override. Used only when `draft-pr` is `true`.
 - `install-nix`: install Nix before running. Default: `true`.
 
 ## Outputs
