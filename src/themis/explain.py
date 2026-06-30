@@ -54,6 +54,18 @@ EXPLANATIONS = {
         "Behavior changes need tests so future maintainers can keep the project stable.",
         "Add or update tests, or document a narrow upstream-approved reason tests are not needed.",
     ),
+    "deleted-test": FindingExplanation(
+        "deleted-test",
+        "A test file was deleted.",
+        "Removing tests can reduce future regression coverage even when the current patch seems small.",
+        "Restore the test, replace it with equivalent coverage, or document the upstream-approved reason it was removed.",
+    ),
+    "upstream-tests-not-proven": FindingExplanation(
+        "upstream-tests-not-proven",
+        "Upstream asks for tests, but the evidence does not prove a passing test/check command.",
+        "Maintainers should not have to infer whether required validation ran and passed.",
+        "Include a concrete passing command or CI job, such as `pytest passed` or `nix flake check passed`.",
+    ),
     "required-checks-not-run": FindingExplanation(
         "required-checks-not-run",
         "Configured required checks were not run by Themis.",
@@ -89,6 +101,12 @@ EXPLANATIONS = {
         "Upstream docs appear to forbid AI-generated contributions.",
         "Themis fails closed when upstream policy appears stricter than the submitter's declared workflow.",
         "Do not submit AI-assisted work to that project unless maintainers explicitly approve an exception.",
+    ),
+    "upstream-ai-policy-present": FindingExplanation(
+        "upstream-ai-policy-present",
+        "Upstream docs mention AI disclosure policy.",
+        "The submitter must make sure any human-authored or AI-assisted declaration is accurate for that upstream policy.",
+        "Review the upstream AI policy and ensure the PR body truthfully discloses AI use or human authorship.",
     ),
     "missing-changelog-decision": FindingExplanation(
         "missing-changelog-decision",
@@ -150,6 +168,12 @@ EXPLANATIONS = {
         "Secrets in PRs can cause immediate security incidents and require rotation.",
         "Remove the secret, rotate it if real, and use secure configuration or secret storage.",
     ),
+    "ai-marker-in-diff": FindingExplanation(
+        "ai-marker-in-diff",
+        "The diff contains AI-tool marker text.",
+        "Markers such as generated-by comments or assistant boilerplate suggest unreviewed output may have been copied directly.",
+        "Remove tool marker text and ensure the submitted code is human-reviewed, project-appropriate, and disclosed accurately.",
+    ),
     "placeholder-in-code": FindingExplanation(
         "placeholder-in-code",
         "Code contains placeholder or cleanup language.",
@@ -167,6 +191,12 @@ EXPLANATIONS = {
         "A broad exception appears to be swallowed.",
         "Silent failures hide bugs and make maintenance harder.",
         "Handle a specific exception, propagate it, or log/report the failure appropriately.",
+    ),
+    "clean-static-gate": FindingExplanation(
+        "clean-static-gate",
+        "No hard blockers were found by configured static checks.",
+        "This is useful signal, but it is not a correctness guarantee or maintainer approval.",
+        "Continue normal human review for correctness, design, security, licensing, and maintainability.",
     ),
 }
 

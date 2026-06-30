@@ -1,4 +1,5 @@
 from pathlib import Path
+import re
 import sys
 import unittest
 
@@ -44,6 +45,18 @@ class ExplainTests(unittest.TestCase):
                 item = explain_code(code)
                 self.assertNotIn("No specific explanation", item.summary)
                 self.assertIn(code, render_explanation())
+
+    def test_active_policy_finding_codes_have_explanations(self) -> None:
+        root = Path(__file__).resolve().parents[1]
+        source = (root / "src" / "themis" / "policy.py").read_text(encoding="utf-8")
+        codes = sorted(set(re.findall(r'Finding\(\s*(?:BLOCKER|WARNING|INFO),\s*"([a-z0-9-]+)"', source)))
+        pattern_explained = {code for code in codes if code.startswith("too-many") or code.endswith("too-large")}
+        missing = [
+            code
+            for code in codes
+            if code not in pattern_explained and "No specific explanation" in explain_code(code).summary
+        ]
+        self.assertEqual(missing, [])
 
 
 if __name__ == "__main__":
