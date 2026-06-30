@@ -2,6 +2,8 @@
 
 Themis releases are Nix-first and fail closed. Do not publish artifacts until every local gate below passes.
 
+Use `.github/ISSUE_TEMPLATE/release-checklist.md` to track release work. Remote, push, and GitHub Actions smoke-test steps should happen last.
+
 ## Version Update
 
 Update all version declarations together:
