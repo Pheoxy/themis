@@ -73,6 +73,11 @@
             PYTHONPATH=${self}/src python -m themis release check
             touch $out
           '';
+          release-audit = pkgs.runCommand "themis-release-audit" { nativeBuildInputs = [ python pkgs.git ]; } ''
+            cd ${self}
+            PYTHONPATH=${self}/src python -m themis release audit
+            touch $out
+          '';
         }
       );
 
