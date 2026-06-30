@@ -68,6 +68,7 @@ The format follows Keep a Changelog conventions, and this project uses semantic 
 - Package metadata and JSON Schema ID now use the reserved `Pheoxy/themis` repository.
 - `nix flake check` now enforces the non-history release audit.
 - Rule inference and gate fixtures now cover Go and Java/Maven/Gradle test workflows.
+- Monorepo contribution docs are discovered outside generated/vendor trees, with generated/vendor allowlist fixture coverage.
 - Configuration, GitHub Action, and development documentation.
 - Direct CLI parser tests for command forms.
 - `themis init` setup command for target repositories.

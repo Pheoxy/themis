@@ -56,7 +56,7 @@ allowed_workflows = ["explain", "guide", "maintainer-packet", "rules"]
 - `allow_paths`: path prefixes or glob patterns exempt from generated/vendor path blockers.
 - `required_checks`: commands Themis runs only when `--run-checks` is used, or by default during `themis pull-request draft`.
 
-Keep exceptions narrow. If a project needs a broad allowlist, that usually means Themis needs a better rule instead of a weaker policy.
+Keep exceptions narrow. If a project needs a broad allowlist, that usually means Themis needs a better rule instead of a weaker policy. Prefer exact generated output directories or package-specific vendor paths, for example `frontend/dist/` or `third_party/project-name/*`, not broad entries such as `dist/` or `third_party/`.
 
 ## AI Provider Fields
 

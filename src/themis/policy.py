@@ -33,6 +33,8 @@ RULE_DOC_NAMES = (
     ".github/pull_request_template.md",
 )
 
+MONOREPO_RULE_DOC_NAMES = {"CONTRIBUTING.md", "DEVELOPING.md", "DEVELOPMENT.md"}
+
 GENERATED_PARTS = {
     "dist",
     "build",
@@ -267,6 +269,13 @@ def load_rule_docs(repo: Path) -> list[tuple[str, str]]:
             if "ISSUE_TEMPLATE" in path.parts:
                 continue
             candidates.add(str(path.relative_to(repo)))
+    for path in repo.rglob("*.md"):
+        relative = str(path.relative_to(repo))
+        if path.name not in MONOREPO_RULE_DOC_NAMES:
+            continue
+        if set(path.relative_to(repo).parts) & (GENERATED_PARTS | VENDOR_PARTS | {".git"}):
+            continue
+        candidates.add(relative)
     for name in sorted(candidates):
         path = repo / name
         if path.is_file():

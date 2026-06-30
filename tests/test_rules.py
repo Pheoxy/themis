@@ -50,6 +50,17 @@ class RulesTests(unittest.TestCase):
             inspection = inspect_rules(repo, PolicyConfig())
             self.assertFalse(inspection.inferred.ai_appears_forbidden)
 
+    def test_monorepo_contributing_docs_are_discovered(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            repo = create_example_target_repo(Path(raw))
+            write(repo / "services" / "api" / "CONTRIBUTING.md", "Run go test ./... and reference the issue this fixes.\n")
+            write(repo / "node_modules" / "pkg" / "CONTRIBUTING.md", "Do not load vendored docs.\n")
+            inspection = inspect_rules(repo, PolicyConfig())
+            self.assertIn("services/api/CONTRIBUTING.md", inspection.rule_docs)
+            self.assertNotIn("node_modules/pkg/CONTRIBUTING.md", inspection.rule_docs)
+            self.assertTrue(inspection.inferred.issue_or_reference_link)
+            self.assertTrue(inspection.inferred.tests_mentioned)
+
     def test_common_upstream_rule_styles_are_inferred(self) -> None:
         cases = [
             (

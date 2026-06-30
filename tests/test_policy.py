@@ -177,6 +177,46 @@ class PolicyTests(unittest.TestCase):
             findings = validate(data, PolicyConfig())
             self.assertIn("invalid-commit-style", {item.code for item in findings if item.severity == BLOCKER})
 
+    def test_generated_and_vendor_paths_are_blocked_by_default(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            tmp = Path(raw)
+            (tmp / "CONTRIBUTING.md").write_text("Run tests before submitting.\n", encoding="utf-8")
+            pr = "AI assistance: Used for implementation suggestions and reviewed manually.\n\nHuman accountability: I own every line and take responsibility for tests."
+            data = make_input(
+                tmp,
+                diff="",
+                files=[ChangedFile("frontend/dist/app.js", "M"), ChangedFile("third_party/lib/code.c", "M")],
+                pr=pr,
+                evidence="pytest passed",
+            )
+            findings = validate(data, PolicyConfig(require_test_changes_for_code=False))
+            codes = {item.code for item in findings if item.severity == BLOCKER}
+            self.assertIn("generated-path", codes)
+            self.assertIn("vendor-path", codes)
+
+    def test_generated_and_vendor_paths_can_be_narrowly_allowed(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            tmp = Path(raw)
+            (tmp / "CONTRIBUTING.md").write_text("Run tests before submitting.\n", encoding="utf-8")
+            pr = "AI assistance: Used for implementation suggestions and reviewed manually.\n\nHuman accountability: I own every line and take responsibility for tests."
+            data = make_input(
+                tmp,
+                diff="",
+                files=[ChangedFile("frontend/dist/app.js", "M"), ChangedFile("third_party/lib/code.c", "M")],
+                pr=pr,
+                evidence="pytest passed",
+            )
+            findings = validate(
+                data,
+                PolicyConfig(
+                    require_test_changes_for_code=False,
+                    allow_paths=["frontend/dist/", "third_party/lib/*"],
+                ),
+            )
+            codes = {item.code for item in findings if item.severity == BLOCKER}
+            self.assertNotIn("generated-path", codes)
+            self.assertNotIn("vendor-path", codes)
+
     def test_issue_templates_do_not_create_pr_issue_link_rule(self) -> None:
         with tempfile.TemporaryDirectory() as raw:
             tmp = Path(raw)
