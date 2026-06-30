@@ -13,6 +13,7 @@ class DocsLinksTests(unittest.TestCase):
         self.assertIn("docs/release-notes-template.md", docs)
         self.assertIn("docs/release.md", docs)
         self.assertIn("docs/security-fixtures.md", docs)
+        self.assertIn("docs/stability.md", docs)
         self.assertIn("docs/threat-model.md", docs)
         for relative in docs:
             with self.subTest(relative=relative):

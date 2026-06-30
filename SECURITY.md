@@ -4,11 +4,13 @@ Themis is a validation gate, so security issues include ordinary vulnerabilities
 
 ## Supported Versions
 
-The project is pre-1.0. Security fixes target the default branch until formal releases exist.
+Security fixes target the latest `1.x` release and the default branch. Older releases may receive fixes at maintainer discretion until a formal long-term support policy exists.
 
 ## Reporting A Vulnerability
 
 Report security issues privately to the maintainers before publishing details. If no private channel exists for the deployed repository, open a minimal public issue that states a private security report is needed without including exploit details.
+
+For GitHub-hosted releases, use private vulnerability reporting or GitHub Security Advisories when available.
 
 Include:
 

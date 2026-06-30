@@ -2,7 +2,7 @@
 
 All notable changes to Themis will be documented in this file.
 
-The format follows Keep a Changelog conventions, and this project uses semantic versioning until a stronger release policy is adopted.
+The format follows Keep a Changelog conventions, and this project follows Semantic Versioning starting with `1.0.0`.
 
 ## [Unreleased]
 
@@ -83,6 +83,7 @@ Initial 1.0 release of Themis.
 - Added a release notes template for 1.0 and later releases.
 - Release audit supports explicitly approved large raster assets in provenance documentation.
 - Release audit now treats documented synthetic secret-like redaction fixtures as approved and fails on unapproved hits.
+- Stability policy documenting the 1.0 public compatibility surface.
 - Configuration, GitHub Action, and development documentation.
 - Direct CLI parser tests for command forms.
 - `themis init` setup command for target repositories.
