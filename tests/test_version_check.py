@@ -10,6 +10,13 @@ from themis.version_check import inspect_versions, render_version_check_json, re
 
 
 class VersionCheckTests(unittest.TestCase):
+    def test_current_repo_versions_are_initial_release(self) -> None:
+        repo = Path(__file__).resolve().parents[1]
+        result = inspect_versions(repo)
+        self.assertEqual(result.pyproject, "1.0.0")
+        self.assertEqual(result.package, "1.0.0")
+        self.assertEqual(result.flake, "1.0.0")
+
     def test_release_check_passes_with_matching_versions_and_files(self) -> None:
         with tempfile.TemporaryDirectory() as raw:
             repo = make_release_repo(Path(raw))

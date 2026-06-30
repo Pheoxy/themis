@@ -6,6 +6,10 @@ The format follows Keep a Changelog conventions, and this project uses semantic 
 
 ## [Unreleased]
 
+## [1.0.0] - 2026-07-01
+
+Initial 1.0 release of Themis.
+
 ### Added
 
 - Initial Themis scaffold with Nix packaging, CLI validation, generated CLI docs, GitHub Action support, and draft pull request creation.
