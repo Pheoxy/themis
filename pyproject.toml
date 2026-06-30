@@ -24,5 +24,11 @@ classifiers = [
 [project.scripts]
 themis = "themis.cli:main"
 
+[project.urls]
+Homepage = "https://github.com/Pheoxy/themis"
+Documentation = "https://github.com/Pheoxy/themis/tree/main/docs"
+Issues = "https://github.com/Pheoxy/themis/issues"
+Source = "https://github.com/Pheoxy/themis"
+
 [tool.setuptools.packages.find]
 where = ["src"]

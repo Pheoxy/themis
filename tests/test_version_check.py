@@ -38,11 +38,24 @@ class VersionCheckTests(unittest.TestCase):
             self.assertIn("files", payload)
             self.assertIn("metadata", payload)
 
+    def test_current_project_urls_are_concrete(self) -> None:
+        repo = Path(__file__).resolve().parents[1]
+        result = inspect_versions(repo)
+        url_checks = [check for check in result.metadata if check.field.startswith("project.urls.")]
+        self.assertGreaterEqual(len(url_checks), 4)
+        self.assertTrue(all(check.status == "PASS" for check in url_checks))
+
     def test_release_check_blocks_placeholder_project_urls(self) -> None:
         with tempfile.TemporaryDirectory() as raw:
             repo = make_release_repo(Path(raw))
-            with (repo / "pyproject.toml").open("a", encoding="utf-8") as handle:
-                handle.write('\n[project.urls]\nHomepage = "https://github.com/OWNER/themis"\n')
+            pyproject = repo / "pyproject.toml"
+            pyproject.write_text(
+                pyproject.read_text(encoding="utf-8").replace(
+                    'Homepage = "https://github.com/Pheoxy/themis"',
+                    'Homepage = "https://github.com/OWNER/themis"',
+                ),
+                encoding="utf-8",
+            )
             result = inspect_versions(repo)
             self.assertEqual(version_check_exit_code(result), 2)
             self.assertIn("project.urls.Homepage", {check.field for check in result.metadata if check.status == "FAIL"})
@@ -52,7 +65,7 @@ def make_release_repo(parent: Path) -> Path:
     repo = parent / "repo"
     (repo / "src" / "themis").mkdir(parents=True)
     (repo / "pyproject.toml").write_text(
-        '[project]\nname = "themis"\nversion = "1.2.3"\ndescription = "Release test"\nreadme = "README.md"\nlicense = { text = "Apache-2.0" }\n',
+        '[project]\nname = "themis"\nversion = "1.2.3"\ndescription = "Release test"\nreadme = "README.md"\nlicense = { text = "Apache-2.0" }\n\n[project.urls]\nHomepage = "https://github.com/Pheoxy/themis"\nSource = "https://github.com/Pheoxy/themis"\nIssues = "https://github.com/Pheoxy/themis/issues"\nDocumentation = "https://github.com/Pheoxy/themis/tree/main/docs"\n',
         encoding="utf-8",
     )
     (repo / "src" / "themis" / "__init__.py").write_text('__version__ = "1.2.3"\n', encoding="utf-8")

@@ -10,6 +10,10 @@ from themis.providers import AIProviderConfig, ASSISTANT_WORKFLOWS, SUPPORTED_PR
 
 
 class SchemaTests(unittest.TestCase):
+    def test_schema_id_uses_project_repository(self) -> None:
+        schema = load_schema()
+        self.assertEqual(schema["$id"], "https://raw.githubusercontent.com/Pheoxy/themis/main/docs/schema/themis.schema.json")
+
     def test_schema_covers_policy_config_keys(self) -> None:
         schema = load_schema()
         schema_keys = set(schema["properties"]["policy"]["properties"])
