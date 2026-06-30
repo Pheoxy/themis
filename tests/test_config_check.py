@@ -36,6 +36,16 @@ class ConfigCheckTests(unittest.TestCase):
             self.assertEqual(config_exit_code(inspection), 2)
             self.assertEqual({check.code: check.status for check in inspection.checks}, {"policy-config": "FAIL", "ai-config": "FAIL"})
 
+    def test_ai_gate_workflow_in_config_blocks(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            repo = create_example_target_repo(Path(raw))
+            write(repo / ".themis.toml", '[ai]\nenabled = true\nprovider = "fake"\nmodel = "fake-model"\nallowed_workflows = ["validate"]\n')
+            inspection = inspect_config(repo)
+            self.assertEqual(config_exit_code(inspection), 2)
+            ai_check = next(check for check in inspection.checks if check.code == "ai-config")
+            self.assertEqual(ai_check.status, "FAIL")
+            self.assertIn("assistant workflows", ai_check.detail or "")
+
     def test_outputs_markdown_and_json(self) -> None:
         with tempfile.TemporaryDirectory() as raw:
             repo = create_example_target_repo(Path(raw))

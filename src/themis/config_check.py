@@ -5,7 +5,7 @@ import json
 from pathlib import Path
 
 from .policy import PolicyConfig
-from .providers import load_provider_config
+from .providers import ASSISTANT_WORKFLOWS, load_provider_config
 
 
 PASS = "PASS"
@@ -42,8 +42,19 @@ def inspect_config(repo: Path) -> ConfigInspection:
         checks.append(ConfigCheck(FAIL, "policy-config", "Policy configuration is invalid.", str(exc)))
 
     try:
-        load_provider_config(repo)
-        checks.append(ConfigCheck(PASS, "ai-config", "AI provider configuration is valid.", str(path)))
+        ai_config = load_provider_config(repo)
+        invalid_workflows = sorted(set(ai_config.allowed_workflows) - ASSISTANT_WORKFLOWS)
+        if invalid_workflows:
+            checks.append(
+                ConfigCheck(
+                    FAIL,
+                    "ai-config",
+                    "AI provider configuration is invalid.",
+                    f"allowed_workflows may only contain assistant workflows: {', '.join(invalid_workflows)}",
+                )
+            )
+        else:
+            checks.append(ConfigCheck(PASS, "ai-config", "AI provider configuration is valid.", str(path)))
     except ValueError as exc:
         checks.append(ConfigCheck(FAIL, "ai-config", "AI provider configuration is invalid.", str(exc)))
 
