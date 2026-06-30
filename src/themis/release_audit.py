@@ -43,6 +43,7 @@ GIT_SECRET_PATTERNS = {
 }
 TEMPLATE_RE = re.compile(r"OWNER/themis|example\.com")
 GENERATED_TRACKED_RE = re.compile(r"(^|/)(__pycache__/|\.pytest_cache/|\.ruff_cache/|\.mypy_cache/|dist/|build/|.*\.py[co]$|\.env(\..*)?$)")
+LARGE_ASSET_BYTES = 1_000_000
 
 
 @dataclass(frozen=True)
@@ -72,6 +73,7 @@ def inspect_release_audit(repo: Path, *, include_history: bool = False) -> Audit
         tracked_generated_check(repo),
         template_reference_check(repo),
         asset_provenance_check(repo),
+        asset_size_check(repo),
         current_secret_check(repo),
     ]
     if include_history:
@@ -126,6 +128,34 @@ def asset_provenance_check(repo: Path) -> AuditCheck:
     if missing:
         return AuditCheck(FAIL, "asset-provenance", "Asset provenance is missing required AI-generation or licensing disclosures.", summarize(missing))
     return AuditCheck(PASS, "asset-provenance", "Tracked raster assets have provenance documentation.")
+
+
+def asset_size_check(repo: Path) -> AuditCheck:
+    assets = [path for path in tracked_files(repo) if path.startswith("docs/assets/") and path.endswith(".png")]
+    large = [path for path in assets if (repo / path).exists() and (repo / path).stat().st_size > LARGE_ASSET_BYTES]
+    if not large:
+        return AuditCheck(PASS, "asset-size", "No tracked raster assets exceed the large-asset threshold.")
+    approved = approved_large_assets(repo)
+    unapproved = [path for path in large if path not in approved]
+    if unapproved:
+        return AuditCheck(
+            WARN,
+            "asset-size",
+            "Tracked raster assets exceed the large-asset threshold and are not documented as approved.",
+            summarize(unapproved),
+        )
+    return AuditCheck(PASS, "asset-size", "Large tracked raster assets are explicitly approved in provenance documentation.")
+
+
+def approved_large_assets(repo: Path) -> set[str]:
+    provenance = repo / "docs" / "assets" / "PROVENANCE.md"
+    if not provenance.exists():
+        return set()
+    text = provenance.read_text(encoding="utf-8", errors="replace")
+    section = re.search(r"(?ms)^## Approved Large Raster Assets\n(?P<body>.*?)(?:\n## |\Z)", text)
+    if not section:
+        return set()
+    return set(re.findall(r"`(docs/assets/[^`]+\.png)`", section.group("body")))
 
 
 def current_secret_check(repo: Path) -> AuditCheck:

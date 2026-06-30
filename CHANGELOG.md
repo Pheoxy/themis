@@ -77,7 +77,7 @@ The format follows Keep a Changelog conventions, and this project uses semantic 
 - Binary deletions no longer trigger the binary-change blocker; binary additions/modifications remain blocked.
 - Added a release checklist issue template that keeps remote/push work last.
 - Added a release notes template for 1.0 and later releases.
-- Release audit no longer warns about tracked PNG size when asset provenance is documented.
+- Release audit supports explicitly approved large raster assets in provenance documentation.
 - Configuration, GitHub Action, and development documentation.
 - Direct CLI parser tests for command forms.
 - `themis init` setup command for target repositories.

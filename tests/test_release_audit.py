@@ -17,8 +17,30 @@ class ReleaseAuditTests(unittest.TestCase):
         self.assertEqual(audit_exit_code(result), 0)
         self.assertEqual(checks["template-references"].status, "PASS")
         self.assertEqual(checks["asset-provenance"].status, "PASS")
-        self.assertNotIn("asset-size", checks)
+        self.assertEqual(checks["asset-size"].status, "PASS")
         self.assertNotIn("supersecretvalue", render_audit_markdown(result))
+
+    def test_large_asset_without_explicit_approval_warns(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            repo = Path(raw)
+            run(repo, "git", "init")
+            run(repo, "git", "config", "user.email", "test@example.invalid")
+            run(repo, "git", "config", "user.name", "Test User")
+            (repo / "docs" / "assets").mkdir(parents=True)
+            (repo / "LICENSE").write_text("Apache License\n", encoding="utf-8")
+            (repo / "pyproject.toml").write_text('[project]\nlicense = { text = "Apache-2.0" }\n', encoding="utf-8")
+            (repo / "docs" / "assets" / "large.png").write_bytes(b"0" * 1_000_001)
+            (repo / "docs" / "assets" / "PROVENANCE.md").write_text(
+                "Generated with ChatGPT and OpenAI. Distributed under the Apache License. "
+                "These assets are not represented as human-created.\n",
+                encoding="utf-8",
+            )
+            run(repo, "git", "add", ".")
+            run(repo, "git", "commit", "-m", "init")
+            result = inspect_release_audit(repo)
+            checks = {check.code: check for check in result.checks}
+            self.assertEqual(checks["asset-size"].status, "WARN")
+            self.assertIn("large.png", checks["asset-size"].detail or "")
 
     def test_release_audit_passes_minimal_clean_repo(self) -> None:
         with tempfile.TemporaryDirectory() as raw:

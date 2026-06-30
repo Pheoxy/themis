@@ -12,6 +12,16 @@ Exact prompts where available, plus approximate reconstructions and follow-up/re
 - `themis-primary-mascot.png`: ChatGPT/OpenAI-generated Themis mascot concept.
 - `themis-validation-card.png`: ChatGPT/OpenAI-generated validation-card artwork.
 
+## Approved Large Raster Assets
+
+These PNG files are intentionally tracked despite exceeding the release audit's large-raster threshold. They are approved because they are current documentation/branding assets with documented AI-generation provenance.
+
+- `docs/assets/themis-banner-dark.png`
+- `docs/assets/themis-banner-light.png`
+- `docs/assets/themis-compact-icon.png`
+- `docs/assets/themis-primary-mascot.png`
+- `docs/assets/themis-validation-card.png`
+
 ## Rights And License Intent
 
 OpenAI's terms state that, as between the user and OpenAI and to the extent permitted by law, the user owns Output and OpenAI assigns any rights it has in Output to the user.
