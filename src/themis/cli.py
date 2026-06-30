@@ -127,7 +127,7 @@ def build_parser() -> argparse.ArgumentParser:
     providers_parser.add_argument("--prompt", default="Summarize the current upstream readiness state.", help="Prompt text for provider preview.")
 
     self_check_parser = subcommands.add_parser("self-check", help="Run diagnostics, rules, provider checks, and the gate together.")
-    add_validation_args(self_check_parser, base_default="origin/main")
+    add_validation_args(self_check_parser, base_default="origin/main", format_choices=["markdown", "json"])
     self_check_parser.add_argument("--run-checks", action="store_true", help="Run required checks from .themis.toml during the gate stage.")
 
     init_parser = subcommands.add_parser("init", help="Create starter Themis files in a target repository.")
@@ -140,7 +140,13 @@ def build_parser() -> argparse.ArgumentParser:
     return parser
 
 
-def add_validation_args(parser: argparse.ArgumentParser, *, base_default: str | None = None, require_pr_description: bool = False) -> None:
+def add_validation_args(
+    parser: argparse.ArgumentParser,
+    *,
+    base_default: str | None = None,
+    require_pr_description: bool = False,
+    format_choices: list[str] | None = None,
+) -> None:
     parser.add_argument("-r", "--repo", type=Path, default=Path.cwd(), help="Target git repository to validate.")
     parser.add_argument("-b", "--base", default=base_default, help="Base ref for PR diff, for example origin/main. Defaults to HEAD plus working tree changes.")
     mode = parser.add_mutually_exclusive_group()
@@ -151,7 +157,7 @@ def add_validation_args(parser: argparse.ArgumentParser, *, base_default: str | 
     parser.add_argument("-e", "--evidence", default="", help="Short text proving which tests/checks passed.")
     parser.add_argument("-E", "--evidence-file", type=Path, help="File containing test/check evidence.")
     parser.add_argument("-o", "--output", type=Path, help="Write gate output to this path.")
-    parser.add_argument("--format", choices=["markdown", "comment", "json", "sarif"], default="markdown", help="Output format for gate results.")
+    parser.add_argument("--format", choices=format_choices or ["markdown", "comment", "json", "sarif"], default="markdown", help="Output format for gate results.")
     parser.add_argument("--annotations", choices=["none", "github"], default="none", help="Emit CI annotations for findings.")
 
 

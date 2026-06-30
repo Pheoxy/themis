@@ -337,7 +337,7 @@ options:
 ```text
 usage: themis self-check [-h] [-r REPO] [-b BASE] [--ai | --human]
                          [-B BODY_FILE] [-e EVIDENCE] [-E EVIDENCE_FILE]
-                         [-o OUTPUT] [--format {markdown,comment,json,sarif}]
+                         [-o OUTPUT] [--format {markdown,json}]
                          [--annotations {none,github}] [--run-checks]
 
 options:
@@ -356,7 +356,7 @@ options:
                         File containing test/check evidence.
   -o OUTPUT, --output OUTPUT
                         Write gate output to this path.
-  --format {markdown,comment,json,sarif}
+  --format {markdown,json}
                         Output format for gate results.
   --annotations {none,github}
                         Emit CI annotations for findings.
