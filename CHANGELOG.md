@@ -52,6 +52,7 @@ The format follows Keep a Changelog conventions, and this project uses semantic 
 - Ecosystem integration documentation for Nix, Python, Rust, Node, Go, and GitHub Actions.
 - Specific `themis explain` entries for inferred upstream process blockers and common gate blockers.
 - Regression coverage requiring active policy finding codes to have remediation explanations.
+- CLI safety coverage proving `validate` does not call configured AI providers.
 - Configuration, GitHub Action, and development documentation.
 - Direct CLI parser tests for command forms.
 - `themis init` setup command for target repositories.
