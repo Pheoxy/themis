@@ -88,36 +88,6 @@ Create a friendly validation-card illustration for Themis, an open-source pre-up
 
 Post-generation notes: copied into `docs/assets/` and renamed. No known repository-side edits.
 
-### `docs/assets/concepts/themis-banner-concept.png`
-
-Prompt status: approximate reconstruction. Concept images were supplied before asset-specific prompts were documented.
-
-Approximate prompt:
-
-```text
-Create concept branding for Themis, a paranoid pre-upstream pull request validator for AI-assisted code. Explore a cute Themis-themed mascot/logo system with law/order cues, developer validation cues, a friendly verification-gate mood, and a clean vector-like style. Include concepts for a primary mascot, compact icon, validation card, and wordmark/banner direction. Original artwork only; no third-party mascots, copyrighted characters, logos, named artist styles, watermarks, or photorealism.
-```
-
-Post-generation notes: copied into `docs/assets/concepts/` and renamed. Concept artwork only, not final canonical branding.
-
-### `docs/assets/concepts/themis-icon-concept.png`
-
-Prompt status: approximate reconstruction. Same concept-set direction as `themis-banner-concept.png`.
-
-Post-generation notes: copied into `docs/assets/concepts/` and renamed. Concept artwork only, not final canonical branding.
-
-### `docs/assets/concepts/themis-mascot-concept.png`
-
-Prompt status: approximate reconstruction. Same concept-set direction as `themis-banner-concept.png`.
-
-Post-generation notes: copied into `docs/assets/concepts/` and renamed. Concept artwork only, not final canonical branding.
-
-### `docs/assets/concepts/themis-validation-card-concept.png`
-
-Prompt status: approximate reconstruction. Same concept-set direction as `themis-banner-concept.png`.
-
-Post-generation notes: copied into `docs/assets/concepts/` and renamed. Concept artwork only, not final canonical branding.
-
 ## Future Regeneration Prompts
 
 Use future prompts only if the project needs refreshed raster artwork before final SVG/logo work.

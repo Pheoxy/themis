@@ -1,7 +1,5 @@
 # Themis Visual Assets
 
-The images in `concepts/` are concept artwork for the Themis brand direction. They are not final canonical logos.
-
 Asset provenance and license intent are documented in `PROVENANCE.md`.
 
 They capture the intended mood for future project artwork:
@@ -41,21 +39,3 @@ These files are useful style references, but should not be treated as ready offi
 - Final 1.0 logo/trademark review: complete before treating any raster asset as canonical project branding.
 
 Generation prompts for follow-up work live in `PROMPTS.md`.
-
-## Concept Gallery
-
-### Banner Concept
-
-![Themis banner concept](concepts/themis-banner-concept.png)
-
-### Validation Card Concept
-
-![Themis validation card concept](concepts/themis-validation-card-concept.png)
-
-### Icon Concept
-
-![Themis icon concept](concepts/themis-icon-concept.png)
-
-### Mascot Concept
-
-![Themis mascot concept](concepts/themis-mascot-concept.png)

@@ -73,6 +73,7 @@ The format follows Keep a Changelog conventions, and this project uses semantic 
 - Threat model documentation covering scope, adversary model, provider boundaries, and non-guarantees.
 - Positioning documentation comparing Themis with scanners, CI, PR bots, AI reviewers, and maintainer review.
 - Executable GitHub Action tests now cover `GITHUB_OUTPUT` status, exit-code, and report outputs.
+- Removed obsolete concept PNG assets from `docs/assets/concepts/`.
 - Configuration, GitHub Action, and development documentation.
 - Direct CLI parser tests for command forms.
 - `themis init` setup command for target repositories.

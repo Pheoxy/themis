@@ -11,10 +11,6 @@ Exact prompts where available, plus approximate reconstructions and follow-up/re
 - `themis-compact-icon.png`: ChatGPT/OpenAI-generated compact Themis icon concept.
 - `themis-primary-mascot.png`: ChatGPT/OpenAI-generated Themis mascot concept.
 - `themis-validation-card.png`: ChatGPT/OpenAI-generated validation-card artwork.
-- `concepts/themis-banner-concept.png`: ChatGPT/OpenAI-generated concept artwork.
-- `concepts/themis-icon-concept.png`: ChatGPT/OpenAI-generated concept artwork.
-- `concepts/themis-mascot-concept.png`: ChatGPT/OpenAI-generated concept artwork.
-- `concepts/themis-validation-card-concept.png`: ChatGPT/OpenAI-generated concept artwork.
 
 ## Rights And License Intent
 
