@@ -219,6 +219,33 @@ class PolicyTests(unittest.TestCase):
             findings = validate(data, PolicyConfig())
             self.assertNotIn(BLOCKER, {item.severity for item in findings})
 
+    def test_common_ecosystem_test_evidence_can_pass_basic_gate(self) -> None:
+        cases = [
+            ("go", "Run go test ./... before submitting.\n", "go test ./... passed"),
+            ("maven", "Run mvn test before submitting.\n", "mvn test passed"),
+            ("gradle", "Run gradle test before submitting.\n", "gradle test passed"),
+        ]
+        for name, docs, evidence in cases:
+            with self.subTest(name=name):
+                with tempfile.TemporaryDirectory() as raw:
+                    tmp = Path(raw)
+                    (tmp / "CONTRIBUTING.md").write_text(docs, encoding="utf-8")
+                    data = ValidationInput(
+                        repo=tmp,
+                        base="origin/main",
+                        changed_files=[ChangedFile("src/app.py", "M"), ChangedFile("tests/test_app.py", "M")],
+                        numstat=[Numstat("src/app.py", 1, 0), Numstat("tests/test_app.py", 1, 0)],
+                        diff_text="+++ b/src/app.py\n+return 1\n+++ b/tests/test_app.py\n+assert True\n",
+                        tracked_files=[],
+                        commits=[],
+                        pr_description="",
+                        test_evidence=evidence,
+                        ai_assisted=False,
+                        check_results=[],
+                    )
+                    findings = validate(data, PolicyConfig())
+                    self.assertNotIn(BLOCKER, {item.severity for item in findings})
+
 
 if __name__ == "__main__":
     unittest.main()

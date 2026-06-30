@@ -322,7 +322,7 @@ def validate_upstream_rules(
                 "No upstream contribution/rules documents were found; fail closed instead of guessing maintainer requirements.",
             )
         )
-    if re.search(r"(?i)\b(dco|signed-off-by|developer certificate of origin)\b", docs_text):
+    if docs_require_dco_or_signoff(docs_text):
         unsigned = [commit for commit in data.commits if "Signed-off-by:" not in f"{commit.subject}\n{commit.body}"]
         if data.base and data.changed_files and not data.commits:
             findings.append(Finding(BLOCKER, "cannot-verify-dco", "Upstream docs mention DCO/signoff, but no commits were found in the base range."))
@@ -525,10 +525,18 @@ def strong_test_evidence(value: str) -> bool:
 def docs_require_changelog(text: str) -> bool:
     return bool(
         re.search(
-            r"(?is)\b(must|required|require|should|need to|include|add|update).{0,80}\b(change.?log|release.?notes|news)",
+            r"(?is)\b(must|required|require|should|need to|include|add|update).{0,80}\b(change.?log|release[ -]?notes|news)",
+            text,
+        )
+        or re.search(
+            r"(?is)\b(need|needs|include|add|update).{0,80}\brelease\s+notes\b",
             text,
         )
     )
+
+
+def docs_require_dco_or_signoff(text: str) -> bool:
+    return bool(re.search(r"(?i)\b(dco|signed-off-by|sign[ -]?off|developer certificate of origin)\b", text))
 
 
 def docs_require_issue_link(text: str) -> bool:
@@ -543,6 +551,10 @@ def docs_require_issue_link(text: str) -> bool:
         )
         or re.search(
             r"(?is)\b(reference|link|fixes|closes).{0,80}\b(issue|ticket|bug report)",
+            text,
+        )
+        or re.search(
+            r"(?is)\b(issue|ticket|bug report).{0,80}\b(fixes|closes|references|links?)",
             text,
         )
     )

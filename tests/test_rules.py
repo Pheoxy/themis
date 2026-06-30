@@ -86,6 +86,38 @@ class RulesTests(unittest.TestCase):
                     "tests_mentioned": True,
                 },
             ),
+            (
+                "go",
+                {
+                    "CONTRIBUTING.md": "Run go test ./... before sending a PR. Include the issue this fixes and sign off commits.\n",
+                },
+                {
+                    "dco_or_signoff": True,
+                    "issue_or_reference_link": True,
+                    "tests_mentioned": True,
+                },
+            ),
+            (
+                "java-maven",
+                {
+                    "CONTRIBUTING.md": "Run mvn test. Pull requests need release notes when user-visible behavior changes.\n",
+                },
+                {
+                    "changelog_or_release_notes": True,
+                    "tests_mentioned": True,
+                },
+            ),
+            (
+                "java-gradle",
+                {
+                    "CONTRIBUTING.md": "Before review, run gradle test and complete the pull request checklist.\n",
+                    ".github/pull_request_template.md": "- [ ] Tests pass\n- [ ] Docs updated if needed\n",
+                },
+                {
+                    "pull_request_checklist": True,
+                    "tests_mentioned": True,
+                },
+            ),
         ]
 
         for name, files, expected in cases:

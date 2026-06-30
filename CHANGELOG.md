@@ -67,6 +67,7 @@ The format follows Keep a Changelog conventions, and this project uses semantic 
 - Documented ChatGPT/OpenAI provenance and Apache-2.0 license intent for generated PNG assets.
 - Package metadata and JSON Schema ID now use the reserved `Pheoxy/themis` repository.
 - `nix flake check` now enforces the non-history release audit.
+- Rule inference and gate fixtures now cover Go and Java/Maven/Gradle test workflows.
 - Configuration, GitHub Action, and development documentation.
 - Direct CLI parser tests for command forms.
 - `themis init` setup command for target repositories.

@@ -10,6 +10,7 @@ from .policy import (
     PolicyConfig,
     docs_require_changelog,
     docs_require_conventional_commits,
+    docs_require_dco_or_signoff,
     docs_require_issue_link,
     is_process_rule_doc,
     is_source_path,
@@ -113,7 +114,7 @@ def readiness_items(process_text: str, code_changes: list[str], test_changes: li
         items.append("Review every code change for maintainability, security, licensing, and project style.")
         if not test_changes:
             items.append("Add or update tests, or document a narrow project-approved reason tests are not changed.")
-    if re.search(r"(?i)\b(dco|signed-off-by|developer certificate of origin)\b", process_text):
+    if docs_require_dco_or_signoff(process_text):
         items.append("Ensure commits include `Signed-off-by:` trailers required by DCO/signoff policy.")
     if docs_require_changelog(process_text):
         items.append("Update changelog/release notes or document why no entry is needed.")

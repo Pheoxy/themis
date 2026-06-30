@@ -9,6 +9,7 @@ from .policy import (
     PolicyConfig,
     docs_require_changelog,
     docs_require_conventional_commits,
+    docs_require_dco_or_signoff,
     docs_forbid_ai,
     docs_require_issue_link,
     is_process_rule_doc,
@@ -43,12 +44,17 @@ def inspect_rules(repo: Path, config: PolicyConfig) -> RulesInspection:
     inferred = InferredRules(
         ai_disclosure_policy=bool(re.search(r"(?is)\b(ai|llm|generative|generated).{0,120}\b(disclos|indicat|mention|declare)", docs_text)),
         ai_appears_forbidden=docs_forbid_ai(docs_text),
-        dco_or_signoff=bool(re.search(r"(?i)\b(dco|signed-off-by|developer certificate of origin)\b", docs_text)),
+        dco_or_signoff=docs_require_dco_or_signoff(docs_text),
         changelog_or_release_notes=docs_require_changelog(process_text),
         issue_or_reference_link=docs_require_issue_link(process_text),
         conventional_commits=docs_require_conventional_commits(process_text),
         pull_request_checklist=any("pull_request_template" in name.lower() and "[ ]" in content for name, content in docs),
-        tests_mentioned=bool(re.search(r"(?i)\b(test|tests|tested|pytest|unit test|integration test|ci)\b", docs_text)),
+        tests_mentioned=bool(
+            re.search(
+                r"(?i)\b(test|tests|tested|pytest|unit test|integration test|ci|go\s+test|mvn\s+test|gradle\s+test)\b",
+                docs_text,
+            )
+        ),
     )
     return RulesInspection(repo=repo, config=config, rule_docs=[name for name, _ in docs], inferred=inferred)
 
