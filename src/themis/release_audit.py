@@ -88,8 +88,8 @@ def license_check(repo: Path) -> AuditCheck:
     pyproject = repo / "pyproject.toml"
     if not license_file.exists() or not license_file.read_text(encoding="utf-8", errors="replace").strip():
         return AuditCheck(FAIL, "license-file", "LICENSE is missing or empty.")
-    if not pyproject.exists() or "MIT" not in pyproject.read_text(encoding="utf-8", errors="replace"):
-        return AuditCheck(FAIL, "package-license", "Package metadata does not declare the MIT license.")
+    if not pyproject.exists() or "Apache-2.0" not in pyproject.read_text(encoding="utf-8", errors="replace"):
+        return AuditCheck(FAIL, "package-license", "Package metadata does not declare the Apache-2.0 license.")
     return AuditCheck(PASS, "license", "LICENSE and package license metadata are present.")
 
 

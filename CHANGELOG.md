@@ -63,6 +63,7 @@ The format follows Keep a Changelog conventions, and this project uses semantic 
 - SARIF results now include stable Themis fingerprints and stronger output coverage.
 - `themis release audit` for redacted pre-1.0 secret, template URL, generated-file, license, and asset-provenance checks.
 - GitHub Action examples now reference `Pheoxy/themis@main` instead of template owner placeholders.
+- Project license changed from MIT to Apache-2.0.
 - Configuration, GitHub Action, and development documentation.
 - Direct CLI parser tests for command forms.
 - `themis init` setup command for target repositories.

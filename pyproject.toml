@@ -9,7 +9,7 @@ description = "Paranoid upstream PR validator that protects maintainers from AI 
 readme = "README.md"
 requires-python = ">=3.11"
 authors = [{ name = "Themis maintainers" }]
-license = { text = "MIT" }
+license = { text = "Apache-2.0" }
 keywords = ["ai", "code-review", "github-actions", "maintainers", "pull-requests", "validation"]
 classifiers = [
   "Programming Language :: Python :: 3",
@@ -17,7 +17,7 @@ classifiers = [
   "Programming Language :: Python :: 3.11",
   "Environment :: Console",
   "Intended Audience :: Developers",
-  "License :: OSI Approved :: MIT License",
+  "License :: OSI Approved :: Apache Software License",
   "Topic :: Software Development :: Quality Assurance",
 ]
 
