@@ -217,6 +217,48 @@ class PolicyTests(unittest.TestCase):
             self.assertNotIn("generated-path", codes)
             self.assertNotIn("vendor-path", codes)
 
+    def test_binary_deletions_are_not_blocked_as_binary_changes(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            tmp = Path(raw)
+            (tmp / "CONTRIBUTING.md").write_text("Run tests before submitting.\n", encoding="utf-8")
+            pr = "AI assistance: Used for implementation suggestions and reviewed manually.\n\nHuman accountability: I own every line and take responsibility for tests."
+            data = ValidationInput(
+                repo=tmp,
+                base="origin/main",
+                changed_files=[ChangedFile("docs/assets/old.png", "D")],
+                numstat=[Numstat("docs/assets/old.png", None, None)],
+                diff_text="",
+                tracked_files=[],
+                commits=[],
+                pr_description=pr,
+                test_evidence="pytest passed",
+                ai_assisted=True,
+                check_results=[],
+            )
+            findings = validate(data, PolicyConfig(require_test_changes_for_code=False))
+            self.assertNotIn("binary-change", {item.code for item in findings if item.severity == BLOCKER})
+
+    def test_binary_additions_are_blocked(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            tmp = Path(raw)
+            (tmp / "CONTRIBUTING.md").write_text("Run tests before submitting.\n", encoding="utf-8")
+            pr = "AI assistance: Used for implementation suggestions and reviewed manually.\n\nHuman accountability: I own every line and take responsibility for tests."
+            data = ValidationInput(
+                repo=tmp,
+                base="origin/main",
+                changed_files=[ChangedFile("docs/assets/new.png", "A")],
+                numstat=[Numstat("docs/assets/new.png", None, None)],
+                diff_text="",
+                tracked_files=[],
+                commits=[],
+                pr_description=pr,
+                test_evidence="pytest passed",
+                ai_assisted=True,
+                check_results=[],
+            )
+            findings = validate(data, PolicyConfig(require_test_changes_for_code=False))
+            self.assertIn("binary-change", {item.code for item in findings if item.severity == BLOCKER})
+
     def test_issue_templates_do_not_create_pr_issue_link_rule(self) -> None:
         with tempfile.TemporaryDirectory() as raw:
             tmp = Path(raw)

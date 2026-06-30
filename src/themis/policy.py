@@ -288,6 +288,7 @@ def load_rule_docs(repo: Path) -> list[tuple[str, str]]:
 
 def validate_scope(data: ValidationInput, config: PolicyConfig) -> list[Finding]:
     findings: list[Finding] = []
+    changed_by_path = {item.path: item for item in data.changed_files}
     if not data.changed_files:
         findings.append(Finding(BLOCKER, "no-changes", "No changes were found to validate."))
         return findings
@@ -311,7 +312,8 @@ def validate_scope(data: ValidationInput, config: PolicyConfig) -> list[Finding]
             findings.append(
                 Finding(BLOCKER, "file-too-large", f"File adds {item.added} lines; maximum is {config.max_file_added_lines}.", file=item.path)
             )
-        if item.added is None or item.deleted is None:
+        changed = changed_by_path.get(item.path)
+        if (item.added is None or item.deleted is None) and not (changed and changed.status.startswith("D")):
             findings.append(Finding(BLOCKER, "binary-change", "Binary file changes require explicit maintainer review.", file=item.path))
     return findings
 

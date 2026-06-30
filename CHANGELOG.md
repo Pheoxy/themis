@@ -74,6 +74,7 @@ The format follows Keep a Changelog conventions, and this project uses semantic 
 - Positioning documentation comparing Themis with scanners, CI, PR bots, AI reviewers, and maintainer review.
 - Executable GitHub Action tests now cover `GITHUB_OUTPUT` status, exit-code, and report outputs.
 - Removed obsolete concept PNG assets from `docs/assets/concepts/`.
+- Binary deletions no longer trigger the binary-change blocker; binary additions/modifications remain blocked.
 - Configuration, GitHub Action, and development documentation.
 - Direct CLI parser tests for command forms.
 - `themis init` setup command for target repositories.
