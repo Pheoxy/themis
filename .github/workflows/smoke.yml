@@ -21,13 +21,27 @@ jobs:
 
           Smoke-test the Themis GitHub Action before release.
 
+          ## Validation
+
+          - [x] I ran `nix flake check`.
+          - [x] I updated tests for behavior changes.
+          - [x] I regenerated `docs/cli.md` when CLI behavior changed.
+          - [x] I updated `CHANGELOG.md` or explain why no changelog entry is needed below.
+          - [x] I reviewed the target repository rules affected by this change.
+
           ## Test Evidence
 
           nix flake check passed locally before dispatch.
 
-          ## Authorship
+          ## AI Assistance
 
-          Human-authored release validation workflow.
+          AI assistance: No AI assistance was used for the synthetic smoke-test PR body.
+
+          Human accountability: I, not Themis or any AI tool, take responsibility for every line, including tests, licensing, security, and project policy compliance.
+
+          ## Changelog Decision
+
+          Changelog: Not needed because this is a CI smoke-test body generated inside a workflow.
           EOF
 
       - id: themis
