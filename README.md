@@ -44,40 +44,74 @@ Themis does not take accountability for users. It blocks risky or under-evidence
 
 ## Quick Start
 
-On NixOS or any system with flakes enabled, enter the development shell first:
+### 1. Enter The Shell
+
+On NixOS or any system with flakes enabled:
 
 ```bash
 nix develop
 ```
 
-Create starter config and a PR body template in a target repository:
+You can also run the packaged CLI directly through the flake:
+
+```bash
+nix run . -- validate --repo /path/to/target/repo --base origin/main --body-file pr-body.md --evidence "pytest -q passed"
+```
+
+### 2. Initialize A Target Repo
+
+Create starter config and a PR body template:
 
 ```bash
 themis init --repo /path/to/target/repo
 ```
 
-Diagnose whether the repository and local tools are ready for Themis workflows:
+### 3. Inspect Readiness
+
+Check local tools and repository policy:
 
 ```bash
 themis doctor --repo /path/to/target/repo
 ```
 
-Inspect the effective policy and inferred upstream rules:
+Inspect inferred upstream rules:
 
 ```bash
 themis rules --repo /path/to/target/repo
 ```
 
-Inspect configured AI provider backend readiness:
+Inspect configured AI provider backend readiness. Providers are disabled by default and cannot decide gate status:
 
 ```bash
 themis providers --repo /path/to/target/repo
 ```
 
-Run the combined local readiness workflow:
+### 4. Run The Combined Gate
+
+For local pre-submit validation, use `self-check`:
 
 ```bash
 themis self-check --repo /path/to/target/repo --base origin/main --body-file pr-body.md --evidence "nix flake check passed" --run-checks
+```
+
+By default, Themis assumes the patch is AI-assisted. To validate a patch as human-authored, make that explicit:
+
+```bash
+themis validate --repo /path/to/target/repo --base origin/main --body-file pr-body.md --human-authored --evidence "make test passed"
+```
+
+### 5. Choose The Workflow
+
+Generate contributor-facing next steps:
+
+```bash
+themis guide --repo /path/to/target/repo --base origin/main --body-file pr-body.md --evidence "pytest -q passed" --run-checks
+```
+
+Generate maintainer-facing feedback:
+
+```bash
+themis maintainer-packet --repo /path/to/target/repo --base origin/main --body-file pr-body.md --evidence "pytest -q passed" --run-checks
 ```
 
 Preview explicit provider-backed assistant output without changing gate results:
@@ -86,23 +120,13 @@ Preview explicit provider-backed assistant output without changing gate results:
 themis providers preview --repo /path/to/target/repo --workflow guide --prompt "Summarize what to fix next."
 ```
 
-Ask Themis to run the gate and organize the upstream prep work for the current change:
-
-```bash
-themis guide --repo /path/to/target/repo --base origin/main --body-file pr-body.md --evidence "pytest -q passed" --run-checks
-```
-
-Generate maintainer-facing feedback that can be sent back to a contributor:
-
-```bash
-themis maintainer-packet --repo /path/to/target/repo --base origin/main --body-file pr-body.md --evidence "pytest -q passed" --run-checks
-```
-
-Explain a blocker or warning code during back-and-forth review:
+Explain a blocker or warning code:
 
 ```bash
 themis explain missing-test-evidence
 ```
+
+### 6. Use CI Output Formats
 
 In GitHub Actions, Themis can annotate blockers and warnings directly in the check UI:
 
@@ -130,16 +154,6 @@ For code scanning/review tooling, request SARIF:
 themis validate --repo . --base origin/main --body-file pr-body.md --evidence "nix flake check passed" --format sarif --output themis.sarif
 ```
 
-```bash
-python -m themis validate --repo /path/to/target/repo --base origin/main --body-file pr-body.md --evidence "pytest -q passed in CI"
-```
-
-By default, the validator assumes the patch is AI-assisted. To validate a patch as human-authored, make that explicit:
-
-```bash
-python -m themis validate --repo /path/to/target/repo --base origin/main --human-authored --evidence "make test passed"
-```
-
 For CI usage, write a report artifact:
 
 ```bash
@@ -152,11 +166,7 @@ themis \
   --output upstream-validation-report.md
 ```
 
-You can also run the packaged CLI directly through the flake:
-
-```bash
-nix run . -- validate --repo /path/to/target/repo --base origin/main --body-file pr-body.md --evidence "pytest -q passed"
-```
+### 7. Verify This Project
 
 Project verification is intentionally Nix-first:
 
@@ -169,6 +179,12 @@ Before releases, verify version consistency:
 ```bash
 themis release check
 ```
+
+### Next Steps
+
+- Use `themis pull-request draft` when local work is ready and you want Themis to create a draft PR.
+- Use `docs/github-action.md` for GitHub Action inputs and permissions.
+- Use `docs/cli.md` for the generated full CLI reference.
 
 ## Draft PR
 
