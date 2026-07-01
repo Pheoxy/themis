@@ -11,6 +11,7 @@ The format follows Keep a Changelog conventions, and this project follows Semant
 - Repo-specific issue and pull request templates for Themis policy, release, and validation workflows.
 - Issue forms for structured bug reports, feature requests, and policy false positives.
 - GitHub Sponsors metadata for the public repository sponsor button.
+- CODEOWNERS metadata for repository ownership and future review rules.
 - Renovate version-update configuration for Nix flake inputs and GitHub Actions.
 - Explicit Renovate Nix manager opt-in and weekly lock-file maintenance for `flake.lock`.
 - Pull request validation now checks the PR head commit instead of GitHub's synthetic merge commit, avoiding false DCO failures for signed-off bot commits.

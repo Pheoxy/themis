@@ -19,6 +19,10 @@ class RepositoryTemplateTests(unittest.TestCase):
         funding = (self.root / ".github" / "FUNDING.yml").read_text(encoding="utf-8")
         self.assertIn("github: [Pheoxy]", funding)
 
+    def test_codeowners_metadata_exists(self) -> None:
+        codeowners = (self.root / ".github" / "CODEOWNERS").read_text(encoding="utf-8")
+        self.assertIn("* @Pheoxy", codeowners)
+
     def test_renovate_version_updates_are_configured(self) -> None:
         renovate = (self.root / "renovate.json").read_text(encoding="utf-8")
         self.assertIn('"github-actions"', renovate)
