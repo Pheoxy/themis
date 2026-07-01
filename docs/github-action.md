@@ -4,6 +4,12 @@ Themis can run as a composite GitHub Action. The action installs Nix by default,
 
 ![Themis validation card](assets/themis-validation-card.png)
 
+## Marketplace
+
+GitHub may show a repository banner offering to publish Themis to the GitHub Marketplace because this repository contains a root `action.yml` file. Marketplace publication is optional; workflows can already use the action directly with `Pheoxy/themis@v1.0.0`.
+
+Publish to Marketplace from a normal future release after reviewing the release notes and action metadata. Do not move an existing public release tag only to change Marketplace metadata.
+
 ## Pull Request Gate
 
 ```yaml

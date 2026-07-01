@@ -1,6 +1,10 @@
 name: Themis
 description: Strict upstream validation gate for AI-assisted code submissions.
 
+branding:
+  icon: shield
+  color: blue
+
 inputs:
   repo:
     description: Repository path to validate.
