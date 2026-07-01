@@ -6,6 +6,9 @@ class ActionMetadataTests(unittest.TestCase):
     def test_action_exposes_bot_friendly_outputs(self) -> None:
         action = (Path(__file__).resolve().parents[1] / "action.yml").read_text(encoding="utf-8")
         self.assertIn("outputs:", action)
+        self.assertIn("branding:", action)
+        self.assertIn("icon: shield", action)
+        self.assertIn("color: blue", action)
         self.assertIn("status:", action)
         self.assertIn("exit-code:", action)
         self.assertIn("report:", action)
@@ -29,6 +32,8 @@ class ActionMetadataTests(unittest.TestCase):
         docs = (Path(__file__).resolve().parents[1] / "docs" / "github-action.md").read_text(encoding="utf-8")
         self.assertIn("Required when `draft-pr` is `true`", docs)
         self.assertIn("Draft PR mode requires `body-file`", docs)
+        self.assertIn("Marketplace", docs)
+        self.assertIn("Do not move an existing public release tag", docs)
 
 
 if __name__ == "__main__":
