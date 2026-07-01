@@ -28,6 +28,7 @@ class RepositoryTemplateTests(unittest.TestCase):
         self.assertIn("Nix flake inputs", renovate)
         self.assertIn("Signed-off-by: renovate[bot]", renovate)
         self.assertIn("Human accountability:", renovate)
+        self.assertIn("- [x] Automated dependency update", renovate)
         self.assertFalse((self.root / ".github" / "dependabot.yml").exists())
 
     def test_pull_request_template_is_themis_specific(self) -> None:
@@ -42,6 +43,11 @@ class RepositoryTemplateTests(unittest.TestCase):
         for text in required:
             with self.subTest(text=text):
                 self.assertIn(text, template)
+
+    def test_pr_validation_checks_head_commit(self) -> None:
+        workflow = (self.root / ".github" / "workflows" / "themis.yml").read_text(encoding="utf-8")
+        self.assertIn("fetch-depth: 0", workflow)
+        self.assertIn("ref: ${{ github.event.pull_request.head.sha }}", workflow)
 
     def test_issue_templates_are_themis_specific(self) -> None:
         issue_dir = self.root / ".github" / "ISSUE_TEMPLATE"

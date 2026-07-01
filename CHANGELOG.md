@@ -13,6 +13,8 @@ The format follows Keep a Changelog conventions, and this project follows Semant
 - GitHub Sponsors metadata for the public repository sponsor button.
 - Renovate version-update configuration for Nix flake inputs and GitHub Actions.
 - Explicit Renovate Nix manager opt-in and weekly lock-file maintenance for `flake.lock`.
+- Pull request validation now checks the PR head commit instead of GitHub's synthetic merge commit, avoiding false DCO failures for signed-off bot commits.
+- Renovate PR bodies include a checked automation acknowledgement compatible with Themis' PR-template gate.
 
 ## [1.0.0] - 2026-07-01
 

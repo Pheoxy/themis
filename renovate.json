@@ -9,6 +9,7 @@
   "prBodyNotes": [
     "AI assistance: No generative AI assistance was used by Renovate; this is an automated dependency update generated from package metadata. Maintainers must review the diff and CI results before merge.",
     "Human accountability: Maintainers who merge this PR take responsibility for reviewing and validating the dependency update, including tests, licensing, security, and project policy compliance.",
+    "- [x] Automated dependency update opened for maintainer review; do not merge until the Themis workflow and required checks pass.",
     "Test Evidence: The Themis workflow runs `nix flake check` for this PR. Merge only after that check passed."
   ],
   "enabledManagers": ["github-actions", "nix"],
