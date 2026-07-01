@@ -22,7 +22,7 @@ class RepositoryTemplateTests(unittest.TestCase):
     def test_dependabot_version_updates_are_configured(self) -> None:
         dependabot = (self.root / ".github" / "dependabot.yml").read_text(encoding="utf-8")
         self.assertIn("package-ecosystem: github-actions", dependabot)
-        self.assertIn("package-ecosystem: pip", dependabot)
+        self.assertNotIn("package-ecosystem: pip", dependabot)
         self.assertIn("interval: weekly", dependabot)
 
     def test_pull_request_template_is_themis_specific(self) -> None:
