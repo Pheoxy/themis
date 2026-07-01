@@ -6,7 +6,9 @@ Themis can run as a composite GitHub Action. The action installs Nix by default,
 
 ## Marketplace
 
-GitHub may show a repository banner offering to publish Themis to the GitHub Marketplace because this repository contains a root `action.yml` file. Marketplace publication is optional; workflows can already use the action directly with `Pheoxy/themis@v1.0.1`.
+GitHub may show a repository banner offering to publish Themis to the GitHub Marketplace because this repository contains a root `action.yml` file. Marketplace publication is optional; workflows can already use the action directly with `Pheoxy/themis@v1.0.2`.
+
+The Marketplace display name is `Themis PR Gate` because Marketplace action names are globally unique and cannot match an existing action, user, or organization name.
 
 Publish to Marketplace from a normal future release after reviewing the release notes and action metadata. Do not move an existing public release tag only to change Marketplace metadata.
 
@@ -32,7 +34,7 @@ jobs:
         env:
           PR_BODY: ${{ github.event.pull_request.body }}
         run: printf '%s' "$PR_BODY" > pr-body.md
-      - uses: Pheoxy/themis@v1.0.1
+      - uses: Pheoxy/themis@v1.0.2
         with:
           base: origin/${{ github.base_ref }}
           body-file: pr-body.md
@@ -97,7 +99,7 @@ The examples in `examples/github-actions/` show the expected permission split:
 Use the maintainer packet workflow when the action should produce contributor-facing feedback instead of the default validation report:
 
 ```yaml
-- uses: Pheoxy/themis@v1.0.1
+- uses: Pheoxy/themis@v1.0.2
   with:
     base: origin/${{ github.base_ref }}
     body-file: pr-body.md
@@ -113,7 +115,7 @@ permissions:
   pull-requests: write
 
 steps:
-  - uses: Pheoxy/themis@v1.0.1
+  - uses: Pheoxy/themis@v1.0.2
     env:
       GH_TOKEN: ${{ github.token }}
     with:

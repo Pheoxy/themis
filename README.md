@@ -13,7 +13,7 @@
 
 <p align="center">
   <a href="https://github.com/Pheoxy/themis/actions/workflows/smoke.yml"><img alt="Themis smoke workflow" src="https://github.com/Pheoxy/themis/actions/workflows/smoke.yml/badge.svg"></a>
-  <a href="https://github.com/Pheoxy/themis/releases/tag/v1.0.1"><img alt="Release v1.0.1" src="https://img.shields.io/badge/release-v1.0.1-blue"></a>
+  <a href="https://github.com/Pheoxy/themis/releases/tag/v1.0.2"><img alt="Release v1.0.2" src="https://img.shields.io/badge/release-v1.0.2-blue"></a>
   <a href="LICENSE"><img alt="License: Apache-2.0" src="https://img.shields.io/badge/license-Apache--2.0-blue"></a>
 </p>
 
@@ -288,7 +288,7 @@ jobs:
         env:
           PR_BODY: ${{ github.event.pull_request.body }}
         run: printf '%s' "$PR_BODY" > pr-body.md
-      - uses: Pheoxy/themis@v1.0.1
+      - uses: Pheoxy/themis@v1.0.2
         with:
           base: origin/${{ github.base_ref }}
           body-file: pr-body.md
