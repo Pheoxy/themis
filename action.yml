@@ -1,4 +1,4 @@
-name: Themis
+name: Themis PR Gate
 description: Strict upstream validation gate for AI-assisted code submissions.
 
 branding:

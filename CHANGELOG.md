@@ -6,6 +6,14 @@ The format follows Keep a Changelog conventions, and this project follows Semant
 
 ## [Unreleased]
 
+## [1.0.2] - 2026-07-01
+
+Patch release for GitHub Marketplace publication metadata.
+
+### Changed
+
+- GitHub Action Marketplace display name changed from `Themis` to `Themis PR Gate` so it satisfies Marketplace's global action-name uniqueness requirement.
+
 ## [1.0.1] - 2026-07-01
 
 Patch release focused on public repository operations, bot dependency maintenance, GitHub Action metadata, and protected PR workflow hardening after the initial `1.0.0` release.
