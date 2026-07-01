@@ -1,9 +1,21 @@
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/themis-banner-dark.png">
-  <img alt="Themis: Pre-upstream PR validation" src="docs/assets/themis-banner-light.png">
-</picture>
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/assets/themis-banner-dark.png">
+    <img alt="Themis: Pre-upstream PR validation" src="docs/assets/themis-banner-light.png" width="960">
+  </picture>
+</p>
 
-# Themis
+<h1 align="center">Themis</h1>
+
+<p align="center">
+  Paranoid pre-upstream PR validation for contributors who want maintainer-ready changes before review.
+</p>
+
+<p align="center">
+  <a href="https://github.com/Pheoxy/themis/actions/workflows/smoke.yml"><img alt="Themis smoke workflow" src="https://github.com/Pheoxy/themis/actions/workflows/smoke.yml/badge.svg"></a>
+  <a href="https://github.com/Pheoxy/themis/releases/tag/v1.0.0"><img alt="Release v1.0.0" src="https://img.shields.io/badge/release-v1.0.0-blue"></a>
+  <a href="LICENSE"><img alt="License: Apache-2.0" src="https://img.shields.io/badge/license-Apache--2.0-blue"></a>
+</p>
 
 Themis is a paranoid pre-upstream assistant and gate for AI-assisted code. It is named for the Greek goddess of law, order, custom, and proper procedure.
 

@@ -84,6 +84,7 @@ Initial 1.0 release of Themis.
 - Release audit supports explicitly approved large raster assets in provenance documentation.
 - Release audit now treats documented synthetic secret-like redaction fixtures as approved and fails on unapproved hits.
 - Stability policy documenting the 1.0 public compatibility surface.
+- Branded README header with light/dark Themis banner artwork and release/license/workflow badges.
 - Configuration, GitHub Action, and development documentation.
 - Direct CLI parser tests for command forms.
 - `themis init` setup command for target repositories.
