@@ -6,6 +6,11 @@ The format follows Keep a Changelog conventions, and this project follows Semant
 
 ## [Unreleased]
 
+### Added
+
+- Repo-specific issue and pull request templates for Themis policy, release, and validation workflows.
+- GitHub Sponsors metadata for the public repository sponsor button.
+
 ## [1.0.0] - 2026-07-01
 
 Initial 1.0 release of Themis.
@@ -87,8 +92,6 @@ Initial 1.0 release of Themis.
 - Branded README header with light/dark Themis banner artwork and release/license/workflow badges.
 - Manual GitHub Actions smoke workflow for verifying the composite action before tagging.
 - `NOTICE` file carrying the project copyright notice for Apache-2.0 distribution.
-- Repo-specific issue and pull request templates for Themis policy, release, and validation workflows.
-- GitHub Sponsors metadata for the public repository sponsor button.
 - Configuration, GitHub Action, and development documentation.
 - Direct CLI parser tests for command forms.
 - `themis init` setup command for target repositories.
