@@ -1,6 +1,6 @@
 # Configuration
 
-Themis reads `.themis.toml` from the target repository root. The built-in paranoid rules always apply first; configuration can tune thresholds and required commands, but should not be used to hide missing evidence.
+Themis reads `.themis.toml` from the target repository root. The built-in fail-closed rules always apply first; configuration can tune thresholds and required commands, but should not be used to hide missing evidence.
 
 A JSON Schema is available at `docs/schema/themis.schema.json` for editors and tooling.
 

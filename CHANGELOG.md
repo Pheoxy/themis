@@ -86,6 +86,7 @@ Initial 1.0 release of Themis.
 - Stability policy documenting the 1.0 public compatibility surface.
 - Branded README header with light/dark Themis banner artwork and release/license/workflow badges.
 - Manual GitHub Actions smoke workflow for verifying the composite action before tagging.
+- `NOTICE` file carrying the project copyright notice for Apache-2.0 distribution.
 - Configuration, GitHub Action, and development documentation.
 - Direct CLI parser tests for command forms.
 - `themis init` setup command for target repositories.
@@ -97,3 +98,5 @@ Initial 1.0 release of Themis.
 - AI disclosure, human accountability, and test evidence now reject placeholder or vague text.
 - Documentation and reports now state explicitly that Themis does not take accountability for users or certify passing code.
 - GitHub Action dependencies updated to current stable releases: `actions/checkout@v7`, `actions/upload-artifact@v7.0.1`, and `DeterminateSystems/nix-installer-action@v22`.
+- `LICENSE` now uses the canonical Apache-2.0 text so GitHub can classify it correctly.
+- Public-facing descriptions now use strict/fail-closed language consistently.

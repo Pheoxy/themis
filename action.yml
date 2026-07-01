@@ -1,5 +1,5 @@
 name: Themis
-description: Paranoid upstream validation gate for AI-assisted code submissions.
+description: Strict upstream validation gate for AI-assisted code submissions.
 
 inputs:
   repo:

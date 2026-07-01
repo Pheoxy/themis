@@ -53,7 +53,7 @@ class GateRun:
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="themis",
-        description="Paranoid upstream PR validator for AI-assisted code.",
+        description="Strict upstream PR validator for AI-assisted code.",
     )
     parser.add_argument("--version", action="version", version=f"%(prog)s {__version__}")
     subcommands = parser.add_subparsers(dest="command", required=True)

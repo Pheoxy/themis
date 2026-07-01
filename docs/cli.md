@@ -11,7 +11,7 @@ usage: themis [-h] [--version]
               {validate,v,guide,g,maintainer-packet,mp,pull-request,pr,docs,release,config,explain,doctor,rules,providers,self-check,init,completion}
               ...
 
-Paranoid upstream PR validator for AI-assisted code.
+Strict upstream PR validator for AI-assisted code.
 
 positional arguments:
   {validate,v,guide,g,maintainer-packet,mp,pull-request,pr,docs,release,config,explain,doctor,rules,providers,self-check,init,completion}

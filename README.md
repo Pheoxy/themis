@@ -8,7 +8,7 @@
 <h1 align="center">Themis</h1>
 
 <p align="center">
-  Paranoid pre-upstream PR validation for contributors who want maintainer-ready changes before review.
+  Strict pre-upstream PR validation for contributors who want maintainer-ready changes before review.
 </p>
 
 <p align="center">
@@ -17,7 +17,7 @@
   <a href="LICENSE"><img alt="License: Apache-2.0" src="https://img.shields.io/badge/license-Apache--2.0-blue"></a>
 </p>
 
-Themis is a paranoid pre-upstream assistant and gate for AI-assisted code. It is named for the Greek goddess of law, order, custom, and proper procedure.
+Themis is a strict pre-upstream assistant and gate for AI-assisted code. It is named for the Greek goddess of law, order, custom, and proper procedure.
 
 It is meant to help contributors prepare upstream-ready work, automate repetitive process checks, and fail closed when a pull request cannot prove it follows the target project's rules.
 
@@ -29,7 +29,7 @@ Themis does not take accountability for users. It blocks risky or under-evidence
 
 ## What It Checks
 
-- Always applies the validator's own built-in paranoid safety rules first.
+- Always applies the validator's own built-in fail-closed safety rules first.
 - Dynamically applies target repository rules from `.themis.toml`, contribution docs, PR templates, and policy files.
 - Finds upstream rules in files such as `CONTRIBUTING`, `DEVELOPING`, `MAINTAINERS`, `SECURITY`, `LICENSE`, pull request templates, and `.github` policy files.
 - Blocks AI-assisted submissions unless the PR text includes explicit `AI assistance:` and `Human accountability:` sections.

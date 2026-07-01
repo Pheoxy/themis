@@ -1,4 +1,4 @@
-"""Themis: a paranoid upstream PR validator."""
+"""Themis: a strict upstream PR validator."""
 
 __all__ = ["__version__"]
 

@@ -1,5 +1,5 @@
 {
-  description = "Themis: paranoid upstream PR validation for AI-assisted code submissions";
+  description = "Themis: strict upstream PR validation for AI-assisted code submissions";
 
   inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
 
@@ -85,7 +85,7 @@
         default = {
           type = "app";
           program = "${self.packages.${system}.default}/bin/themis";
-          meta.description = "Themis: paranoid upstream PR validation for AI-assisted code submissions";
+          meta.description = "Themis: strict upstream PR validation for AI-assisted code submissions";
         };
       });
 
