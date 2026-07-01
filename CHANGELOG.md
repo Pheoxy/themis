@@ -88,6 +88,7 @@ Initial 1.0 release of Themis.
 - Manual GitHub Actions smoke workflow for verifying the composite action before tagging.
 - `NOTICE` file carrying the project copyright notice for Apache-2.0 distribution.
 - Repo-specific issue and pull request templates for Themis policy, release, and validation workflows.
+- GitHub Sponsors metadata for the public repository sponsor button.
 - Configuration, GitHub Action, and development documentation.
 - Direct CLI parser tests for command forms.
 - `themis init` setup command for target repositories.

@@ -15,6 +15,10 @@ class RepositoryTemplateTests(unittest.TestCase):
         self.assertIn("[ai]", config)
         self.assertIn("enabled = false", config)
 
+    def test_github_sponsors_metadata_exists(self) -> None:
+        funding = (self.root / ".github" / "FUNDING.yml").read_text(encoding="utf-8")
+        self.assertIn("github: [Pheoxy]", funding)
+
     def test_pull_request_template_is_themis_specific(self) -> None:
         template = (self.root / ".github" / "pull_request_template.md").read_text(encoding="utf-8")
         required = (
