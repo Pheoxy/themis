@@ -53,6 +53,14 @@ class RepositoryTemplateTests(unittest.TestCase):
         self.assertIn("fetch-depth: 0", workflow)
         self.assertIn("ref: ${{ github.event.pull_request.head.sha }}", workflow)
 
+    def test_release_workflow_runs_release_gates_on_tags(self) -> None:
+        workflow = (self.root / ".github" / "workflows" / "release.yml").read_text(encoding="utf-8")
+        self.assertIn("tags:", workflow)
+        self.assertIn('"v*"', workflow)
+        self.assertIn("nix flake check", workflow)
+        self.assertIn("nix run . -- release check", workflow)
+        self.assertIn("nix run . -- release audit --history --format markdown", workflow)
+
     def test_issue_templates_are_themis_specific(self) -> None:
         issue_dir = self.root / ".github" / "ISSUE_TEMPLATE"
         templates = {

@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "themis"
-version = "1.0.0"
+version = "1.0.1"
 description = "Strict upstream PR validator that protects maintainers from low-confidence AI-assisted submissions."
 readme = "README.md"
 requires-python = ">=3.11"
