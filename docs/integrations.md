@@ -112,7 +112,7 @@ The action should run after checkout with full history when commit trailers or c
 - uses: actions/checkout@v7
   with:
     fetch-depth: 0
-- uses: Pheoxy/themis@v1.0.0
+- uses: Pheoxy/themis@v1.0.1
   with:
     base: origin/${{ github.base_ref }}
     body-file: pr-body.md

@@ -1,0 +1,28 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: read
+
+jobs:
+  release-gates:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - uses: DeterminateSystems/nix-installer-action@v22
+
+      - name: Run flake checks
+        run: nix flake check
+
+      - name: Run release check
+        run: nix run . -- release check
+
+      - name: Run release audit
+        run: nix run . -- release audit --history --format markdown

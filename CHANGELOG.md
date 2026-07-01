@@ -6,6 +6,10 @@ The format follows Keep a Changelog conventions, and this project follows Semant
 
 ## [Unreleased]
 
+## [1.0.1] - 2026-07-01
+
+Patch release focused on public repository operations, bot dependency maintenance, GitHub Action metadata, and protected PR workflow hardening after the initial `1.0.0` release.
+
 ### Added
 
 - Repo-specific issue and pull request templates for Themis policy, release, and validation workflows.
