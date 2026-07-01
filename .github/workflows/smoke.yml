@@ -1,0 +1,49 @@
+name: Themis Smoke
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  self-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Write smoke PR body
+        run: |
+          cat > pr-body.md <<'EOF'
+          ## Summary
+
+          Smoke-test the Themis GitHub Action before release.
+
+          ## Test Evidence
+
+          nix flake check passed locally before dispatch.
+
+          ## Authorship
+
+          Human-authored release validation workflow.
+          EOF
+
+      - id: themis
+        uses: ./
+        with:
+          workflow: self-check
+          base: HEAD~1
+          body-file: pr-body.md
+          evidence: nix flake check passed locally before dispatch.
+          human-authored: "true"
+          run-checks: "true"
+          output: smoke-report.md
+
+      - name: Verify action outputs
+        run: |
+          test "${{ steps.themis.outputs.status }}" = "pass"
+          test "${{ steps.themis.outputs.exit-code }}" = "0"
+          test "${{ steps.themis.outputs.report }}" = "smoke-report.md"
+          test -s smoke-report.md
