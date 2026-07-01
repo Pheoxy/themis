@@ -12,6 +12,13 @@
     "Test Evidence: The Themis workflow runs `nix flake check` for this PR. Merge only after that check passed."
   ],
   "enabledManagers": ["github-actions", "nix"],
+  "nix": {
+    "enabled": true
+  },
+  "lockFileMaintenance": {
+    "enabled": true,
+    "schedule": ["before 09:00 on monday"]
+  },
   "packageRules": [
     {
       "matchManagers": ["github-actions"],

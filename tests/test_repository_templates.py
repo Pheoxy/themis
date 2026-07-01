@@ -23,6 +23,8 @@ class RepositoryTemplateTests(unittest.TestCase):
         renovate = (self.root / "renovate.json").read_text(encoding="utf-8")
         self.assertIn('"github-actions"', renovate)
         self.assertIn('"nix"', renovate)
+        self.assertIn('"enabled": true', renovate)
+        self.assertIn("lockFileMaintenance", renovate)
         self.assertIn("Nix flake inputs", renovate)
         self.assertIn("Signed-off-by: renovate[bot]", renovate)
         self.assertIn("Human accountability:", renovate)
