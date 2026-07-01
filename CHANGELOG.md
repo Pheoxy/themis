@@ -66,7 +66,7 @@ Initial 1.0 release of Themis.
 - GitHub Action docs now state the draft PR `body-file` requirement.
 - SARIF results now include stable Themis fingerprints and stronger output coverage.
 - `themis release audit` for redacted pre-1.0 secret, template URL, generated-file, license, and asset-provenance checks.
-- GitHub Action examples now reference `Pheoxy/themis@main` instead of template owner placeholders.
+- GitHub Action examples now reference the stable `Pheoxy/themis@v1.0.0` release tag instead of template owner placeholders.
 - Project license changed from MIT to Apache-2.0.
 - Documented ChatGPT/OpenAI provenance and Apache-2.0 license intent for generated PNG assets.
 - Package metadata and JSON Schema ID now use the reserved `Pheoxy/themis` repository.
@@ -85,6 +85,7 @@ Initial 1.0 release of Themis.
 - Release audit now treats documented synthetic secret-like redaction fixtures as approved and fails on unapproved hits.
 - Stability policy documenting the 1.0 public compatibility surface.
 - Branded README header with light/dark Themis banner artwork and release/license/workflow badges.
+- Manual GitHub Actions smoke workflow for verifying the composite action before tagging.
 - Configuration, GitHub Action, and development documentation.
 - Direct CLI parser tests for command forms.
 - `themis init` setup command for target repositories.
@@ -95,3 +96,4 @@ Initial 1.0 release of Themis.
 
 - AI disclosure, human accountability, and test evidence now reject placeholder or vague text.
 - Documentation and reports now state explicitly that Themis does not take accountability for users or certify passing code.
+- GitHub Action dependencies updated to current stable releases: `actions/checkout@v7`, `actions/upload-artifact@v7.0.1`, and `DeterminateSystems/nix-installer-action@v22`.

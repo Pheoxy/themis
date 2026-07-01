@@ -265,14 +265,14 @@ jobs:
   validate:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
       - name: Write PR body
         env:
           PR_BODY: ${{ github.event.pull_request.body }}
         run: printf '%s' "$PR_BODY" > pr-body.md
-      - uses: Pheoxy/themis@main
+      - uses: Pheoxy/themis@v1.0.0
         with:
           base: origin/${{ github.base_ref }}
           body-file: pr-body.md

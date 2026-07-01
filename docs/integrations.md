@@ -109,10 +109,10 @@ go test ./... passed
 The action should run after checkout with full history when commit trailers or commit style need verification:
 
 ```yaml
-- uses: actions/checkout@v4
+- uses: actions/checkout@v7
   with:
     fetch-depth: 0
-- uses: Pheoxy/themis@main
+- uses: Pheoxy/themis@v1.0.0
   with:
     base: origin/${{ github.base_ref }}
     body-file: pr-body.md

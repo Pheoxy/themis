@@ -76,7 +76,7 @@ runs:
   steps:
     - name: Install Nix
       if: ${{ inputs.install-nix == 'true' }}
-      uses: DeterminateSystems/nix-installer-action@v16
+      uses: DeterminateSystems/nix-installer-action@v22
 
     - name: Validate upstream readiness
       id: validate
@@ -233,7 +233,7 @@ runs:
 
     - name: Upload validation report
       if: always() && inputs.output != ''
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7.0.1
       with:
         name: upstream-validation-report
         path: ${{ inputs.output }}

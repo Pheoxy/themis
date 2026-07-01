@@ -14,8 +14,8 @@ jobs:
   config-check:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: Pheoxy/themis@main
+      - uses: actions/checkout@v7
+      - uses: Pheoxy/themis@v1.0.0
         with:
           workflow: config-check
           format: markdown
