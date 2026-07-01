@@ -87,6 +87,7 @@ Initial 1.0 release of Themis.
 - Branded README header with light/dark Themis banner artwork and release/license/workflow badges.
 - Manual GitHub Actions smoke workflow for verifying the composite action before tagging.
 - `NOTICE` file carrying the project copyright notice for Apache-2.0 distribution.
+- Repo-specific issue and pull request templates for Themis policy, release, and validation workflows.
 - Configuration, GitHub Action, and development documentation.
 - Direct CLI parser tests for command forms.
 - `themis init` setup command for target repositories.
