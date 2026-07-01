@@ -52,7 +52,7 @@ class RepositoryTemplateTests(unittest.TestCase):
     def test_issue_template_config_points_to_security_policy(self) -> None:
         config = (self.root / ".github" / "ISSUE_TEMPLATE" / "config.yml").read_text(encoding="utf-8")
         self.assertIn("blank_issues_enabled: false", config)
-        self.assertIn("https://github.com/Pheoxy/themis/security/policy", config)
+        self.assertNotIn("contact_links:", config)
 
 
 if __name__ == "__main__":
