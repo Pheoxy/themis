@@ -11,7 +11,7 @@ The format follows Keep a Changelog conventions, and this project follows Semant
 - Repo-specific issue and pull request templates for Themis policy, release, and validation workflows.
 - Issue forms for structured bug reports, feature requests, and policy false positives.
 - GitHub Sponsors metadata for the public repository sponsor button.
-- Dependabot version-update configuration for GitHub Actions.
+- Renovate version-update configuration for Nix flake inputs and GitHub Actions.
 
 ## [1.0.0] - 2026-07-01
 
