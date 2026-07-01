@@ -36,8 +36,11 @@ class RepositoryTemplateTests(unittest.TestCase):
         issue_dir = self.root / ".github" / "ISSUE_TEMPLATE"
         templates = {
             "bug_report.md": ("Themis Result", "Finding code(s)", "Target Repository Context"),
+            "bug_report.yml": ("Themis Status", "Finding Codes", "Target Repository Context"),
             "feature_request.md": ("Themis Surface", ".themis.toml", "1.x compatibility surface"),
+            "feature_request.yml": ("Themis Surface", "GitHub Action input/output", "major release / 1.x compatibility change"),
             "policy_false_positive.md": ("Policy False Positive", "Proposed Adjustment", "themis validate"),
+            "policy_false_positive.yml": ("Policy False Positive", "Proposed Adjustment", "Command And Output"),
             "release-checklist.md": ("Themis Release Checklist", "nix flake check", "Remote Work Last"),
         }
         for filename, required in templates.items():

@@ -1,0 +1,45 @@
+name: Policy False Positive
+description: Report a blocker that appears stricter than the target repository requires.
+title: "Policy false positive: "
+labels: [policy, false-positive]
+body:
+  - type: textarea
+    id: blocker
+    attributes:
+      label: Blocker
+      description: Paste the Themis blocker code and message.
+    validations:
+      required: true
+  - type: textarea
+    id: command
+    attributes:
+      label: Command And Output
+      render: bash
+    validations:
+      required: true
+  - type: textarea
+    id: target-rule
+    attributes:
+      label: Target Repository Rule
+      description: Link or quote the upstream rule Themis should follow.
+    validations:
+      required: true
+  - type: textarea
+    id: why-pass
+    attributes:
+      label: Why This Should Pass
+      description: Explain why the submission satisfies the target repository's documented process.
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence
+      description: Include tests, PR body sections, signoff details, changelog decision, and relevant paths.
+    validations:
+      required: true
+  - type: textarea
+    id: proposed-adjustment
+    attributes:
+      label: Proposed Adjustment
+      description: Describe the smallest rule/config/schema change that would avoid this false positive without weakening Themis for other repositories.

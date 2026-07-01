@@ -1,0 +1,59 @@
+name: Feature Request
+description: Propose a new validation rule or workflow.
+title: "Feature: "
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What maintainer burden or upstream risk should this reduce?
+    validations:
+      required: true
+  - type: textarea
+    id: proposed-behavior
+    attributes:
+      label: Proposed Behavior
+      description: Describe the rule or workflow.
+    validations:
+      required: true
+  - type: checkboxes
+    id: surface
+    attributes:
+      label: Themis Surface
+      options:
+        - label: CLI command or option
+        - label: GitHub Action input/output
+        - label: `.themis.toml` config/schema
+        - label: Finding code or severity
+        - label: Report format
+        - label: Documentation only
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Hard Blocker Or Warning
+      description: Should this fail the submission or only warn?
+      options:
+        - hard blocker
+        - warning
+        - info only
+        - not sure
+    validations:
+      required: true
+  - type: textarea
+    id: examples
+    attributes:
+      label: Target Project Examples
+      description: Link to real upstream policies or review practices that justify the behavior.
+  - type: dropdown
+    id: compatibility
+    attributes:
+      label: Compatibility
+      description: What release level does this likely require?
+      options:
+        - patch release
+        - minor release
+        - major release / 1.x compatibility change
+        - not sure
+    validations:
+      required: true
