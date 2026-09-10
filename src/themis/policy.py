@@ -252,7 +252,7 @@ def validate_project_specific_rules(
         elif not data.commits:
             findings.append(Finding(BLOCKER, "cannot-verify-commit-style", "Upstream docs require conventional commits, but no commits were found in the base range."))
         else:
-            invalid = [commit for commit in data.commits if not is_conventional_commit(commit.subject)]
+            invalid = [commit for commit in data.commits if not commit.is_merge and not is_conventional_commit(commit.subject)]
             if invalid:
                 detail = ", ".join(f"{commit.sha[:12]} {commit.subject}" for commit in invalid)
                 findings.append(Finding(BLOCKER, "invalid-commit-style", "Upstream docs appear to require conventional commits.", detail=trim(detail, 500)))
@@ -334,7 +334,11 @@ def validate_upstream_rules(
             )
         )
     if docs_require_dco_or_signoff(docs_text):
-        unsigned = [commit for commit in data.commits if "Signed-off-by:" not in f"{commit.subject}\n{commit.body}"]
+        unsigned = [
+            commit
+            for commit in data.commits
+            if not commit.is_merge and "Signed-off-by:" not in f"{commit.subject}\n{commit.body}"
+        ]
         if data.base and data.changed_files and not data.commits:
             findings.append(Finding(BLOCKER, "cannot-verify-dco", "Upstream docs mention DCO/signoff, but no commits were found in the base range."))
         elif data.base and unsigned:

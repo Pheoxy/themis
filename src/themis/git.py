@@ -27,6 +27,11 @@ class CommitInfo:
     sha: str
     subject: str
     body: str
+    parent_shas: tuple[str, ...] = ()
+
+    @property
+    def is_merge(self) -> bool:
+        return len(self.parent_shas) > 1
 
 
 def git(repo: Path, *args: str, check: bool = True) -> str:
@@ -126,20 +131,25 @@ def tracked_files(repo: Path) -> list[str]:
     return [line for line in git(repo, "ls-files", check=False).splitlines() if line.strip()]
 
 
-def commits(repo: Path, base: str | None) -> list[CommitInfo]:
-    if not base:
-        return []
-    fmt = "%H%x1f%s%x1f%b%x1e"
-    output = git(repo, "log", f"{base}..HEAD", f"--pretty=format:{fmt}", check=False)
+def parse_commit_log(output: str) -> list[CommitInfo]:
     parsed: list[CommitInfo] = []
     for record in output.strip("\x1e\n").split("\x1e"):
         if not record.strip():
             continue
-        parts = record.strip("\n").split("\x1f", 2)
-        if len(parts) != 3:
+        parts = record.strip("\n").split("\x1f", 3)
+        if len(parts) != 4:
             continue
-        parsed.append(CommitInfo(sha=parts[0], subject=parts[1], body=parts[2]))
+        parent_shas = tuple(sha for sha in parts[2].split() if sha)
+        parsed.append(CommitInfo(sha=parts[0], subject=parts[1], body=parts[3], parent_shas=parent_shas))
     return parsed
+
+
+def commits(repo: Path, base: str | None) -> list[CommitInfo]:
+    if not base:
+        return []
+    fmt = "%H%x1f%s%x1f%P%x1f%b%x1e"
+    output = git(repo, "log", f"{base}..HEAD", f"--pretty=format:{fmt}", check=False)
+    return parse_commit_log(output)
 
 
 def current_branch(repo: Path) -> str:
