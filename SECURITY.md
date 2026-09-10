@@ -8,9 +8,11 @@ Security fixes target the latest `1.x` release and the default branch. Older rel
 
 ## Reporting A Vulnerability
 
-Report security issues privately to the maintainers before publishing details. If no private channel exists for the deployed repository, open a minimal public issue that states a private security report is needed without including exploit details.
+Report security issues privately before publishing details.
 
-For GitHub-hosted releases, use private vulnerability reporting or GitHub Security Advisories when available.
+For this GitHub-hosted repository, use [private vulnerability reporting](https://github.com/Pheoxy/themis/security/advisories/new). That form stays private. Do not include exploit details in a public issue.
+
+If you are reporting against a different Themis deployment with no private channel, open a minimal public issue that states a private security report is needed, without exploit details.
 
 Include:
 

@@ -6,6 +6,10 @@ The format follows Keep a Changelog conventions, and this project follows Semant
 
 ## [Unreleased]
 
+## [1.0.3] - 2026-09-10
+
+Patch release so Marketplace and documented `Pheoxy/themis@v1.0.3` pins include the DCO merge-commit skip and the Nix installer v23 bump.
+
 ### Fixed
 
 - DCO and Conventional Commits checks now skip git merge commits, so GitHub "Update branch" merge commits without `Signed-off-by` no longer fail an otherwise signed PR.
@@ -13,6 +17,8 @@ The format follows Keep a Changelog conventions, and this project follows Semant
 ### Changed
 
 - GitHub Action Nix installer updated from `DeterminateSystems/nix-installer-action@v22` to `v23` in `action.yml` and the release workflow.
+- Documented GitHub Action examples and the README release badge now pin `Pheoxy/themis@v1.0.3`.
+- `SECURITY.md` now points reporters at GitHub private vulnerability reporting, which is enabled on this repository.
 
 ## [1.0.2] - 2026-07-01
 
