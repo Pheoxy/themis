@@ -10,6 +10,10 @@ The format follows Keep a Changelog conventions, and this project follows Semant
 
 - DCO and Conventional Commits checks now skip git merge commits, so GitHub "Update branch" merge commits without `Signed-off-by` no longer fail an otherwise signed PR.
 
+### Changed
+
+- GitHub Action Nix installer updated from `DeterminateSystems/nix-installer-action@v22` to `v23` in `action.yml` and the release workflow.
+
 ## [1.0.2] - 2026-07-01
 
 Patch release for GitHub Marketplace publication metadata.
