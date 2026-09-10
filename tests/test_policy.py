@@ -177,6 +177,47 @@ class PolicyTests(unittest.TestCase):
             findings = validate(data, PolicyConfig())
             self.assertIn("invalid-commit-style", {item.code for item in findings if item.severity == BLOCKER})
 
+    def test_unsigned_merge_commit_does_not_fail_dco(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            tmp = Path(raw)
+            (tmp / "CONTRIBUTING.md").write_text("Sign off commits with Signed-off-by.\n", encoding="utf-8")
+            pr = "AI assistance: Used for implementation suggestions and reviewed manually.\n\nHuman accountability: I own every line and take responsibility for tests."
+            data = make_input(tmp, diff="", files=[ChangedFile("README.md", "M")], pr=pr)
+            data.commits.extend(
+                [
+                    CommitInfo("af06ca9abcde", "Lock file maintenance", "Signed-off-by: bot@example.com\n", ("parent1",)),
+                    CommitInfo("f33c54db9bf4", "Merge branch 'main' into topic", "", ("parent1", "parent2")),
+                ]
+            )
+            findings = validate(data, PolicyConfig())
+            codes = {item.code for item in findings if item.severity == BLOCKER}
+            self.assertNotIn("missing-signed-off-by", codes)
+
+    def test_unsigned_non_merge_commit_still_fails_dco(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            tmp = Path(raw)
+            (tmp / "CONTRIBUTING.md").write_text("Sign off commits with Signed-off-by.\n", encoding="utf-8")
+            pr = "AI assistance: Used for implementation suggestions and reviewed manually.\n\nHuman accountability: I own every line and take responsibility for tests."
+            data = make_input(tmp, diff="", files=[ChangedFile("README.md", "M")], pr=pr)
+            data.commits.append(CommitInfo("abc123def456", "docs: update readme", ""))
+            findings = validate(data, PolicyConfig())
+            self.assertIn("missing-signed-off-by", {item.code for item in findings if item.severity == BLOCKER})
+
+    def test_merge_commit_subject_does_not_fail_conventional_commits(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            tmp = Path(raw)
+            (tmp / "CONTRIBUTING.md").write_text("Commits must follow Conventional Commits. Run cargo test.\n", encoding="utf-8")
+            pr = "AI assistance: Used for implementation suggestions and reviewed manually.\n\nHuman accountability: I own every line and take responsibility for tests."
+            data = make_input(tmp, diff="", files=[ChangedFile("README.md", "M")], pr=pr)
+            data.commits.extend(
+                [
+                    CommitInfo("abc123def456", "docs: update readme", "", ("parent1",)),
+                    CommitInfo("f33c54db9bf4", "Merge branch 'main' into topic", "", ("parent1", "parent2")),
+                ]
+            )
+            findings = validate(data, PolicyConfig())
+            self.assertNotIn("invalid-commit-style", {item.code for item in findings if item.severity == BLOCKER})
+
     def test_generated_and_vendor_paths_are_blocked_by_default(self) -> None:
         with tempfile.TemporaryDirectory() as raw:
             tmp = Path(raw)

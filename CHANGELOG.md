@@ -6,6 +6,10 @@ The format follows Keep a Changelog conventions, and this project follows Semant
 
 ## [Unreleased]
 
+### Fixed
+
+- DCO and Conventional Commits checks now skip git merge commits, so GitHub "Update branch" merge commits without `Signed-off-by` no longer fail an otherwise signed PR.
+
 ## [1.0.2] - 2026-07-01
 
 Patch release for GitHub Marketplace publication metadata.

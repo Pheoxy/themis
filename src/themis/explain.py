@@ -94,7 +94,7 @@ EXPLANATIONS = {
         "missing-signed-off-by",
         "One or more commits lack required signoff trailers.",
         "DCO/signoff documents contributor responsibility for the submitted work.",
-        "Add `Signed-off-by:` trailers according to the target project's process.",
+        "Add `Signed-off-by:` trailers to non-merge commits according to the target project's process. Git merge commits created by branch updates are ignored.",
     ),
     "upstream-forbids-ai": FindingExplanation(
         "upstream-forbids-ai",
