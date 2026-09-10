@@ -80,7 +80,7 @@ runs:
   steps:
     - name: Install Nix
       if: ${{ inputs.install-nix == 'true' }}
-      uses: DeterminateSystems/nix-installer-action@v22
+      uses: DeterminateSystems/nix-installer-action@v23
 
     - name: Validate upstream readiness
       id: validate
