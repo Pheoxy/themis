@@ -22,7 +22,7 @@
         {
           default = python.pkgs.buildPythonApplication {
             pname = "themis";
-            version = "1.0.2";
+            version = "1.0.3";
             pyproject = true;
             src = ./.;
 
