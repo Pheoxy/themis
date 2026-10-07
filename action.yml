@@ -237,7 +237,7 @@ runs:
 
     - name: Upload validation report
       if: always() && inputs.output != ''
-      uses: actions/upload-artifact@v7.0.1
+      uses: actions/upload-artifact@v7.0.2
       with:
         name: upstream-validation-report
         path: ${{ inputs.output }}
